@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from json import load, dumps, loads
 from os import remove, mkdir, listdir, rename
 from os.path import sep, join, exists, isfile, dirname
@@ -23,8 +22,10 @@ from .main import solutions_filter, check_admin_on_course, re_test, check_admin,
     get_restore_hash, block_solutions_info, solution_path, can_send_solution, get_in_html_tag, register_user, \
     check_cheating, result_comparer
 from .models import Block, Subscribe, Course, Restore, ExtraFile, Message
+from .decorators import login_required
 
 
+@login_required(True)
 def download_rating(request):
     block = Block.objects.get(id=request.GET['block_id'])
     if not check_admin_on_course(request.user, block.course):
@@ -48,6 +49,7 @@ def download_rating(request):
     return response
 
 
+@login_required(True)
 def download(request):
     if not check_admin(request.user) or not check_admin_on_course(request.user, Block.objects.get(id=request.GET['block_id']).course):
         return HttpResponseRedirect('/main')
@@ -94,6 +96,7 @@ def download(request):
     return response
 
 
+@login_required(True)
 def queue(request):
     block = Block.objects.get(id=request.GET['block_id'])
     if not check_admin_on_course(request.user, block.course):
@@ -101,12 +104,13 @@ def queue(request):
     return render(request, 'queue.html', {'Block': block})
 
 
+@login_required(True)
 def docs(request):
     if not check_admin(request.user):
         return HttpResponseRedirect('/main')
     return render(request, "docs.html", context={'is_teacher': check_teacher(request.user)})
 
-
+@login_required(True)
 def retest(request):
     solutions_request = solutions_filter(request.GET)
     if not check_admin_on_course(request.user, Block.objects.get(id=request.GET['block_id']).course):
@@ -121,10 +125,9 @@ def retest(request):
     return HttpResponseRedirect('/admin/solutions%s' % req)
 
 
+@login_required(True)
 def solution(request):
     current_solution = Solution.objects.get(id=request.GET['id'])
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect('/main')
     if current_solution.user != request.user:
         try:
             Subscribe.objects.get(user=request.user, is_assistant=True, course=current_solution.task.block.course)
@@ -162,6 +165,7 @@ def solution(request):
                                                      'path': request.path})
 
 
+@login_required(True)
 def solutions(request):
     current_block = Block.objects.get(id=request.GET['block_id'])
     try:
@@ -186,12 +190,14 @@ def solutions(request):
                                                       'solutions_info': block_solutions_info(current_block)})
 
 
+@login_required(True)
 def messages(request):
     return HttpResponseRedirect('/main')
     current_block = Block.objects.get(id=request.GET['block_id'])
     return render(request, 'messages.html', context={'Block': current_block})
 
 
+@login_required(True)
 def users_settings(request):
     current_course = Course.objects.get(id=request.GET['course_id'])
     if not check_admin_on_course(request.user, current_course):
@@ -245,6 +251,7 @@ def users_settings(request):
     return render(request, 'users_settings.html', context={'course': current_course})
 
 
+@login_required(True)
 def task(request):
     current_task = Task.objects.get(id=request.GET['id'])
     user = request.user
@@ -376,6 +383,7 @@ def task_test(request):
             return HttpResponseRedirect('/task?id=' + str(current_task.id))
 
 
+@login_required(True)
 def block(request):
     current_block = Block.objects.get(id=request.GET['id'])
     if not check_permission_block(request.user, current_block):
@@ -386,6 +394,7 @@ def block(request):
                                                   'user': request.user})
 
 
+@login_required(True)
 def task_settings(request):
     if not check_admin(request.user):
         return HttpResponseRedirect('/main')
@@ -486,6 +495,7 @@ def task_settings(request):
                                                           'is_superuser': check_teacher(request.user)})
 
 
+@login_required(True)
 def block_settings(request):
     if not check_admin(request.user):
         return HttpResponseRedirect('/main')
@@ -563,6 +573,7 @@ def block_settings(request):
                                                            'Block': current_block})
 
 
+@login_required(True)
 def solutions_table(request):
     current_task = Task.objects.get(id=request.GET['id'])
     user = request.user
@@ -587,6 +598,7 @@ def solutions_table(request):
     return HttpResponse('done')
 
 
+@login_required(True)
 def queue_table(request):
     block = Block.objects.get(id=request.GET['block_id'])
     if not check_admin_on_course(request.user, block):
@@ -595,6 +607,7 @@ def queue_table(request):
     return render(request, 'queue_table.html', {'solutions': sorted(sols, key=lambda x: -x.task.block.priority * 10 - x.task.priority)})
 
 
+@login_required(True)
 def get_result_data(request):
     solution = Solution.objects.get(id=request.GET['id'])
     if not check_admin_on_course(request.user, solution.task.block.course):
@@ -607,6 +620,7 @@ def get_result_data(request):
     }))
 
 
+@login_required(True)
 def get_comment_data(request):
     solution = Solution.objects.get(id=request.GET['id'])
     if not check_admin_on_course(request.user, solution.task.block.course):
@@ -616,7 +630,8 @@ def get_comment_data(request):
         'comment_text': solution.comment
     }))
 
-    
+
+@login_required(True)
 def rating(request):
     current_block = Block.objects.get(id=request.GET['block_id'])
     if not check_admin_on_course(request.user, current_block.course) and not current_block.show_rating:
@@ -624,6 +639,7 @@ def rating(request):
     return render(request, 'rating.html', context={'Block': Block.objects.get(id=request.GET['block_id']), 'admin_course': check_admin_on_course(request.user, current_block.course)})
 
 
+@login_required(True)
 def cheating(request):
     current_block = Block.objects.get(id=request.GET['block_id'])
     if not check_admin_on_course(request.user, current_block.course):
@@ -662,6 +678,7 @@ def cheating(request):
     return render(request, 'cheating.html', {'Block': current_block})
 
 
+@login_required(True)
 def admin(request):
     if not check_admin(request.user):
         return HttpResponseRedirect('/main')
@@ -689,6 +706,7 @@ def admin(request):
                                                   'is_teacher': check_teacher(request.user)})
 
 
+@login_required(False)
 def reset_password(request):
     code = request.GET['code']
     try:
@@ -709,9 +727,8 @@ def reset_password(request):
             return HttpResponseRedirect('/enter')
 
 
+@login_required(True)
 def settings(request):
-    if not check_login(request.user):
-        return HttpResponseRedirect('/enter')
     context = {'is_admin': check_admin(request.user), 'form': ChangePasswordForm()}
     if request.method == 'POST':
         old = request.POST['old']
@@ -735,6 +752,7 @@ def settings(request):
     return render(request, 'settings.html', context=context)
 
 
+@login_required(True)
 def exit(request):
     logout(request)
     return HttpResponseRedirect('/enter')
@@ -744,16 +762,14 @@ def redirect(request):
     return HttpResponseRedirect('/main')
 
 
+@login_required(True)
 def main(request):
-    if not check_login(request.user):
-        return HttpResponseRedirect('/enter')
     return render(request, 'main.html', context={'blocks': blocks_available(request.user)})
 
 
+@login_required(False)
 def restore(request):
-    if check_login(request.user):
-        return HttpResponseRedirect('/main')
-    elif request.method == 'GET':
+    if request.method == 'GET':
         return render(request, 'restore.html')
     else:
         email = request.POST['email']
@@ -775,13 +791,43 @@ def restore(request):
         return HttpResponseRedirect('/enter')
 
 
+@login_required(False)
 def enter(request):
     if check_login(request.user):
         return HttpResponseRedirect('/main')
     if request.method == 'POST':
-        user = authenticate(username=request.POST['email'].strip(), password=request.POST['password'].strip())
+        try:
+            user = User.objects.get(username=request.POST['email'])
+        except ObjectDoesNotExist:
+            try:
+                user = User.objects.get(email=request.POST['email'])
+            except ObjectDoesNotExist:
+                return HttpResponseRedirect('/enter?error_message=Данного пользователя не существует')
+        user = authenticate(username=user.username, password=request.POST['password'].strip())
         if user is not None:
             login(request, user)
+        return HttpResponseRedirect('/enter?error_message=Неверный пароль')
+    return render(request, "enter.html", context={"form": LoginForm(), 'error_message': request.GET.get('error_message', '')})
+
+
+@login_required(False)
+def register(request):
+    if request.method == 'POST':
+        if len(request.POST['password'].strip()) < 8:
+            return HttpResponseRedirect('/register?error_message=Пароль слишком слабый')
+        if request.POST['password'] != request.POST['repeat_password']:
+            return HttpResponseRedirect('/register?error_message=Пароли не совпадают')
+        if len(User.objects.filter(username=request.POST['username'])):
+            return HttpResponseRedirect('/register?error_message=Данное имя пользователя уже занято')
+        if len(User.objects.filter(email=request.POST['email'])):
+            return HttpResponseRedirect('/register?error_message=Пользователь под таким email уже зарегистрирован')
+        user = User.objects.create_user(request.POST['username'], request.POST['email'], password=request.POST['password'])
+        userinfo = UserInfo.objects.create(
+            surname = request.POST['surname'],
+            name = request.POST['name'],
+            middle_name = request.POST['middle_name']
+        )
+        user.userinfo = userinfo
+        user.save()
         return HttpResponseRedirect('/enter')
-    else:
-        return render(request, "enter.html", context={"form": LoginForm()})
+    return render(request, 'register.html', {'error_message': request.GET.get('error_message', '')})

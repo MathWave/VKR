@@ -16,22 +16,8 @@ from django.db.transaction import atomic
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 
-from Main.models import Course, Block, Solution, ThreadSafe, Restore, System, Subscribe, UserInfo
+from Main.models import Course, Block, Solution, Restore, System, Subscribe, UserInfo
 from Sprint.settings import MEDIA_ROOT
-
-base_dir = 'data'
-
-
-@contextmanager
-def lock(key):
-    pk = ThreadSafe.objects.get_or_create(key=key)[0].pk
-    try:
-        objs = ThreadSafe.objects.filter(pk=pk).select_for_update()
-        with atomic():
-            list(objs)
-            yield None
-    finally:
-        pass
 
 
 def get_in_html_tag(full, tag_name):
