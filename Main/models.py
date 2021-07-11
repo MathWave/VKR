@@ -11,13 +11,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from json import loads
 
 
-base_dir = 'data'
-
-
-class ThreadSafe(models.Model):
-    key = models.CharField(max_length=80, unique=True)
-
-
 class Course(models.Model):
     name = models.TextField()
 
@@ -28,7 +21,6 @@ class Course(models.Model):
     @property
     def subscribes(self):
         return sorted(Subscribe.objects.filter(course=self), key=lambda s: s.user.email)
-
 
     @property
     def students(self):
@@ -200,7 +192,7 @@ class Task(models.Model):
         return self.name
 
     def tests_path(self):
-        return join(base_dir, 'tests', str(self.id) + '.cs')
+        return join(MEDIA_ROOT, 'tests', str(self.id) + '.cs')
 
     @property
     def tests_text(self):
@@ -270,7 +262,7 @@ class Solution(models.Model):
         return str(self.id)
 
     def path(self):
-        return join(base_dir, 'solutions', str(self.id))
+        return join(MEDIA_ROOT, 'solutions', str(self.id))
 
     def write_log(self, text):
         with self.log_fs as fs:
