@@ -1,0 +1,90 @@
+{% extends 'base_main.html' %}
+
+{% block title %}Аккаунт{% endblock %}
+
+{% block main %}
+    <h2 style="margin-bottom: 40px;">Информация об аккаунте</h2>
+    <div class="row">
+        <div class="col-3">
+            <div style="height: 100%; width: 100%;">
+                <img src="{{ account.userinfo.profile_pic_url }}" height="100%" width="100%" alt="Фото профиля">
+            </div>
+            {% if owner %}
+                <label for="file-upload" class="btn btn-light" style="margin-top: -100px; margin-left: 10%; width: 80%;">
+                    <i class="fa fa-upload"></i> Загрузить фото
+                </label>
+                <input type="file" form="photoform" style="display: none;" accept="image/png, image/jpg" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file" onchange="document.getElementById('photoform').submit();">
+                <form method="POST" enctype="multipart/form-data" id="photoform">
+                    <input type="hidden" name="action" value="upload_photo">
+                    {% csrf_token %}
+                </form>
+            {% endif %}
+        </div>
+        <div class="col-9">
+            <h3>
+                {{ account.userinfo.surname }} {{ account.userinfo.name }} {{ account.userinfo.middle_name }}
+                <span style="margin-left: 15px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
+            </h3>
+            <table>
+                <tr>
+                    <td>
+                        <h2><i class="fa fa-user"></i></h2>
+                    </td>
+                    <td><div style="width: 20px;"></div></td>
+                    <td>
+                        <p style="padding-top: 8px; font-size: 24px;">{{ account.username }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h2><i class="fa fa-at"></i></h2>
+                    </td>
+                    <td><div style="width: 20px;"></div></td>
+                    <td>
+                        <p style="padding-top: 8px; font-size: 24px;">{{ account.email }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h2><i class="fa fa-star"></i></h2>
+                    </td>
+                    <td><div style="width: 20px;"></div></td>
+                    <td>
+                        <p style="padding-top: 8px; font-size: 24px;">{{ account.userinfo.rating }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h2><i class="fa fa-arrow-up"></i></h2>
+                    </td>
+                    <td><div style="width: 20px;"></div></td>
+                    <td>
+                        <p style="padding-top: 8px; font-size: 24px;">{{ account.userinfo.place }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h2><i class="fa fa-calendar"></i></h2>
+                    </td>
+                    <td><div style="width: 20px;"></div></td>
+                    <td>
+                        <p style="padding-top: 8px; font-size: 24px;">{{ account.date_joined.date }}</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr><hr>
+    {% if owner %}
+        <p style="color: red;">{{ error_message }}</p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+            <h2 style="margin-bottom: 40px; margin-top: 40px;">Смена пароля</h2>
+            <input type="password" placeholder="Текущий пароль" name="password" style="margin-bottom: 20px; width: 300px;"><br>
+            <input type="password" placeholder="Новый пароль" name="new_password" style="margin-bottom: 20px; width: 300px;"><br>
+            <input type="password" placeholder="Повторить пароль" name="repeat" style="margin-bottom: 20px; width: 300px;"><br>
+            <button type="submit" class="btn btn-light">Сменить пароль</button>
+        </form>
+    {% endif %}
+{% endblock %}

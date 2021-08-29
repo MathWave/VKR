@@ -26,37 +26,69 @@
         </script>
         <script type="text/javascript" src={% static "js/scripts.js" %}></script>
         <style type="text/css">
+            .center {
+                height: 400px;
+                width: 400px;
+
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                margin-top: -200px;
+                margin-left: -200px;
+            }
+            h1 {
+                font-size: 500%;
+            }
+            .form {
+                border: none;
+                border-bottom: 2px solid;
+                outline: none;
+                text-align: center;
+                width: 300px;
+                margin-top: 20px;
+            }
+            .sub {
+                margin-top: 20px;
+            }
+            .main_div {
+                margin-left: 10%;
+                margin-right: 10%;
+                margin-bottom: 20px;
+            }
+            .header {
+                margin-top: 5px;
+                margin-bottom: 15px;
+                display: flex;
+            }
+            .header-button {
+                width: 170px;
+            }
+            .button-right {
+                display: flex;
+            }
+            .task-settings-input {
+                width: 50%;
+            }
+            .task-settings-textarea {
+                height: 300px;
+                resize: none;
+            }
+
+            @media screen and (max-width: 700px){
+                .header-button {
+                    width:50px;
+                }
+            }
             {% block styles %}{% endblock %}
         </style>
 		<script type="text/javascript">
-
             {% block scripts %}{% endblock %}
         </script>
 	</head>
 	<body onload="{% block onload %}{% endblock %}">
 		<div class="main_div">
-            <header class="mt-2 mb-2" role="banner">
-                <div class="row no-gutters top-buffer">
-                    <div class="col" style="min-width: 100px;">
-                        <button type="button" class="btn {% if current_page == 'main' %}btn-dark{% else %}btn-light{% endif %} btn-block top-button" onclick="main()"><i class="fa fa-random"></i> Sprint</button>
-                    </div>
-                    {% if is_admin %}
-                    <div class="col" style="min-width: 100px;">
-                        <button type="button" class="btn {% if current_page == 'admin' %}btn-dark{% else %}btn-light{% endif %} btn-block top-button" onclick="admin()"><i class="fa fa-user"></i> Админка</button>
-                    </div>
-                    {% endif %}
-                    <div class="col" style="min-width: 100px;">
-                        <button type="button" class="btn {% if current_page == 'settings' %}btn-dark{% else %}btn-light{% endif %} btn-block top-button"  onclick="settings()"><i class="fa fa-cog"></i> Настройки</button>
-                    </div>
-                    <div class="col-{% if is_admin %}8{% else %}9{% endif %}">
-
-                    </div>
-                    <div class="col" style="min-width: 100px;">
-                        <button type="button" style="max-width: 200px;" class="btn btn-light btn-block top-button" onclick="logout()"><i class="fa fa-sign-out"></i> Выход</button>
-                    </div>
-                </div>
-            </header>
-            {% block content %}{% endblock %}
+            {% block body %}
+            {% endblock %}
         </div>
 	</body>
 </html>

@@ -7,17 +7,30 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0013_delete_extrafile'),
+        ("Main", "0013_delete_extrafile"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ExtraFile',
+            name="ExtraFile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to='')),
-                ('filename', models.TextField()),
-                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Main.task')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file", models.FileField(upload_to="")),
+                ("filename", models.TextField()),
+                (
+                    "task",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="Main.task"
+                    ),
+                ),
             ],
         ),
     ]

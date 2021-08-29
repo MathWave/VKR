@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0014_extrafile'),
+        ("Main", "0014_extrafile"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='task',
-            name='max_mark',
+            model_name="task",
+            name="max_mark",
             field=models.IntegerField(default=10),
         ),
         migrations.AlterField(
-            model_name='extrafile',
-            name='file',
-            field=models.FileField(upload_to='data\\extra_files'),
+            model_name="extrafile",
+            name="file",
+            field=models.FileField(upload_to="data\\extra_files"),
         ),
     ]

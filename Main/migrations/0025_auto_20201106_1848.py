@@ -6,46 +6,46 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0024_extrafile_sample'),
+        ("Main", "0024_extrafile_sample"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='userinfo',
-            name='mark_notification',
+            model_name="userinfo",
+            name="mark_notification",
         ),
         migrations.RemoveField(
-            model_name='userinfo',
-            name='new_block_notification',
+            model_name="userinfo",
+            name="new_block_notification",
         ),
         migrations.AlterField(
-            model_name='block',
-            name='opened',
+            model_name="block",
+            name="opened",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='extrafile',
-            name='for_compilation',
+            model_name="extrafile",
+            name="for_compilation",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='extrafile',
-            name='sample',
+            model_name="extrafile",
+            name="sample",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='subscribe',
-            name='is_assistant',
+            model_name="subscribe",
+            name="is_assistant",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='full_solution',
+            model_name="task",
+            name="full_solution",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='show_details',
+            model_name="task",
+            name="show_details",
             field=models.BooleanField(default=False),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0031_block_cheating_checking'),
+        ("Main", "0031_block_cheating_checking"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='block',
-            name='cheating_data',
-            field=models.TextField(default='[]'),
+            model_name="block",
+            name="cheating_data",
+            field=models.TextField(default="[]"),
         ),
     ]

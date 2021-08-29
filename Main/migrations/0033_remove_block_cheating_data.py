@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0032_block_cheating_data'),
+        ("Main", "0032_block_cheating_data"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='block',
-            name='cheating_data',
+            model_name="block",
+            name="cheating_data",
         ),
     ]

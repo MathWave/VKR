@@ -1,14 +1,11 @@
 from django.contrib import admin
 from Main.models import *
+import Main.models
 
 # Register your models here.
 
-admin.site.register(Course)
-admin.site.register(Block)
-admin.site.register(Task)
-admin.site.register(Subscribe)
-admin.site.register(Restore)
-admin.site.register(UserInfo)
-admin.site.register(Solution)
-admin.site.register(System)
-admin.site.register(ExtraFile)
+for model in dir(Main.models):
+    try:
+        admin.site.register(eval("Main.models." + model))
+    except:
+        continue

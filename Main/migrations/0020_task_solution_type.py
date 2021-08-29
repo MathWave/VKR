@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0019_task_show_details'),
+        ("Main", "0019_task_show_details"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='task',
-            name='solution_type',
-            field=models.TextField(default='Решение'),
+            model_name="task",
+            name="solution_type",
+            field=models.TextField(default="Решение"),
         ),
     ]

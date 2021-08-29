@@ -1,327 +1,150 @@
-﻿{% extends 'base.html' %}
+{% extends 'base_main.html' %}
 
-{% load filters %}
-
-{% block title %}{{ task.name }}|настройки{% endblock %}
+{% block title %}{{ task.name }}{% endblock %}
 
 {% block scripts %}
-        function uploaded() {
-            document.getElementById('is_uploaded').style.display = 'block';
-            document.getElementById('is_uploaded').nodeValue = document.getElementById('file-upload').nodeValue;
-        }
-        function uploaded1() {
-            document.getElementById('send').style.display = 'block';
-            document.getElementById('is_uploaded1').nodeValue = document.getElementById('file-upload1').nodeValue;
-        }
-        function valueChanged() {
-            const other = document.getElementById('show_details');
-            other.disabled = !document.getElementById('show_result').checked;
-            console.log('changed');
-            if (other.disabled) {
-                other.checked = false;
+    function deleteFile(file_id) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/task?task_id={{ task.id }}",
+            data: {"id": file_id, "csrfmiddlewaretoken": document.getElementsByName("csrfmiddlewaretoken")[0].value, "action": "delete_file"},
+            success: function(data) {
+                if (data == "ok") {
+                    var elem = document.getElementById("file_" + file_id);
+                    elem.parentNode.removeChild(elem);
+                }
             }
-        }
-        function set_checkboxes() {
-            if (!document.getElementById('show_result').checked) {
-                document.getElementById('show_details').disabled = true;
-            }
-        }
+        });
+    }
+    function setActionCreate(action) {
+        document.getElementById('action_create').value = action;
+    }
 {% endblock %}
 
-{% block onload %}set_checkboxes(){% endblock %}
-
-{% block styles %}
-        input[type="file"] {
-            display: none;
-        }
-        input[name="new_file"] {
-            display: none;
-        }
-        .my_td { 
-            vertical-align: middle;
-            height: 20px;
-        }
-        .params {
-            margin-top: 20px;
-        }
-        .in {
-            width: 500%;
-        }
-{% endblock %}
-{% block content %}
-    <h5><a href="/admin/block?id={{ task.block.id }}">{{ task.block.name }}</a></h5>
-    <h2>{{ task.name }} <a style="color: black;" href="/task?id={{ task.id }}"><i class="fa fa-eye"></i></a></h2>
-        <form action="" method="POST" id="main_form" enctype="multipart/form-data">
+{% block main %}
+    <h3 style="margin-bottom: 40px;">Настройки задачи</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 250px;">
+                    Название задачи
+                </td>
+                <td>
+                    <h4><input type="text" value="{{ task.name }}" name="name" class="task-settings-input" placeholder="Новая задача"></h4>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Легенда
+                </td>
+                <td>
+                    <textarea class="task-settings-input task-settings-textarea" name="legend">{{ task.legend }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Формат входных данных
+                </td>
+                <td>
+                    <textarea class="task-settings-input task-settings-textarea" name="input_format">{{ task.input_format }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Формат выходных данных
+                </td>
+                <td>
+                    <textarea class="task-settings-input task-settings-textarea" name="output_format">{{ task.output_format }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Примечания
+                </td>
+                <td>
+                    <textarea class="task-settings-input task-settings-textarea" name="specifications">{{ task.specifications }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Ограничение по времени (мс)
+                </td>
+                <td>
+                    <input type="text" name="time_limit" value="{{ task.time_limit }}" class="task-settings-input">
+                </td>
+            </tr>
+        </table>
+        <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
+    </form>
+    <hr><hr>
+    <h3 style="margin-bottom: 40px;">Загрузка тестов и файлов</h3>
+        <p style="color: red">{{ error_message }}</p>
+        <table style="width: 80%;">
+            <tr>
+                <td>
+                    <h4>Тесты</h4>
+                </td>
+                <td>
+                    <h4>Файлы</h4>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% for test in task.tests %}
+                        <div id="file_{{ test.id }}">
+                        <i class="fa fa-file"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                        </div>
+                    {% endfor %}
+                    <input type="file" style="display: none;" form="form_test_upload" onchange="this.form.submit();" class="btn form-control-file" id="test-upload" value="Выбрать файл" name="file">
+                    <label for="test-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить тесты</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewtest" onclick="setActionCreate('create_test');"><i class="fa fa-plus"></i></button>
+                    <form method="POST" enctype="multipart/form-data" id="form_test_upload">
+                        <input name="action" type="hidden" value="test_upload">
+                        {% csrf_token %}
+                    </form>
+                </td>
+                <td>
+                    {% for file in task.files %}
+                        <div id="file_{{ file.id }}">
+                        <i class="fa fa-file"></i> <button class="btn btn-link" {% if not file.readable %}style="color: red;"{% endif %}>{{ file.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ file.id }});"><i class="fa fa-times"></i> </button><br>
+                        </div>
+                    {% endfor %}
+                    <input type="file" style="display: none;" form="form_file_upload" onchange="this.form.submit();" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
+                    <label for="file-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить файлы</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewtest" onclick="setActionCreate('create_file');"><i class="fa fa-plus"></i></button>
+                    <form method="POST" enctype="multipart/form-data" id="form_file_upload">
+                        <input name="action" type="hidden" value="file_upload">
+                        {% csrf_token %}
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <form method="POST">
             {% csrf_token %}
-            <table>
-                <tr class="params">
-                    <td>
-                        Легенда
-                    </td>
-                    <td>
-                        <textarea form="main_form" rows="15" class="in" style="resize: none;" name="legend">{{ task.legend }}</textarea>
-                    </td>
-                </tr>
-                <tr class="params">
-                    <td>
-                        Формат входных данных
-                    </td>
-                    <td>
-                        <textarea form="main_form" rows="15" class="in" style="resize: none;" name="input">{{ task.input }}</textarea>
-                    </td>
-                </tr>
-                <tr class="params">
-                    <td>
-                        Формат выходных данных
-                    </td>
-                    <td>
-                        <textarea form="main_form" rows="15" class="in" style="resize: none;" name="output">{{ task.output }}</textarea>
-                    </td>
-                </tr>
-                <tr class="params">
-                    <td>
-                        Спецификации
-                    </td>
-                    <td>
-                        <textarea form="main_form" rows="15" class="in" style="resize: none;" name="specifications">{{ task.specifications }}</textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Ограничения по времени
-                    </td>
-                    <td>
-                        <input form="main_form" type="text" name="time_limit" class="in" value="{{ task.time_limit }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Вес задачи
-                    </td>
-                    <td>
-                        <input form="main_form" type="text" name="weight" class="in" value="{{ task.weight }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Максимальная оценка
-                    </td>
-                    <td>
-                        <input form="main_form" type="text" name="max_mark" class="in" value="{{ task.max_mark }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Максимум решений
-                    </td>
-                    <td>
-                        <input form="main_form" type="text" name="max_solutions_count" class="in" value="{{ task.max_solutions_count }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Формула оценки
-                    </td>
-                    <td>
-                        <input form="main_form" type="text" name="mark_formula" class="in" value="{{ task.mark_formula }}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Сдается полное решение
-                    </td>
-                    <td>
-                        <input form="main_form" type="checkbox" name="full_solution" {{ task.is_full_solution }}>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Показывать результат тестирования
-                    </td>
-                    <td>
-                        <input form="main_form" type="checkbox" id="show_result" name="show_result" onchange="valueChanged()" {% if task.show_result %}checked{% endif %}>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Показывать детали тестирования
-                    </td>
-                    <td>
-                        <input form="main_form" type="checkbox" id="show_details" name="show_details" {{ task.showable }}>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Приоритет
-                    </td>
-                    <td>
-                        <select name="priority">
-                            {% for i in 10|num_range %}
-                                <option {% if task.priority == i %}selected{% endif %}>{{ i }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-
-                </tr>
-
-
-
-                <tr>
-                    <td>
-                        Тесты
-                    </td>
-                    <td>
-                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleModalLong">
-                                  Посмотреть
-                                </button>
-
-                                <!-- Modal -->
-                                <div class="modal fade bd-example-modal-lg" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitle">Unit тесты</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-12">
-<textarea cols="82" rows="30" name="tests_text">{{ task.tests_text }}</textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                                        <button type="submit" class="btn btn-primary" name="ACTION" value="SAVE_TESTS"><i class="fa fa-save"></i> Save</button>
-                                      </div>
-                                    </div>
-                                  </div>
+            <div class="modal fade" id="exampleModalLongnewtest" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewtest" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitlenewtest">Создать новый файл</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="text" placeholder="Имя файла" name="newfile_name">
                                 </div>
-                    </td>
-                </tr>
-
-
-
-
-                <tr>
-                    <td style="vertical-align: top; padding-top: 10px;">
-                        Дополнительные файлы и самплы
-                    </td>
-                    <td style="vertical-align: top;">
-                        <table>
-                            {% for file in task.files %}
-                                <tr>
-                                    <td>
-                                        {% if file.can_be_sample %}
-                                        <input form="main_form" type="checkbox" name="sample_{{ file.id }}" {{ file.is_sample }}>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <button type="submit" class="close" name="ACTION" value="DELETE_FILE_{{ file.id }}">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <img width="14px" height="14px" src="https://image.flaticon.com/icons/svg/876/876755.svg">
-                                    </td>
-                                    <td>
-                                        {% if file.readable %}
-                                            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#filesModalLong{{ file.id }}">
-                                              {{ file.filename }}
-                                            </button>
-
-                                            <!-- Modal -->
-                                            <div class="modal fade bd-example-modal-lg" id="filesModalLong{{ file.id }}" tabindex="-1" role="dialog" aria-labelledby="filesModalLongTitle{{ file.id }}" aria-hidden="true">
-                                              <div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content">
-                                                  <div class="modal-header">
-                                                    <h5 class="modal-title" id="filesModalLongTitle{{ file.id }}">{{ file.filename }}</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                  </div>
-                                                  <div class="modal-body">
-                                                    <div class="container-fluid">
-                                                        <div class="row">
-                                                            <div class="col-12">
-<textarea cols="82" rows="30" name="extra_file_text_{{ file.id }}">{{ file.text }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="modal-footer">
-                                                    Файл для компиляции <input type="checkbox" name="{{ file.id }}_for_compilation" {{ file.is_for_compilation }}>
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                                                    <button type="submit" class="btn btn-primary" name="ACTION" value="SAVE_EXTRA_FILE_{{ file.id }}"><i class="fa fa-save"></i> Save</button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        {% else %}
-                                            <button type="button" class="btn btn-link" style="color: red;">
-                                              {{ file.filename }}
-                                            </button>
-                                        {% endif %}
-                                        
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                        <label for="files" class="btn btn-primary">
-                            <i class="fa fa-upload"></i> Загрузить файл
-                        </label>
-                        <form method="POST">
-                            <input type="file" class="btn form-control-file" id="files" value="Выбрать файл" name="file" onchange="uploaded1()">
-                        </form>
-                        <label for="add_file" class="btn btn-success">
-                            <i class="fa fa-plus"></i>
-                        </label>
-                        <input type="button" class="btn btn-success" id="add_file" value="Создать файл" name="new_file"  data-toggle="modal" data-target="#exampleModalLongnewfile">
-                        <button name="ACTION" value="UPLOAD_EXTRA_FILE" type="submit" class="btn btn-success" style="display: none;" id="send">Отправить</button>
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="modal fade" id="exampleModalLongnewfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewfile" aria-hidden="true">
-                                  <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitlenewfile">Создать новый файл</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                      </div>
-                                      <div class="modal-body">
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <input type="text" placeholder="Имя файла" name="newfile_name">
-                                                </div>
-                                            </div>
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
-                                        <button name="ACTION" value="CREATE_EXTRA_FILE" type="submit" class="btn btn-primary"><i class="fa fa-file"></i> Создать</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <hr>
-            <button type="submit" name="ACTION" value="SAVE" class="btn btn-dark"><i class="fa fa-save"></i> Сохранить</button>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
+                        <input id="action_create" type="hidden" name="action" value="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
         </form>
-        {% if is_superuser %}
-        <form style="margin-top: 15px;" id="another_form" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="ACTION" value="DELETE" form="another_form">
-            <button form="another_form" type="button" onclick="let del = confirm('Данное действие приведет к удалению условия, тестов, дополнительных файлов и решений, привязанных к этому таску. Точно удаляем?'); if (del) {this.form.submit();}" class="btn btn-dark"><i class="fa fa-trash"></i> Удалить таск</button>
-        </form>
-        {% endif %}
 {% endblock %}

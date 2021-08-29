@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0027_task_mark_formula'),
+        ("Main", "0027_task_mark_formula"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='task',
-            name='show_result',
+            model_name="task",
+            name="show_result",
             field=models.BooleanField(default=True),
         ),
     ]

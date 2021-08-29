@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0028_task_show_result'),
+        ("Main", "0028_task_show_result"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='block',
-            name='priority',
+            model_name="block",
+            name="priority",
             field=models.IntegerField(default=5),
         ),
         migrations.AddField(
-            model_name='task',
-            name='priority',
+            model_name="task",
+            name="priority",
             field=models.IntegerField(default=5),
         ),
     ]

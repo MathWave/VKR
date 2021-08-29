@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0007_auto_20200629_0833'),
+        ("Main", "0007_auto_20200629_0833"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userinfo',
-            name='mark_notification',
+            model_name="userinfo",
+            name="mark_notification",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='userinfo',
-            name='new_block_notification',
+            model_name="userinfo",
+            name="new_block_notification",
             field=models.IntegerField(default=0),
         ),
     ]

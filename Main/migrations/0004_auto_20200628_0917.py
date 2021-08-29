@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0003_auto_20200627_1959'),
+        ("Main", "0003_auto_20200627_1959"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='task',
-            name='input',
-            field=models.TextField(default=''),
+            model_name="task",
+            name="input",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='legend',
-            field=models.TextField(default=''),
+            model_name="task",
+            name="legend",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='output',
-            field=models.TextField(default=''),
+            model_name="task",
+            name="output",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='specifications',
-            field=models.TextField(default=''),
+            model_name="task",
+            name="specifications",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='time_limit',
+            model_name="task",
+            name="time_limit",
             field=models.IntegerField(default=10000),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0023_extrafile_for_compilation'),
+        ("Main", "0023_extrafile_for_compilation"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='extrafile',
-            name='sample',
+            model_name="extrafile",
+            name="sample",
             field=models.IntegerField(default=0),
         ),
     ]

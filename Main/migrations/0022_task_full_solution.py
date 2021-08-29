@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0021_remove_task_solution_type'),
+        ("Main", "0021_remove_task_solution_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='task',
-            name='full_solution',
+            model_name="task",
+            name="full_solution",
             field=models.IntegerField(default=0),
         ),
     ]

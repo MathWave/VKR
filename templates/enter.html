@@ -1,67 +1,30 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
-  "http://www.w3.org/TR/html4/strict.dtd">
-  {% load static %}
-<html lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>
-			Sprint
-		</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href={% static "css/styles.css" %}>
-        <script src="https://use.fontawesome.com/49b98aaeb5.js"></script>
-		<script type="text/javascript" src={% static "js/scripts.js" %}></script>
-        <style type="text/css">
-            .center {
-                height: 400px;
-                width: 400px;
+{% extends 'base.html' %}
 
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                margin-top: -200px;
-                margin-left: -200px;
-            }
-            h1 {
-                font-size: 500%;
-            }
-            .form {
-                border: none;
-                border-bottom: 2px solid;
-                outline: none;
-                text-align: center;
-                width: 300px;
-                margin-top: 20px;
-            }
-            .sub {
-                margin-top: 20px;
-            }
-        </style>
-	</head>
-	<body>
-        <div class="center">
-            <center>
-                <div>
-                    <h1>
-                        <i class="fa fa-random"></i> Sprint
-                    </h1>
-                </div>
-                <div>
-                    <p style="color: red;">{{ error_message }}</p>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <input type="text" class="form" name="email" placeholder="email or username"><br>
-                        <input type="password" class="form" name="password" placeholder="password"><br>
-                        <input type="submit" value="Вход" class="sub btn btn-dark form">
-                    </form>
-                </div>
-                <div>
-                    <button onclick="window.location.href='/restore'" class="sub btn btn-dark form">Восстановить пароль</button>
-                </div>
-                <div>
-                    <button onclick="window.location.href='/register'" class="sub btn btn-dark form">Регистрация</button>
-                </div>
-            </center>
-        </div>
-	</body>
-</html>
+{% block title %}Вход{% endblock %}
+
+{% block body %}
+    <div class="center">
+        <center>
+            <div>
+                <h1>
+                    <i class="fa fa-random"></i> Sprint
+                </h1>
+            </div>
+            <div>
+                <p style="color: red;">{{ error_message }}</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="text" class="form" name="email" placeholder="email or username"><br>
+                    <input type="password" class="form" name="password" placeholder="password"><br>
+                    <input type="submit" value="Вход" class="sub btn btn-dark form">
+                </form>
+            </div>
+            <div>
+                <button onclick="window.location.href='/restore'" class="sub btn btn-dark form">Восстановить пароль</button>
+            </div>
+            <div>
+                <button onclick="window.location.href='/register'" class="sub btn btn-dark form">Регистрация</button>
+            </div>
+        </center>
+    </div>
+{% endblock %}

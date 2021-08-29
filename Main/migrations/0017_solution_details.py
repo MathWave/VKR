@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0016_task_max_solutions_count'),
+        ("Main", "0016_task_max_solutions_count"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='solution',
-            name='details',
-            field=models.TextField(default=''),
+            model_name="solution",
+            name="details",
+            field=models.TextField(default=""),
         ),
     ]

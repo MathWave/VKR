@@ -1,30 +1,7 @@
-{% extends 'base.html' %}
-
-{% load filters %}
+{% extends 'base_main.html' %}
 
 {% block title %}Главная{% endblock %}
 
-{% block content %}
-    <h2>Доступные курсы</h2>
-    {% for key, value in blocks.items %}
-        <h5>{{ key.name }}</h5>
-        {% for block in value %}
-            <table>
-                <tr>
-                    <td>
-                        <a href="/block?id={{ block.id }}">{{ block.name }}</a>
-                    </td>
-                    <td>
-                        {% with mark=block|mark_for_block:user %}
-                            {% if mark|marked %}
-                                <div style="margin-left: 20px; border: 1px solid black; background: {{ mark|mark_color }}; width: 25px; text-align: center;">
-                                    {{ mark }}
-                                </div>
-                            {% endif %}
-                        {% endwith %}
-                    </td>
-                </tr>
-            </table>
-        {% endfor %}
-    {% endfor %}
+{% block main %}
+    <h2>Мои группы</h2>
 {% endblock %}

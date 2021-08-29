@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Main', '0010_system'),
+        ("Main", "0010_system"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ThreadSafe',
+            name="ThreadSafe",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=80, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("key", models.CharField(max_length=80, unique=True)),
             ],
         ),
         migrations.DeleteModel(
-            name='Mark',
+            name="Mark",
         ),
     ]
