@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="task",
             name="solution_type",
-            field=models.TextField(default="Решение"),
+            field=models.TextField(default="Solution"),
         ),
     ]
