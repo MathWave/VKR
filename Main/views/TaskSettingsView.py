@@ -1,7 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.utils import timezone
 
-from Main.models import ExtraFile
+from Main.models import ExtraFile, Progress
 from SprintLib.BaseView import BaseView, AccessError
 
 
@@ -12,6 +12,10 @@ class TaskSettingsView(BaseView):
     def pre_handle(self):
         if self.entities.task not in self.request.user.userinfo.available_tasks:
             raise AccessError()
+        if self.request.method == 'POST':
+            for progress in Progress.objects.filter(task=self.entities.task, finished=False):
+                progress.start_time = timezone.now()
+                progress.save()
 
     def get(self):
         self.context['error_message'] = self.request.GET.get('error_message', '')
@@ -29,8 +33,10 @@ class TaskSettingsView(BaseView):
             name = filename.strip('.a')
             if not name.isnumeric():
                 return f'/admin/task?task_id={self.entities.task.id}&error_message=Формат файла не соответствует тесту'
-            ef, created = ExtraFile.objects.get_or_create(task=self.entities.task, is_test=True, test_number=int(name))
+            ef, created = ExtraFile.objects.get_or_create(task=self.entities.task, is_test=True, filename=filename)
             if not created:
+                ef.is_sample = False
+                ef.save()
                 return f'/admin/task?task_id={self.entities.task.id}'
         if ef is None or created is None:
             ef, created = ExtraFile.objects.get_or_create(
@@ -78,3 +84,11 @@ class TaskSettingsView(BaseView):
 
     def post_create_test(self):
         return self._create(True)
+
+    def post_save_test(self):
+        ef = ExtraFile.objects.get(id=self.request.POST['test_id'])
+        with open(ef.path, 'w') as fs:
+            fs.write(self.request.POST['text'])
+        ef.is_sample = 'is_sample' in self.request.POST.keys()
+        ef.save()
+        return f'/admin/task?task_id={self.entities.task.id}'

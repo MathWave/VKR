@@ -1,6 +1,6 @@
 from zipfile import ZipFile
 
-from Main.models import Solution
+from Main.models import Solution, Progress
 from Main.tasks import start_testing
 from SprintLib.BaseView import BaseView, Language
 from SprintLib.testers import *
@@ -12,6 +12,8 @@ class TaskView(BaseView):
 
     def get(self):
         self.context['languages'] = Language.objects.filter(opened=True).order_by('name')
+        progress, _ = Progress.objects.get_or_create(user=self.request.user, task=self.entities.task)
+        self.context['progress'] = progress
 
     def pre_handle(self):
         if self.request.method == 'GET':

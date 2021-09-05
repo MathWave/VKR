@@ -38,3 +38,11 @@ class AccountView(BaseView):
         self.request.user.save()
         login(self.request, self.request.user)
         return "/account?error_message=Пароль успешно установлен"
+
+    def post_notifications(self):
+        self.request.user.userinfo.telegram_chat_id = self.request.POST['chat_id']
+        for attr in dir(self.request.user.userinfo):
+            if attr.startswith('notification'):
+                setattr(self.request.user.userinfo, attr, attr in self.request.POST.keys())
+        self.request.user.userinfo.save()
+        return '/account'

@@ -4,8 +4,10 @@ from shutil import copyfile, rmtree
 from subprocess import call, TimeoutExpired
 
 from Main.models import ExtraFile
+from Main.models.progress import Progress
 from Sprint.settings import CONSTS
 from SprintLib.utils import copy_content
+from bot import bot
 
 
 class TestException(Exception):
@@ -68,6 +70,12 @@ class BaseTester:
                     self.test(test.filename)
             self.after_test()
             self.solution.result = CONSTS["ok_status"]
+            progress = Progress.objects.get(user=self.solution.user, task=self.solution.task)
+            if progress.finished_time is None:
+                progress.finished_time = self.solution.time_sent
+                progress.finished = True
+                progress.save()
+                progress.increment_rating()
         except TestException as e:
             self.solution.result = str(e)
         except TimeoutExpired:
@@ -78,3 +86,11 @@ class BaseTester:
         self.solution.save()
         call(f"docker rm --force solution_{self.solution.id}", shell=True)
         rmtree(self.solution.testing_directory)
+        self.solution.user.userinfo.refresh_from_db()
+        if self.solution.user.userinfo.notification_solution_result:
+            bot.send_message(self.solution.user.userinfo.telegram_chat_id,
+                             f'Задача: {self.solution.task.name}\n'
+                             f'Результат: {self.solution.result}\n'
+                             f'Очки решения: {Progress.by_solution(self.solution).score}\n'
+                             f'Текущий рейтинг: {self.solution.user.userinfo.rating}',
+                             parse_mode='html')

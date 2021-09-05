@@ -9,3 +9,5 @@ from Main.views.RatingView import RatingView
 from Main.views.SetsView import SetsView
 from Main.views.TaskView import TaskView
 from Main.views.SolutionsTableView import SolutionsTableView
+from Main.views.TaskRuntimeView import TaskRuntimeView
+from Main.views.SolutionView import SolutionView

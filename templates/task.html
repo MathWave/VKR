@@ -19,16 +19,23 @@
     }
     function doPoll() {
         jQuery.get('/solutions_table?task_id={{ task.id }}', function(data) {
-            if (data == 'done') {
-                return
-            }
-            else {
-                document.getElementById('solutions').innerHTML = data;
+            jQuery.get('/task_runtime?task_id={{ task.id }}', function(data1) {
+                if (data == 'done' && data1 == 'done')
+                    return
+                if (data != 'done') {
+                    document.getElementById('solutions').innerHTML = data;
+                }
+                if (data1 != 'done') {
+                    document.getElementById('runtime').innerHTML = data1;
+                }
                 setTimeout(function() {doPoll()}, 2000);
-            }
+            })
         })
-        jQuery.get('/solutions_table?task_id={{ task.id }}&render=true', function(data) {
+        jQuery.get('/solutions_table?id={{ task.id }}&render=true', function(data) {
             document.getElementById('solutions').innerHTML = data;
+        })
+        jQuery.get('/task_runtime?id={{ task.id }}&render=true', function(data) {
+            document.getElementById('runtime').innerHTML = data;
         })
     }
 {% endblock %}
@@ -36,7 +43,7 @@
 {% block onload %}doPoll(){% endblock %}
 
 {% block main %}
-    <h2>{{ task.name }}</h2>
+    <div id="runtime"></div>
 {% if task.legend %}
 <h4>Легенда</h4>
 {% autoescape off %}
@@ -64,6 +71,40 @@
 {{ task.specifications }}
 {% endautoescape %}
 <hr>
+{% endif %}
+{% if task.samples %}
+<h4 style="">Примеры</h4>
+{% for sample in task.samples %}
+                <h5>Пример {{ sample.num }}</h5>
+                <b>
+                    <table style="width: 100%">
+                        <tr>
+                            <td>
+                                Входные данные
+                            </td>
+                            <td>
+                                Выходные данные
+                            </td>
+                        </tr>
+                    </table>
+                </b>
+                <hr>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; vertical-align: top;">
+<pre>
+{{ sample.input }}
+</pre>
+                        </td>
+                        <td style="width: 50%; vertical-align: top;">
+<pre>
+{{ sample.output }}
+</pre>
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+            {% endfor %}
 {% endif %}
     <h2>Отправить решение</h2>
     <table style="margin-bottom: 10px;">

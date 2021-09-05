@@ -12,8 +12,7 @@ class RegisterView(BaseView):
         self.context["error_message"] = self.request.GET.get("error_message", "")
 
     def post(self):
-        data = {**self.request.POST}
-        data["password"] = data["password"].strip()
+        data = self.request.POST
         if len(data["password"]) < 8:
             return "/register?error_message=Пароль слишком слабый"
         if data["password"] != data["repeat_password"]:

@@ -1,9 +1,10 @@
-from os import mkdir
+from os import mkdir, walk
 from os.path import join, exists
 from shutil import rmtree
 from subprocess import call
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
 
@@ -23,6 +24,30 @@ class Solution(models.Model):
         if exists(self.directory):
             rmtree(self.directory)
         super().delete(using=using, keep_parents=keep_parents)
+
+    @property
+    def files(self):
+        data = []
+        for path, _, files in walk(self.directory):
+            if path.startswith(self.testing_directory):
+                continue
+            for file in files:
+                try:
+                    entity = {
+                        'filename': file,
+                        'text': open(join(path, file), 'r').read()
+                    }
+                    end = file.split('.')[-1]
+                    try:
+                        highlight = 'language-' + Language.objects.get(file_type=end).highlight
+                    except ObjectDoesNotExist:
+                        highlight = 'nohighlight'
+                    entity['highlight'] = highlight
+                    data.append(entity)
+                except:
+                    continue
+        data.sort(key=lambda x: x['filename'])
+        return data
 
     def create_dirs(self):
         mkdir(self.directory)

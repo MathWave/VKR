@@ -1,7 +1,7 @@
 {% for solution in solutions %}
     <tr>
         <td>
-            <b><a href="">{{ solution.id }}</a></b>
+            <b><a href="/solution?solution_id={{ solution.id }}">{{ solution.id }}</a></b>
         </td>
         <td>
             {{ solution.time_sent }}

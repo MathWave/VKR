@@ -24,6 +24,10 @@
         <script type="text/javascript" id="MathJax-script" async
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
         </script>
+        <link rel="stylesheet"
+          href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.2.0/build/styles/default.min.css">
+        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.2.0/build/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
         <script type="text/javascript" src={% static "js/scripts.js" %}></script>
         <style type="text/css">
             .center {
@@ -65,6 +69,8 @@
             }
             .button-right {
                 display: flex;
+                position: absolute;
+                right:10%;
             }
             .task-settings-input {
                 width: 50%;
@@ -74,9 +80,10 @@
                 resize: none;
             }
 
-            @media screen and (max-width: 700px){
+            @media screen and (max-width: 1200px){
                 .header-button {
-                    width:50px;
+                    width:140px;
+                    font-size: 15px;
                 }
             }
             {% block styles %}{% endblock %}

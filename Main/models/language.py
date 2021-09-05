@@ -7,6 +7,7 @@ class Language(models.Model):
     file_type = models.TextField(null=True)
     logo = models.ImageField(upload_to="logos", null=True)
     image = models.TextField(default='ubuntu')
+    highlight = models.TextField(default='plaintext')
     opened = models.BooleanField(default=False)
 
     def __str__(self):

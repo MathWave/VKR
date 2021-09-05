@@ -74,6 +74,14 @@
                     <input type="text" name="time_limit" value="{{ task.time_limit }}" class="task-settings-input">
                 </td>
             </tr>
+            <tr>
+                <td>
+                    Оценка времени решения (мин)
+                </td>
+                <td>
+                    <input type="text" name="time_estimation" value="{{ task.time_estimation }}" class="task-settings-input">
+                </td>
+            </tr>
         </table>
         <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
     </form>
@@ -93,8 +101,40 @@
                 <td>
                     {% for test in task.tests %}
                         <div id="file_{{ test.id }}">
-                        <i class="fa fa-file"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                        <i class="fa fa-file"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                    {% if test.readable %}
+<form method="POST">{% csrf_token %}
+                        <!-- Modal -->
+                        <div class="modal fade bd-example-modal-lg" id="filesModalLong{{ test.id }}" tabindex="-1" role="dialog" aria-labelledby="filesModalLongTitle{{ test.id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="filesModalLongTitle{{ test.id }}">{{ test.filename }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-12">
+<textarea cols="82" rows="30" name="text">{{ test.text }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                {% if test.can_be_sample %}Использовать как пример <input type="checkbox" name="is_sample" {% if test.is_sample %}checked{% endif %}>{% endif %}
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                                  <input name="action" value="save_test" type="hidden">
+                                  <input name="test_id" value="{{ test.id }}" type="hidden">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
+                        </form>
+                        {% endif %}
                     {% endfor %}
                     <input type="file" style="display: none;" form="form_test_upload" onchange="this.form.submit();" class="btn form-control-file" id="test-upload" value="Выбрать файл" name="file">
                     <label for="test-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить тесты</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewtest" onclick="setActionCreate('create_test');"><i class="fa fa-plus"></i></button>

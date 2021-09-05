@@ -87,4 +87,25 @@
             <button type="submit" class="btn btn-light">Сменить пароль</button>
         </form>
     {% endif %}
+    {% if owner %}
+    <hr><hr>
+    <h2>Уведомления</h2>
+        <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="notifications">
+        <input type="text" name="chat_id" value="{{ user.userinfo.telegram_chat_id }}" placeholder="telegram chat id"> <a class="btn btn-link" target="_blank" rel="noopener noreferrer" href="https://t.me/sprint_notifications_bot">Бот</a>
+    <table>
+        <tr>
+            <td style="width: 200px;">
+                Результаты решений
+            </td>
+            <td>
+                <input type="checkbox" name="notification_solution_result" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
+            </td>
+        </tr>
+    </table>
+                <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
+
+                </form>
+    {% endif %}
 {% endblock %}

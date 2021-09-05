@@ -12,6 +12,7 @@ class Task(models.Model):
     output_format = models.TextField(default="")
     specifications = models.TextField(default="")
     time_limit = models.IntegerField(default=10000)
+    time_estimation = models.IntegerField(default=5)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
@@ -24,3 +25,25 @@ class Task(models.Model):
     @property
     def tests(self):
         return ExtraFile.objects.filter(task=self, is_test=True)
+
+    @property
+    def samples(self):
+        data = []
+        for test in self.tests.order_by('test_number'):
+            if test.is_sample and test.readable:
+                data.append({
+                    'input': test.text,
+                    'output': test.answer.text
+                })
+        count = 1
+        for entity in data:
+            entity["num"] = count
+            count += 1
+        return data
+
+    def delete(self, using=None, keep_parents=False):
+        from Main.models.progress import Progress
+        for progress in Progress.objects.filter(task=self):
+            progress.user.userinfo.rating -= progress.score
+            progress.user.userinfo.save()
+        super().delete(using=using, keep_parents=keep_parents)

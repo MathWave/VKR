@@ -1,6 +1,5 @@
 from Main.models import Task
 from SprintLib.BaseView import BaseView
-from django.db.models import Q
 
 
 class TasksView(BaseView):

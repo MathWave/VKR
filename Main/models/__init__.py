@@ -8,3 +8,4 @@ from Main.models.settask import SetTask
 from Main.models.solution import Solution
 from Main.models.language import Language
 from Main.models.extrafile import ExtraFile
+from Main.models.progress import Progress

@@ -17,6 +17,8 @@ class UserInfo(models.Model):
     profile_picture = models.ImageField(upload_to="profile_pictures", null=True)
     rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    telegram_chat_id = models.TextField(default="")
+    notification_solution_result = models.BooleanField(default=False)
 
     def _append_task(self, task, tasks):
         if task.creator == self.user or task.public:
