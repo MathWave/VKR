@@ -39,7 +39,7 @@ class UserInfo(models.Model):
         tasks = []
         for task in Task.objects.all():
             self._append_task(task, tasks)
-        return tasks
+        return sorted(tasks, key=lambda x: x.time_estimation)
 
     @property
     def place(self):
