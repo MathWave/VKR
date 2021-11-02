@@ -16,4 +16,4 @@ class Python3Tester(BaseTester):
 
     @property
     def command(self):
-        return f"python {self.file}"
+        return f"python3 {self.file}"

@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from Main.models.task import Task
 from Main.models.language import Language
-from Sprint.settings import CONSTS, SOLUTIONS_ROOT
+from Sprint.settings import CONSTS, SOLUTIONS_ROOT, SOLUTIONS_ROOT_EXTERNAL
 
 
 class Solution(models.Model):
@@ -61,5 +61,9 @@ class Solution(models.Model):
     def testing_directory(self):
         return join(self.directory, 'test_dir')
 
+    @property
+    def volume_directory(self):
+        return join(SOLUTIONS_ROOT_EXTERNAL, str(self.id), 'test_dir')
+
     def exec_command(self, command, working_directory='app', timeout=None):
-        return call(f'docker exec -i solution_{self.id} bash -c "cd {working_directory} && {command}"', shell=True, timeout=timeout)
+        return call(f'docker exec -i solution_{self.id} sh -c "cd {working_directory} && {command}"', shell=True, timeout=timeout)

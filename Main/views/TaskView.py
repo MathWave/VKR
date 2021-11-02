@@ -1,8 +1,8 @@
 from zipfile import ZipFile
 
-from Main.models import Solution, Progress
-from Main.tasks import start_testing
+from Main.models import Solution
 from SprintLib.BaseView import BaseView, Language
+from SprintLib.queue import send_testing
 from SprintLib.testers import *
 
 
@@ -31,11 +31,13 @@ class TaskView(BaseView):
         file_path = join(self.solution.directory, filename)
         with open(file_path, 'w') as fs:
             fs.write(self.request.POST['code'])
-        start_testing.delay(self.solution.id)
+        send_testing(self.solution.id)
         return "task?task_id=" + str(self.entities.task.id)
 
     def post_1(self):
         # отправка решения через файл
+        if 'file' not in self.request.FILES:
+            return "task?task_id=" + str(self.entities.task.id)
         filename = self.request.FILES['file'].name
         file_path = join(self.solution.directory, filename)
         with open(file_path, 'wb') as fs:
@@ -44,5 +46,5 @@ class TaskView(BaseView):
         if filename.endswith('.zip'):
             with ZipFile(file_path) as obj:
                 obj.extractall(self.solution.directory)
-        start_testing.delay(self.solution.id)
+        send_testing(self.solution.id)
         return "task?task_id=" + str(self.entities.task.id)

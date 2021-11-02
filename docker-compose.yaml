@@ -5,11 +5,57 @@ services:
 
   postgres:
     restart: always
-    image: postgres
-
+    build:
+      context: .
+      dockerfile: dockerfiles/postgres/Dockerfile
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  web:
+    image: sprint
+    restart: always
+    command: scripts/runserver.sh
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  bot:
+    image: sprint
+    restart: always
+    command: python bot.py
+    depends_on:
+      - web
+
+  rabbitmq:
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/rabbitmq/Dockerfile
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/worker/Dockerfile
+    privileged: true
+    command: scripts/create_worker.sh
+    depends_on:
+      - web
+      - rabbitmq
+      - postgres
+    volumes:
+      - .:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock

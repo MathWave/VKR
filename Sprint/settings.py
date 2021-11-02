@@ -84,11 +84,11 @@ WSGI_APPLICATION = "Sprint.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "postgres",
+        "NAME": "sprint",
         "USER": "postgres",
         "PASSWORD": "password",
-        "HOST": "0.0.0.0",
-        "PORT": "5432",
+        "HOST": "postgres",
+        "PORT": 5432,
     }
 }
 
@@ -141,6 +141,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
+SOLUTIONS_ROOT_EXTERNAL = "/Users/egormatveev/Sprint/data/solutions"
+
+RABBIT_HOST = "rabbitmq"
+RABBIT_PORT = 5672
+
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "Main/static"),
 ]
@@ -148,12 +154,6 @@ STATICFILES_DIRS = [
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
-
-
-# Celery Configuration Options
-CELERY_TIMEZONE = "Europe/Moscow"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 
 CONSTS = {
     "online_status": "Online",
