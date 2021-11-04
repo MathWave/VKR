@@ -1,0 +1,19 @@
+stages:
+  - build
+  - deploy
+
+before_script:
+  - echo "Starting"
+
+after_script:
+  - echo "Done"
+
+build:
+  stage: build
+  script:
+    - docker build -t sprint .
+
+deploy:
+  deploy: test
+  script:
+   - docker-compose up -d

@@ -8,8 +8,5 @@ def copy_content(from_dir, to_dir, exc=()):
         if file in exc:
             continue
         full_path = join(from_dir, file)
-        if isfile(full_path):
-            func = copyfile
-        else:
-            func = copytree
+        func = copyfile if isfile(full_path) else copytree
         func(full_path, join(to_dir, file))
