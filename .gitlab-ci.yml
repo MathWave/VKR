@@ -7,12 +7,6 @@ variables:
   SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
   DB_HOST: "postgres"
 
-before_script:
-  - echo "Starting..."
-
-after_script:
-  - echo "Done!"
-
 build:
   stage: build
   tags:
