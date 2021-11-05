@@ -10,10 +10,14 @@ after_script:
 
 build:
   stage: build
+  tags:
+    - main
   script:
     - docker build -t sprint .
 
 deploy:
   stage: deploy
+  tags:
+    - main
   script:
    - docker-compose up -d
