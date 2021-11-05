@@ -24,7 +24,7 @@ services:
       PORT: $PORT
     command: scripts/runserver.sh
     ports:
-      - "8000:${PORT}"
+      - "${PORT}:${PORT}"
     volumes:
       - /sprint-data/data:/usr/src/app/data
       - /sprint-data/media:/usr/src/app/media
