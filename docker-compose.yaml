@@ -50,9 +50,7 @@ services:
 
   worker:
     restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/worker/Dockerfile
+    image: sprint
     privileged: true
     command: scripts/create_worker.sh
     depends_on:
