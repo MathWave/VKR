@@ -13,7 +13,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: sprint
     volumes:
-      - /root/postgres-data:/var/lib/postgresql/data
+      - /sprint-data/postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
@@ -24,8 +24,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /root/data:/usr/src/app/data
-      - /root/media:/usr/src/app/media
+      - /sprint-data/data:/usr/src/app/data
+      - /sprint-data/media:/usr/src/app/media
     depends_on:
       - postgres
       - rabbitmq
@@ -58,5 +58,5 @@ services:
       - rabbitmq
       - postgres
     volumes:
-      - /root/data:/usr/src/app/data
+      - /sprint-data/data:/usr/src/app/data
       - /var/run/docker.sock:/var/run/docker.sock
