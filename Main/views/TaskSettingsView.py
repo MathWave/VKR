@@ -23,6 +23,7 @@ class TaskSettingsView(BaseView):
     def post(self):
         for key, value in self.request.POST.items():
             setattr(self.entities.task, key, value.strip())
+        self.entities.task.public = 'public' in self.request.POST
         self.entities.task.save()
         return f"/admin/task?task_id={self.entities.task.id}"
 

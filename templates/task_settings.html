@@ -82,6 +82,14 @@
                     <input type="text" name="time_estimation" value="{{ task.time_estimation }}" class="task-settings-input">
                 </td>
             </tr>
+            <tr>
+                <td>
+                    Публичная задача
+                </td>
+                <td>
+                    <input type="checkbox" name="public" {% if task.public %}checked {% endif %}class="task-settings-input">
+                </td>
+            </tr>
         </table>
         <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
     </form>
