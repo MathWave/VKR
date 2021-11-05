@@ -6,7 +6,7 @@ before_script:
   - echo "Starting..."
 
 after_script:
-  - echo "Done..."
+  - echo "Done!"
 
 build:
   stage: build
