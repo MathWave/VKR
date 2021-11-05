@@ -4,6 +4,7 @@ stages:
 
 before_script:
   - echo "Starting..."
+  - docker info
 
 after_script:
   - echo "Done!"
