@@ -1,6 +1,7 @@
 stages:
   - build
   - deploy-dev
+  - deploy-prod
 
 before_script:
   - echo "Starting..."
@@ -24,3 +25,15 @@ deploy-dev:
     PORT: 80
   script:
    - docker-compose up -d
+
+deploy-prod:
+  stage: deploy-prod
+  tags:
+    - prod
+  only:
+    - master
+  when: manual
+  variables:
+    PORT: 443
+  script:
+    - docker-compose up -d
