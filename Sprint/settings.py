@@ -83,7 +83,7 @@ DATABASES = {
         "NAME": "sprint",
         "USER": "postgres",
         "PASSWORD": "password",
-        "HOST": "postgres",
+        "HOST": os.getenv("DB_HOST", "0.0.0.0"),
         "PORT": 5432,
     }
 }

@@ -22,6 +22,7 @@ services:
     restart: always
     environment:
       PORT: $PORT
+      DB_HOST: $DB_HOST
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
@@ -55,6 +56,7 @@ services:
     command: scripts/create_worker.sh
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
+      DB_HOST: "${DB_HOST}"
     depends_on:
       - web
       - rabbitmq
