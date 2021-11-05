@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_DB: sprint
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     ports:
