@@ -48,6 +48,10 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    volumes:
+      - /sprint-data/rabbitmq/etc/:/etc/rabbitmq/
+      - /sprint-data/rabbitmq/data/:/var/lib/rabbitmq/
+      - /sprint-data/rabbitmq/logs/:/var/log/rabbitmq/
 
   worker:
     restart: always
