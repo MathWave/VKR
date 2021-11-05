@@ -1,2 +1,2 @@
-SOLUTIONS_ROOT_EXTERNAL = "/Users/egormatveev/Sprint/data/solutions"
+SOLUTIONS_ROOT_EXTERNAL = "/sprint-data/data/solutions"
 DEPLOY = False
