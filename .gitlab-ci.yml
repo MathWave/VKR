@@ -3,6 +3,9 @@ stages:
   - deploy-dev
   - deploy-prod
 
+variables:
+  SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+
 before_script:
   - echo "Starting..."
 

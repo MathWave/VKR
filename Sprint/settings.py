@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from config import *
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,6 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "-w#*mn6*fa8a=(-c0@klx&$vl%hpiy&l(u*3%0a#2)wdt##(z2"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+DEPLOY = False
 DEBUG = not DEPLOY
 
 SECURE_SSL_REDIRECT = DEPLOY
@@ -133,6 +133,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 EXTRA_FILES_ROOT = os.path.join(BASE_DIR, "extra_files")
+SOLUTIONS_ROOT_EXTERNAL = os.getenv("SOLUTIONS_ROOT_EXTERNAL", os.path.join(DATA_ROOT, "solutions"))
 for root in DATA_ROOT, EXTRA_FILES_ROOT, MEDIA_ROOT:
     if not os.path.exists(root):
         os.mkdir(root)
