@@ -24,7 +24,7 @@ deploy-dev:
   variables:
     PORT: 80
   script:
-   - docker-compose up -d
+    - docker-compose up -d
 
 deploy-prod:
   stage: deploy-prod
