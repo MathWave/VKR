@@ -1,6 +1,6 @@
 stages:
   - build
-  - deploy
+  - deploy-dev
 
 before_script:
   - echo "Starting..."
@@ -16,9 +16,11 @@ build:
   script:
     - docker build -t sprint .
 
-deploy:
-  stage: deploy
+deploy-dev:
+  stage: deploy-dev
   tags:
     - main
+  variables:
+    PORT: 80
   script:
    - docker-compose up -d
