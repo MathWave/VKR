@@ -3,10 +3,10 @@ stages:
   - deploy
 
 before_script:
-  - echo "Starting"
+  - echo "Starting..."
 
 after_script:
-  - echo "Done"
+  - echo "Done..."
 
 build:
   stage: build
