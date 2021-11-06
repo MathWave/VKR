@@ -3,6 +3,7 @@ from os.path import join, exists
 from shutil import copyfile, rmtree
 from subprocess import call, TimeoutExpired
 
+from Main.management.commands.bot import bot
 from Main.models import ExtraFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
