@@ -1,5 +1,4 @@
 stages:
-  - lint
   - build
   - deploy-dev
   - deploy-prod
@@ -7,13 +6,6 @@ stages:
 variables:
   SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
   DB_HOST: "postgres"
-
-lint:
-  stage: lint
-  tags:
-    - main
-  script:
-    - mypy --ignore-missing-imports .
 
 build:
   stage: build
