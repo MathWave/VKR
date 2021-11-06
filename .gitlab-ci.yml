@@ -12,6 +12,7 @@ build:
   tags:
     - main
   script:
+    - docker login
     - docker build -t mathwave/sprint-repo:sprint .
     - docker push mathwave/sprint-repo:sprint
 
@@ -27,6 +28,7 @@ deploy-dev:
   variables:
     PORT: 80
   script:
+    - docker login
     - docker pull mathwave/sprint-repo:sprint
     - docker-compose up -d
 
