@@ -20,11 +20,13 @@ class Command(BaseCommand):
                 id = int(str(body, encoding='utf-8'))
                 print(f"Received id {id}")
                 solution = Solution.objects.get(id=id)
-            except:
+            except Exception as e:
+                print(e)
                 return
             try:
                 eval(solution.language.work_name + 'Tester')(solution).execute()
-            except:
+            except Exception as e:
+                print(e)
                 solution.result = 'TE'
                 solution.save()
 
