@@ -1,10 +1,11 @@
+from typing import Optional
+
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 
 from SprintLib.EntityStorage import EntityStorage
-from Main.models import *
 
 
 class AccessError(Exception):
@@ -15,8 +16,8 @@ class BaseView:
     request: WSGIRequest = None
     context: dict = {}
     entities = EntityStorage()
-    required_login: bool = None
-    view_file: str = None
+    required_login: Optional[bool] = None
+    view_file: Optional[str] = None
 
     @classmethod
     def as_view(cls):
@@ -33,6 +34,7 @@ class BaseView:
                     return HttpResponseRedirect("/")
             request_method = request.method.lower()
             c.request = request
+            exec("from Main.models import *")
             for key in request.GET.keys():
                 if key.endswith("_id"):
                     model_name = key.rstrip("_id")

@@ -1,6 +1,6 @@
 from os import listdir
 
-from SprintLib.testers import BaseTester, TestException
+from SprintLib.testers.BaseTester import BaseTester, TestException
 
 
 class KotlinTester(BaseTester):

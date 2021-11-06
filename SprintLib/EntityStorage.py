@@ -1,5 +1,8 @@
+from django.db.models import Model
+
+
 class EntityStorage:
-    entities = {}
+    entities: dict[str, Model] = {}
 
     def add(self, name, entity):
         self.entities[name] = entity

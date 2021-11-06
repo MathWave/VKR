@@ -1,4 +1,4 @@
-from SprintLib.testers import BaseTester
+from SprintLib.testers.BaseTester import BaseTester
 
 
 class GoTester(BaseTester):
