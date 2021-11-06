@@ -6,5 +6,7 @@ class SolutionView(BaseView):
     required_login = True
 
     def pre_handle(self):
+        if self.request.user.is_superuser:
+            return
         if self.entities.solution.user != self.request.user:
             raise AccessError()

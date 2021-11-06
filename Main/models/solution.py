@@ -9,16 +9,20 @@ from django.db import models
 from django.utils import timezone
 
 from Main.models.task import Task
-from Main.models.language import Language
 from Sprint.settings import CONSTS, SOLUTIONS_ROOT, SOLUTIONS_ROOT_EXTERNAL
+from SprintLib.language import languages
 
 
 class Solution(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
+    language_id = models.IntegerField(default=0)
     time_sent = models.DateTimeField(default=timezone.now)
     result = models.TextField(default=CONSTS["in_queue_status"])
+
+    @property
+    def language(self):
+        return languages[self.language_id]
 
     def delete(self, using=None, keep_parents=False):
         if exists(self.directory):
@@ -38,10 +42,15 @@ class Solution(models.Model):
                         'text': open(join(path, file), 'r').read()
                     }
                     end = file.split('.')[-1]
-                    try:
-                        highlight = 'language-' + Language.objects.get(file_type=end).highlight
-                    except ObjectDoesNotExist:
+                    language = None
+                    for l in languages:
+                        if l.file_type == end:
+                            language = l
+                            break
+                    if language is None:
                         highlight = 'nohighlight'
+                    else:
+                        highlight = 'language-' + language.highlight
                     entity['highlight'] = highlight
                     data.append(entity)
                 except:

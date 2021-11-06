@@ -1,7 +1,8 @@
 from zipfile import ZipFile
 
 from Main.models import Solution
-from SprintLib.BaseView import BaseView, Language
+from SprintLib.BaseView import BaseView
+from SprintLib.language import languages
 from SprintLib.queue import send_testing
 from SprintLib.testers import *
 
@@ -11,7 +12,7 @@ class TaskView(BaseView):
     view_file = "task.html"
 
     def get(self):
-        self.context['languages'] = Language.objects.filter(opened=True).order_by('name')
+        self.context['languages'] = sorted(languages, key=lambda x: x.name)
         progress, _ = Progress.objects.get_or_create(user=self.request.user, task=self.entities.task)
         self.context['progress'] = progress
 
@@ -21,7 +22,7 @@ class TaskView(BaseView):
         self.solution = Solution.objects.create(
             task=self.entities.task,
             user=self.request.user,
-            language_id=self.request.POST["language"]
+            language_id=int(self.request.POST["language"])
         )
         self.solution.create_dirs()
 
