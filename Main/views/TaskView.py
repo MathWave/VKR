@@ -1,4 +1,5 @@
 from zipfile import ZipFile
+from os.path import join
 
 from Main.models import Solution, Progress
 from SprintLib.BaseView import BaseView
