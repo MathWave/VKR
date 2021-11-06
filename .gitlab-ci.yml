@@ -16,7 +16,15 @@ build:
     - docker build -t mathwave/sprint-repo:sprint .
     - docker push mathwave/sprint-repo:sprint
 
+.deploy:
+  script:
+    - docker login -u mathwave -p Fuck0ffb1tch
+    - docker pull mathwave/sprint-repo:sprint
+    - docker-compose up -d
+
 deploy-dev:
+  extends:
+    - .deploy
   stage: deploy-dev
   tags:
     - main
@@ -24,15 +32,12 @@ deploy-dev:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: on_success
     - when: manual
-
   variables:
     PORT: 80
-  script:
-    - docker login -u mathwave -p Fuck0ffb1tch
-    - docker pull mathwave/sprint-repo:sprint
-    - docker-compose up -d
 
 deploy-prod:
+  extends:
+    - .deploy
   stage: deploy-prod
   tags:
     - prod
@@ -41,5 +46,3 @@ deploy-prod:
   when: manual
   variables:
     PORT: 443
-  script:
-    - docker-compose up -d
