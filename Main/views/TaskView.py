@@ -1,6 +1,6 @@
 from zipfile import ZipFile
 
-from Main.models import Solution
+from Main.models import Solution, Progress
 from SprintLib.BaseView import BaseView
 from SprintLib.language import languages
 from SprintLib.queue import send_testing
