@@ -1,0 +1,41 @@
+version: "3"
+
+
+services:
+
+  postgres:
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/postgres/Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sprint
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  rabbitmq:
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/rabbitmq/Dockerfile
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  worker:
+    restart: always
+    image: sprint
+    privileged: true
+    command: scripts/create_worker.sh
+    environment:
+      SOLUTIONS_ROOT_EXTERNAL: "data/solutions"
+    depends_on:
+      - rabbitmq
+      - postgres
+    volumes:
+      - ./data:/usr/src/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
