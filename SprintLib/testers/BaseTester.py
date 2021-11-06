@@ -7,7 +7,6 @@ from Main.models import ExtraFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
 from SprintLib.utils import copy_content
-from bot import bot
 
 
 class TestException(Exception):
