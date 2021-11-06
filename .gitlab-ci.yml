@@ -12,13 +12,13 @@ build:
   tags:
     - main
   script:
-    - docker login -u mathwave -p Fuck0ffb1tch
+    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
     - docker build -t mathwave/sprint-repo:sprint .
     - docker push mathwave/sprint-repo:sprint
 
 .deploy:
   script:
-    - docker login -u mathwave -p Fuck0ffb1tch
+    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
     - docker pull mathwave/sprint-repo:sprint
     - docker-compose up -d
 

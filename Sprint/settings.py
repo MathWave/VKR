@@ -82,7 +82,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "sprint",
         "USER": "postgres",
-        "PASSWORD": "password",
+        "PASSWORD": os.getenv("DB_PASSWORD", "password"),
         "HOST": os.getenv("DB_HOST", "0.0.0.0"),
         "PORT": 5432,
     }

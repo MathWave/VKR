@@ -10,7 +10,7 @@ services:
       dockerfile: dockerfiles/postgres/Dockerfile
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: sprint
     volumes:
       - /sprint-data/postgres-data:/var/lib/postgresql/data
