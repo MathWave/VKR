@@ -18,7 +18,7 @@ services:
       - "5432:5432"
 
   web:
-    image: sprint
+    image: mathwave/sprint-repo:sprint
     restart: always
     environment:
       PORT: $PORT
@@ -34,7 +34,7 @@ services:
       - rabbitmq
 
   bot:
-    image: sprint
+    image: mathwave/sprint-repo:sprint
     restart: always
     command: python manage.py bot
     depends_on:
@@ -51,7 +51,7 @@ services:
 
   worker:
     restart: always
-    image: sprint
+    image: mathwave/sprint-repo:sprint
     privileged: true
     command: scripts/create_worker.sh
     environment:
