@@ -6,6 +6,7 @@ stages:
 variables:
   SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
   DB_HOST: "postgres"
+  RABBIT_HOST: "rabbitmq"
 
 build:
   stage: build
@@ -34,6 +35,9 @@ deploy-dev:
     - when: manual
   variables:
     PORT: 80
+    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+    DB_HOST: "postgres"
+    RABBIT_HOST: "rabbitmq"
 
 deploy-prod:
   extends:
@@ -46,3 +50,6 @@ deploy-prod:
   when: manual
   variables:
     PORT: 443
+    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+    DB_HOST: "postgres"
+    RABBIT_HOST: "rabbitmq"

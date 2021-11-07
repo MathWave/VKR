@@ -140,7 +140,7 @@ for root in DATA_ROOT, EXTRA_FILES_ROOT, MEDIA_ROOT:
 
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
-RABBIT_HOST = "rabbitmq"
+RABBIT_HOST = os.getenv("RABBIT_HOST", "0.0.0.0")
 RABBIT_PORT = 5672
 
 STATICFILES_DIRS = [
