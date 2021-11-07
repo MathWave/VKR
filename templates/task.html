@@ -1,5 +1,7 @@
 {% extends 'base_main.html' %}
 
+{% block title %}{{ task.name }}{% endblock %}
+
 {% block scripts %}
     function change(num) {
         inp = document.getElementById('soltype');
