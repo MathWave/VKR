@@ -23,6 +23,7 @@ services:
     environment:
       PORT: $PORT
       DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
@@ -57,6 +58,7 @@ services:
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
       DB_HOST: "${DB_HOST}"
+      RABBIT_HOST: "${RABBIT_HOST}"
     depends_on:
       - web
       - rabbitmq
