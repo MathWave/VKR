@@ -65,7 +65,7 @@ class Solution(models.Model):
 
     @property
     def volume_directory(self):
-        return join(SOLUTIONS_ROOT_EXTERNAL, str(self.id), 'test_dir')
+        return "solution"
 
     def exec_command(self, command, working_directory='app', timeout=None):
         return call(f'docker exec -i solution_{self.id} sh -c "cd {working_directory} && {command}"', shell=True, timeout=timeout)
