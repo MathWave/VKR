@@ -45,11 +45,9 @@ class TaskSettingsView(BaseView):
                 filename=filename,
                 is_test=is_test
             )
-        with open(ef.path, 'wb') as fs:
-            for chunk in self.request.FILES['file'].chunks():
-                fs.write(chunk)
+        ef.write(self.request.FILES['file'].read())
         try:
-            open(ef.path, 'r').read()
+            var = ef.text
             ef.readable = True
         except UnicodeDecodeError:
             ef.readable = False
@@ -73,8 +71,7 @@ class TaskSettingsView(BaseView):
         ef, created = ExtraFile.objects.get_or_create(filename=name, task=self.entities.task)
         if not created:
             return f'/admin/task?task_id={self.entities.task.id}&error_message=Файл с таким именем уже существует'
-        with open(ef.path, 'w') as fs:
-            fs.write('')
+        ef.write(b"")
         ef.is_test = is_test
         ef.readable = True
         ef.save()
@@ -88,8 +85,8 @@ class TaskSettingsView(BaseView):
 
     def post_save_test(self):
         ef = ExtraFile.objects.get(id=self.request.POST['test_id'])
-        with open(ef.path, 'w') as fs:
-            fs.write(self.request.POST['text'])
+        ef.remove_from_fs()
+        ef.write(self.request.POST['text'].encode('utf-8'))
         ef.is_sample = 'is_sample' in self.request.POST.keys()
         ef.save()
         return f'/admin/task?task_id={self.entities.task.id}'

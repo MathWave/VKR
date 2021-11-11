@@ -24,6 +24,7 @@ services:
       PORT: $PORT
       DB_HOST: $DB_HOST
       RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
@@ -33,6 +34,15 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - storage
+
+  storage:
+    restart: always
+    image: mathwave/sprint-repo:sprint
+    ports:
+      - "5555:5555"
+    volumes:
+      - /sprint-data/data:/usr/src/app/FileStorage/data
 
   bot:
     image: mathwave/sprint-repo:sprint
