@@ -38,10 +38,11 @@ services:
   storage:
     restart: always
     image: mathwave/sprint-repo:sprint
+    command: python manage.py storage
     ports:
       - "5555:5555"
     volumes:
-      - /sprint-data/data:/usr/src/app/FileStorage/data
+      - /sprint-data/data:/usr/src/app/data
 
   bot:
     image: mathwave/sprint-repo:sprint
