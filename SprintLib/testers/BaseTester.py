@@ -102,7 +102,7 @@ class BaseTester:
             self.solution.result = "TE"
             print(str(e))
         self.solution.save()
-        call(f"docker rm --force solution_{self.solution.id}", shell=True)
+        # call(f"docker rm --force solution_{self.solution.id}", shell=True)
         self.solution.user.userinfo.refresh_from_db()
         if self.solution.user.userinfo.notification_solution_result:
             bot.send_message(
