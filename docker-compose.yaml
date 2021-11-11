@@ -29,7 +29,6 @@ services:
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - /sprint-data/data:/usr/src/app/data
       - /sprint-data/media:/usr/src/app/media
     depends_on:
       - postgres
@@ -74,5 +73,4 @@ services:
       - rabbitmq
       - postgres
     volumes:
-      - /sprint-data/data:/usr/src/app/data
       - /var/run/docker.sock:/var/run/docker.sock
