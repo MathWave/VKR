@@ -103,7 +103,6 @@ class BaseTester:
             print(str(e))
         self.solution.save()
         call(f"docker rm --force solution_{self.solution.id}", shell=True)
-        rmtree("solution")
         self.solution.user.userinfo.refresh_from_db()
         if self.solution.user.userinfo.notification_solution_result:
             bot.send_message(
