@@ -19,7 +19,7 @@ class Progress(models.Model):
     def time(self):
         if not self.finished:
             self.finished_time = timezone.now()
-        seconds = (self.finished_time - self.start_time).total_seconds()
+        seconds = int((self.finished_time - self.start_time).total_seconds())
         hours = seconds // 3600
         seconds -= hours * 3600
         minutes = seconds // 60
