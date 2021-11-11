@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, getcwd
 
 from SprintLib.testers.BaseTester import BaseTester, TestException
 
@@ -7,6 +7,7 @@ class Python3Tester(BaseTester):
     file = None
 
     def before_test(self):
+        print(getcwd())
         for file in listdir(self.solution.testing_directory):
             if file.endswith(".py"):
                 self.file = file
