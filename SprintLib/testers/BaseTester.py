@@ -63,7 +63,7 @@ class BaseTester:
                 name = join("solution", '/'.join(dirs[:i + 1]))
                 if not exists(name):
                     mkdir(name)
-            with open(file.path, 'wb') as fs:
+            with open(join("solution", file.path), 'wb') as fs:
                 fs.write(get_bytes(file.fs_id))
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()

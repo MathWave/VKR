@@ -12,6 +12,7 @@ class Python3Tester(BaseTester):
                 self.file = file
                 break
         if self.file is None:
+            print('no file')
             raise TestException("TE")
 
     @property
