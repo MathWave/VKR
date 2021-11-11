@@ -21,7 +21,7 @@ class UserInfo(models.Model):
     notification_solution_result = models.BooleanField(default=False)
 
     def _append_task(self, task, tasks):
-        if task.creator == self.user or task.public:
+        if task.creator == self.user or task.public or self.user.is_superuser:
             tasks.append(task)
             return
         for st in SetTask.objects.filter(task=task):
