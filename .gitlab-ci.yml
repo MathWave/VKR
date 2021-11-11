@@ -38,7 +38,7 @@ deploy-dev:
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     DB_HOST: "postgres"
     RABBIT_HOST: "rabbitmq"
-    FS_HOST: "storage"
+    FS_HOST: "http://storage"
 
 deploy-prod:
   extends:
