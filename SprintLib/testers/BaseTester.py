@@ -94,6 +94,8 @@ class BaseTester:
                 progress.finished = True
                 progress.save()
                 progress.increment_rating()
+        except TestException as e:
+            self.solution.result = str(e)
         except TimeoutExpired:
             self.solution.result = "TL"
         except Exception as e:
