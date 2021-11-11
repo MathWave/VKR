@@ -57,11 +57,11 @@ class Solution(models.Model):
 
     @property
     def directory(self):
-        return join(SOLUTIONS_ROOT, str(self.id))
+        return "solution"
 
     @property
     def testing_directory(self):
-        return join(self.directory, 'test_dir')
+        return self.directory
 
     @property
     def volume_directory(self):
