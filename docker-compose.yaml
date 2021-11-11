@@ -76,4 +76,5 @@ services:
       - postgres
       - storage
     volumes:
+      - /sprint-data/worker:/usr/src/app
       - /var/run/docker.sock:/var/run/docker.sock
