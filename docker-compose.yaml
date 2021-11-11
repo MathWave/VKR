@@ -69,6 +69,7 @@ services:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
       DB_HOST: "${DB_HOST}"
       RABBIT_HOST: "${RABBIT_HOST}"
+      FS_HOST: "${FS_HOST}"
     depends_on:
       - web
       - rabbitmq
