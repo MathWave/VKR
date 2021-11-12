@@ -24,6 +24,9 @@
             <h3>
                 {{ account.userinfo.surname }} {{ account.userinfo.name }} {{ account.userinfo.middle_name }}
                 <span style="margin-left: 15px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
+                {% if user.is_superuser %}
+                    <a style="margin-left: 15px;" href="/admin/" class="badge badge-secondary"> Админ</a> 
+                {% endif %}
             </h3>
             <table>
                 <tr>
