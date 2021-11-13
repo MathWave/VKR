@@ -22,13 +22,7 @@ services:
     restart: always
     environment:
       PORT: $PORT
-<<<<<<< HEAD
-      DB_HOST: $DB_HOST
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
-=======
       HOST: $HOST
->>>>>>> a512261c4d4b443cf25874181acd50485f1b40a4
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
