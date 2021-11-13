@@ -1,23 +1,17 @@
-from os import remove
-from os.path import join, exists
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from Sprint.settings import DATA_ROOT
+from .mixins import FileStorageMixin
 
 
-class ExtraFile(models.Model):
+class ExtraFile(FileStorageMixin, models.Model):
     task = models.ForeignKey("Task", on_delete=models.CASCADE)
     filename = models.TextField()
     is_test = models.BooleanField(null=True)
     is_sample = models.BooleanField(null=True)
     readable = models.BooleanField(null=True)
     test_number = models.IntegerField(null=True)
-
-    @property
-    def path(self):
-        return join(DATA_ROOT, "extra_files", str(self.id))
+    fs_id = models.IntegerField(null=True)
 
     @property
     def can_be_sample(self):
@@ -29,13 +23,8 @@ class ExtraFile(models.Model):
             )
         )
 
-    @property
-    def text(self):
-        return open(self.path, "r").read()
-
     def delete(self, using=None, keep_parents=False):
-        if exists(self.path):
-            remove(self.path)
+        self.remove_from_fs()
         if self.is_test and self.filename.endswith('.a'):
             try:
                 ef = ExtraFile.objects.get(task=self.task, filename=self.filename.rstrip('.a'), is_test=True)

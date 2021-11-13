@@ -1,13 +1,12 @@
 from os import listdir, mkdir
 from os.path import join, exists
-from shutil import copyfile, rmtree
 from subprocess import call, TimeoutExpired
 
 from Main.management.commands.bot import bot
-from Main.models import ExtraFile
+from Main.models import ExtraFile, SolutionFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
-from SprintLib.utils import copy_content
+from SprintLib.utils import get_bytes
 
 
 class TestException(Exception):
@@ -56,19 +55,26 @@ class BaseTester:
         self.solution = solution
 
     def execute(self):
-        if not exists(self.solution.testing_directory):
-            mkdir(self.solution.testing_directory)
-        copy_content(
-            self.solution.directory, self.solution.testing_directory, ("test_dir",)
-        )
+        if not exists("solutions"):
+            mkdir("solutions")
+        mkdir("solutions/" + str(self.solution.id))
+        for file in SolutionFile.objects.filter(solution=self.solution):
+            dirs = file.path.split('/')
+            for i in range(len(dirs) - 1):
+                name = join(str("solutions/" + self.solution.id), '/'.join(dirs[:i + 1]))
+                if not exists(name):
+                    mkdir(name)
+            with open(join("solutions/" + str(self.solution.id), file.path), 'wb') as fs:
+                fs.write(get_bytes(file.fs_id))
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
-        docker_command = f"docker run --name solution_{self.solution.id} --volume={self.solution.volume_directory}:/{self.working_directory} -t -d {self.solution.language.image}"
+        docker_command = f"docker run --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
         call(docker_command, shell=True)
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
-            copyfile(file.path, join(self.solution.testing_directory, file.filename))
+            with open(join("solutions/" + str(self.solution.id), file.filename), 'wb') as fs:
+                fs.write(get_bytes(file.fs_id))
         print("Files copied")
         try:
             self.before_test()
@@ -98,7 +104,6 @@ class BaseTester:
             print(str(e))
         self.solution.save()
         call(f"docker rm --force solution_{self.solution.id}", shell=True)
-        rmtree(self.solution.testing_directory)
         self.solution.user.userinfo.refresh_from_db()
         if self.solution.user.userinfo.notification_solution_result:
             bot.send_message(
