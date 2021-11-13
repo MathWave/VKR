@@ -146,6 +146,9 @@ SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 RABBIT_HOST = HOST
 RABBIT_PORT = 5672
 
+FS_HOST = "http://" + HOST
+FS_PORT = 5555
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "Main/static"),
 ]
