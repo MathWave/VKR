@@ -57,7 +57,7 @@ class Solution(models.Model):
 
     @property
     def directory(self):
-        return "solution"
+        return "solutions/" + str(self.id)
 
     @property
     def testing_directory(self):
