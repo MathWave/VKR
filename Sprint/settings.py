@@ -16,6 +16,9 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+HOST = os.getenv("HOST", "0.0.0.0")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -83,7 +86,7 @@ DATABASES = {
         "NAME": "sprint",
         "USER": "postgres",
         "PASSWORD": os.getenv("DB_PASSWORD", "password"),
-        "HOST": os.getenv("DB_HOST", "0.0.0.0"),
+        "HOST": HOST,
         "PORT": 5432,
     }
 }
@@ -140,7 +143,7 @@ for root in DATA_ROOT, EXTRA_FILES_ROOT, MEDIA_ROOT:
 
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
-RABBIT_HOST = os.getenv("RABBIT_HOST", "0.0.0.0")
+RABBIT_HOST = HOST
 RABBIT_PORT = 5672
 
 STATICFILES_DIRS = [
