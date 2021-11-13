@@ -55,7 +55,7 @@ services:
     restart: always
     image: mathwave/sprint-repo:sprint
     privileged: true
-    command: scripts/create_worker.sh
+    command: python manage.py receive
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
       HOST: $HOST

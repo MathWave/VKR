@@ -19,7 +19,7 @@ build:
   script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
     - docker pull mathwave/sprint-repo:sprint
-    - docker-compose up -d
+    - docker-compose up -d --scale worker=2
 
 deploy-dev:
   extends:
@@ -35,6 +35,10 @@ deploy-dev:
     PORT: 80
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     HOST: "77.246.159.65"
+  script:
+    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
+    - docker pull mathwave/sprint-repo:sprint
+    - docker-compose up -d --scale worker=2
 
 deploy-prod:
   extends:
