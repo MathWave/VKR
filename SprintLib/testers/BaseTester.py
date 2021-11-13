@@ -56,7 +56,7 @@ class BaseTester:
         self.solution = solution
 
     def execute(self):
-        mkdir("solution")
+        mkdir(str(self.solution.id))
         for file in SolutionFile.objects.filter(solution=self.solution):
             dirs = file.path.split('/')
             for i in range(len(dirs) - 1):
@@ -67,7 +67,7 @@ class BaseTester:
                 fs.write(get_bytes(file.fs_id))
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
-        docker_command = f"docker run --name solution_{self.solution.id} --volume={self.solution.volume_directory}:/{self.working_directory} -t -d {self.solution.language.image}"
+        docker_command = f"docker run --name solution_{self.solution.id} --volume=/sprint-data/worker/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
         call(docker_command, shell=True)
         print("Container created")
