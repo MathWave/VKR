@@ -5,8 +5,6 @@ stages:
 
 variables:
   SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-  DB_HOST: "postgres"
-  RABBIT_HOST: "rabbitmq"
 
 build:
   stage: build
@@ -36,9 +34,7 @@ deploy-dev:
   variables:
     PORT: 80
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-    DB_HOST: "postgres"
-    RABBIT_HOST: "rabbitmq"
-    FS_HOST: "http://storage"
+    HOST: "77.246.159.65"
 
 deploy-prod:
   extends:

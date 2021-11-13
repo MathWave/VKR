@@ -22,9 +22,13 @@ services:
     restart: always
     environment:
       PORT: $PORT
+<<<<<<< HEAD
       DB_HOST: $DB_HOST
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
+=======
+      HOST: $HOST
+>>>>>>> a512261c4d4b443cf25874181acd50485f1b40a4
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
@@ -47,6 +51,8 @@ services:
   bot:
     image: mathwave/sprint-repo:sprint
     restart: always
+    environment:
+      HOST: $HOST
     command: python manage.py bot
     depends_on:
       - web
@@ -67,9 +73,7 @@ services:
     command: scripts/create_worker.sh
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
-      DB_HOST: "${DB_HOST}"
-      RABBIT_HOST: "${RABBIT_HOST}"
-      FS_HOST: "${FS_HOST}"
+      HOST: $HOST
     depends_on:
       - web
       - rabbitmq
