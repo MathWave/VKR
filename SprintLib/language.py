@@ -43,4 +43,13 @@ languages = [
         image="gcc",
         highlight="cpp",
     ),
+    Language(
+        id=3,
+        name="Java",
+        work_name="Java",
+        file_type="java",
+        logo_url="https://upload.wikimedia.org/wikipedia/ru/thumb/3/39/Java_logo.svg/1200px-Java_logo.svg.png",
+        image="openjdk",
+        highlight="java"
+    )
 ]
