@@ -54,6 +54,10 @@ class BaseTester:
     def __init__(self, solution):
         self.solution = solution
 
+    def set_test(self, num):
+        self.solution.result = CONSTS["testing_status"] + f"({num})"
+        self.solution.save()
+
     def execute(self):
         if not exists("solutions"):
             mkdir("solutions")
