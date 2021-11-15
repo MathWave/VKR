@@ -12,7 +12,7 @@ build:
     - main
   script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
-    - docker build -t mathwave/sprint-repo:sprint .
+    - docker build --cache-from=mathwave/sprint-repo:sprint -t mathwave/sprint-repo:sprint .
     - docker push mathwave/sprint-repo:sprint
 
 .deploy:
