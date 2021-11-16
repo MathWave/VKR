@@ -60,5 +60,14 @@ languages = [
         logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Go_Logo_Blue.svg/1280px-Go_Logo_Blue.svg.png",
         image="golang",
         highlight="go"
+    ),
+    Language(
+        id=5,
+        name="C#",
+        work_name="CSharp",
+        file_type="cs",
+        logo_url="https://cdn.worldvectorlogo.com/logos/c--4.svg",
+        image="mono",
+        highlight="csharp"
     )
 ]
