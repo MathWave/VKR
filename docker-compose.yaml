@@ -26,8 +26,6 @@ services:
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
-    volumes:
-      - /sprint-data/media:/usr/src/app/media
     depends_on:
       - postgres
       - rabbitmq
