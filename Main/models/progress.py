@@ -27,6 +27,7 @@ class Progress(models.Model):
         delta = timedelta(minutes=self.task.time_estimation)
         self.score = int(delta / self.time * 100)
         self.save()
+        self.user.userinfo.refresh_from_db()
         self.user.userinfo.rating += self.score
         self.user.userinfo.save()
 

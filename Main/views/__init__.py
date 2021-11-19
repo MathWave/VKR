@@ -11,3 +11,4 @@ from Main.views.TaskView import TaskView
 from Main.views.SolutionsTableView import SolutionsTableView
 from Main.views.TaskRuntimeView import TaskRuntimeView
 from Main.views.SolutionView import SolutionView
+from Main.views.ImageView import ImageView

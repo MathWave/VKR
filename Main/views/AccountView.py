@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
 from SprintLib.BaseView import BaseView
+from SprintLib.utils import delete_file, write_bytes
 
 
 class AccountView(BaseView):
@@ -19,8 +20,10 @@ class AccountView(BaseView):
         self.context["error_message"] = self.request.GET.get("error_message", "")
 
     def post_upload_photo(self):
-        self.request.user.userinfo.profile_picture.delete()
-        self.request.user.userinfo.profile_picture = self.request.FILES["file"]
+        if self.request.user.userinfo.has_profile_pic:
+            delete_file(self.request.user.userinfo.profile_picture_fs_id)
+        fs_id = write_bytes(self.request.FILES["file"].read())
+        self.request.user.userinfo.profile_picture_fs_id = fs_id
         self.request.user.userinfo.save()
         return "/account"
 

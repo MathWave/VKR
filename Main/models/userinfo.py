@@ -2,9 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-from Main.models.subscription import Subscription
 from Main.models.group import Group
 from Main.models.settask import SetTask
+from Main.models.subscription import Subscription
 from Main.models.task import Task
 from Sprint.settings import CONSTS
 
@@ -14,7 +14,7 @@ class UserInfo(models.Model):
     name = models.TextField()
     middle_name = models.TextField()
     last_request = models.DateTimeField(default=timezone.now)
-    profile_picture = models.ImageField(upload_to="profile_pictures", null=True)
+    profile_picture_fs_id = models.IntegerField(null=True)
     rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     telegram_chat_id = models.TextField(default="")
@@ -59,14 +59,14 @@ class UserInfo(models.Model):
     @property
     def has_profile_pic(self):
         try:
-            return self.profile_picture.url is not None
+            return self.profile_picture_fs_id is not None
         except ValueError:
             return False
 
     @property
     def profile_pic_url(self):
         if self.has_profile_pic:
-            return self.profile_picture.url
+            return "/image?id=" + str(self.profile_picture_fs_id)
         return "https://i2.wp.com/electrolabservice.com/wp-content/uploads/2021/01/blank-profile-picture-mystery-man-avatar-973460.jpg"
 
     def __str__(self):
