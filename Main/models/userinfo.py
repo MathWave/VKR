@@ -11,9 +11,8 @@ from SprintLib.language import languages
 
 
 class UserInfo(models.Model):
-    surname = models.TextField()
-    name = models.TextField()
-    middle_name = models.TextField()
+    surname = models.TextField(null=True)
+    name = models.TextField(null=True)
     last_request = models.DateTimeField(default=timezone.now)
     profile_picture_fs_id = models.IntegerField(null=True)
     favourite_language_id = models.IntegerField(null=True)
@@ -21,6 +20,7 @@ class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     telegram_chat_id = models.TextField(default="")
     notification_solution_result = models.BooleanField(default=False)
+    code = models.IntegerField(null=True)
 
     @property
     def has_favourite_language(self):
@@ -80,6 +80,3 @@ class UserInfo(models.Model):
         if self.has_profile_pic:
             return "/image?id=" + str(self.profile_picture_fs_id)
         return "https://i2.wp.com/electrolabservice.com/wp-content/uploads/2021/01/blank-profile-picture-mystery-man-avatar-973460.jpg"
-
-    def __str__(self):
-        return "{} {} {}".format(self.surname, self.name, self.middle_name)

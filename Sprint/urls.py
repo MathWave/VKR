@@ -18,6 +18,7 @@ urlpatterns = [
     path("solutions_table", SolutionsTableView.as_view()),
     path("task_runtime", TaskRuntimeView.as_view()),
     path("image", ImageView.as_view()),
+    path("send_code", SendCodeView.as_view()),
     path("", MainView.as_view()),
     path("admin/", admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

@@ -22,7 +22,7 @@
         </div>
         <div class="col-9">
             <h3>
-                {{ account.userinfo.surname }} {{ account.userinfo.name }} {{ account.userinfo.middle_name }}
+                {{ account.userinfo.surname }} {{ account.userinfo.name }}
                 <span style="margin-left: 15px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
                 {% if user.is_superuser %}
                     <a style="margin-left: 15px;" href="/admin/" class="badge badge-secondary"> Админ</a> 
@@ -36,15 +36,6 @@
                     <td><div style="width: 20px;"></div></td>
                     <td>
                         <p style="padding-top: 8px; font-size: 24px;">{{ account.username }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h2><i class="fa fa-at"></i></h2>
-                    </td>
-                    <td><div style="width: 20px;"></div></td>
-                    <td>
-                        <p style="padding-top: 8px; font-size: 24px;">{{ account.email }}</p>
                     </td>
                 </tr>
                 <tr>

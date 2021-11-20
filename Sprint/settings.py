@@ -133,11 +133,10 @@ STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 EXTRA_FILES_ROOT = os.path.join(BASE_DIR, "extra_files")
 SOLUTIONS_ROOT_EXTERNAL = os.getenv("SOLUTIONS_ROOT_EXTERNAL", os.path.join(DATA_ROOT, "solutions"))
-for root in DATA_ROOT, EXTRA_FILES_ROOT, MEDIA_ROOT:
+for root in DATA_ROOT, EXTRA_FILES_ROOT:
     if not os.path.exists(root):
         os.mkdir(root)
 

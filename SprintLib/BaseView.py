@@ -2,7 +2,7 @@ from typing import Optional
 
 from django.db import transaction
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 
@@ -57,6 +57,8 @@ class BaseView:
                         data = method()
                     if type(data) == str:
                         return HttpResponseRedirect(data)
+                    if type(data) == dict:
+                        return JsonResponse(data)
                     if data is not None:
                         return data
                 context = {**context, **c.context}

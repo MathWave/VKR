@@ -2,6 +2,41 @@
 
 {% block title %}Вход{% endblock %}
 
+{% block scripts %}
+    function send_code() {
+        const p = document.getElementById('message');
+        if (document.getElementById('state').value == 'code') {
+        $.ajax({
+          type: "POST",
+          url: '/send_code',
+          data: {"username": document.getElementById('username').value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "create"},
+          success: function(data) {
+            if (data['success']) {
+                document.getElementById('code').hidden = false;
+                document.getElementById('enter').firstChild.data = "Вход";
+                document.getElementById('state').value = "verify";
+                p.innerHTML = '';
+            } else {
+                p.innerHTML = data['message'];
+            }
+        }});
+        } else {
+        $.ajax({
+          type: "POST",
+          url: '/send_code',
+          data: {"username": document.getElementById('username').value, "code": document.getElementById('code').value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "check"},
+          success: function(data) {
+            if (data['success']) {
+                window.location.href = '/';
+            } else {
+                p.innerHTML = data['message'];
+            }
+            },
+        });
+        }
+    }
+{% endblock %}
+
 {% block body %}
     <div class="center">
         <center>
@@ -11,19 +46,15 @@
                 </h1>
             </div>
             <div>
-                <p style="color: red;">{{ error_message }}</p>
-                <form method="POST">
-                    {% csrf_token %}
-                    <input type="text" class="form" name="email" placeholder="email or username"><br>
-                    <input type="password" class="form" name="password" placeholder="password"><br>
-                    <input type="submit" value="Вход" class="sub btn btn-dark form">
-                </form>
+                <p id="message" style="color: red;"></p>
+                {% csrf_token %}
+                <input type="text" class="form" name="username" id="username" placeholder="username"><br>
+                <input type="password" class="form" name="code" id="code" placeholder="code" hidden><br>
+                <input type="hidden" id="state" value="code">
+                <button type="button" onclick="send_code()" id="enter" class="sub btn btn-dark form">Отправить код</button>
             </div>
             <div>
-                <button onclick="window.location.href='/restore'" class="sub btn btn-dark form">Восстановить пароль</button>
-            </div>
-            <div>
-                <button onclick="window.location.href='/register'" class="sub btn btn-dark form">Регистрация</button>
+                <a href="https://t.me/sprint_notifications_bot" target="_blank" class="sub btn btn-dark form">Регистрация</a>
             </div>
         </center>
     </div>
