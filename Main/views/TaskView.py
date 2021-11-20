@@ -13,7 +13,6 @@ class TaskView(BaseView):
     view_file = "task.html"
 
     def get(self):
-        self.context["languages"] = sorted(languages, key=lambda x: x.name)
         progress, _ = Progress.objects.get_or_create(
             user=self.request.user, task=self.entities.task
         )

@@ -74,6 +74,33 @@
                         <p style="padding-top: 8px; font-size: 24px;">{{ account.date_joined.date }}</p>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <h2><i class="fa fa-desktop"></i></h2>
+                    </td>
+                    <td><div style="width: 20px;"></div></td>
+                    <td>
+                        {% if owner %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="set_language">
+                                <select name="language" onchange="this.form.submit();">
+                                    <option value="-1">Предпочитаемый язык отсутствует</option>
+                                    {% for lang in languages %}
+                                        <option value="{{ lang.id }}"{% if account.userinfo.favourite_language_id == lang.id %} selected{% endif %}>{{ lang }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        {% else %}
+                            {% if account.favourite_language_id %}
+                                yes
+                            {% else %}
+                                no
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+
             </table>
         </div>
     </div>

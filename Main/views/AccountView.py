@@ -27,6 +27,12 @@ class AccountView(BaseView):
         self.request.user.userinfo.save()
         return "/account"
 
+    def post_set_language(self):
+        lang_id = self.request.POST["language"]
+        self.request.user.userinfo.favourite_language_id = lang_id if lang_id != -1 else None
+        self.request.user.userinfo.save()
+        return "/account"
+
     def post_change_password(self):
         password = self.request.POST["password"].strip()
         new_password = self.request.POST["new_password"].strip()

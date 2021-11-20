@@ -15,6 +15,7 @@ class UserInfo(models.Model):
     middle_name = models.TextField()
     last_request = models.DateTimeField(default=timezone.now)
     profile_picture_fs_id = models.IntegerField(null=True)
+    favourite_language_id = models.IntegerField(null=True)
     rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     telegram_chat_id = models.TextField(default="")
