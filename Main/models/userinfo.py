@@ -7,6 +7,7 @@ from Main.models.settask import SetTask
 from Main.models.subscription import Subscription
 from Main.models.task import Task
 from Sprint.settings import CONSTS
+from SprintLib.language import languages
 
 
 class UserInfo(models.Model):
@@ -20,6 +21,16 @@ class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     telegram_chat_id = models.TextField(default="")
     notification_solution_result = models.BooleanField(default=False)
+
+    @property
+    def has_favourite_language(self):
+        return self.favourite_language_id is not None
+
+    @property
+    def favourite_language(self):
+        if not self.has_favourite_language:
+            return None
+        return languages[self.favourite_language_id]
 
     def _append_task(self, task, tasks):
         if task.creator == self.user or task.public or self.user.is_superuser:

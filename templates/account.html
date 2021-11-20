@@ -79,7 +79,7 @@
                         <h2><i class="fa fa-desktop"></i></h2>
                     </td>
                     <td><div style="width: 20px;"></div></td>
-                    <td>
+                    <td><p style="padding-top: 8px; font-size: 24px;">
                         {% if owner %}
                             <form method="POST">
                                 {% csrf_token %}
@@ -92,13 +92,13 @@
                                 </select>
                             </form>
                         {% else %}
-                            {% if account.favourite_language_id %}
-                                yes
+                            {% if account.userinfo.has_favourite_language %}
+                                <img src="{{ account.userinfo.favourite_language.logo_url }}" height="24px" width="24px"> {{ account.userinfo.favourite_language.name }}
                             {% else %}
-                                no
+                                Предпочитаемый язык отсутствует
                             {% endif %}
                         {% endif %}
-                    </td>
+                    </p></td>
                 </tr>
 
             </table>

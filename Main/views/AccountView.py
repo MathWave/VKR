@@ -28,7 +28,7 @@ class AccountView(BaseView):
         return "/account"
 
     def post_set_language(self):
-        lang_id = self.request.POST["language"]
+        lang_id = int(self.request.POST["language"])
         self.request.user.userinfo.favourite_language_id = lang_id if lang_id != -1 else None
         self.request.user.userinfo.save()
         return "/account"

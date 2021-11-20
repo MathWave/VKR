@@ -1,5 +1,6 @@
 from typing import Optional
 
+from django.db import transaction
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -20,6 +21,7 @@ class BaseView:
     view_file: Optional[str] = None
 
     @classmethod
+    @transaction.atomic
     def as_view(cls):
         def execute(request):
             if request.user.is_authenticated:
