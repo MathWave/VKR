@@ -1,5 +1,4 @@
 from Main.views.EnterView import EnterView
-from Main.views.RegisterView import RegisterView
 from Main.views.MainView import MainView
 from Main.views.TasksView import TasksView
 from Main.views.AccountView import AccountView

@@ -1,12 +1,10 @@
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
+
 from Main.views import *
-from Sprint import settings
 
 urlpatterns = [
     path("enter", EnterView.as_view()),
-    path("register", RegisterView.as_view()),
     path("rating", RatingView.as_view()),
     path("tasks", TasksView.as_view()),
     path("account", AccountView.as_view()),

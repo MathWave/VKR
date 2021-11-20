@@ -25,6 +25,8 @@ class SendCodeView(BaseView):
             return {"success": False, "message": "Пользователя с таким именем не существует"}
         code = int(self.request.POST["code"])
         if code == user.userinfo.code:
+            user.userinfo.code = None
+            user.userinfo.save()
             login(self.request, user)
             return {"success": True, "message": "Успешно"}
         else:
