@@ -95,26 +95,12 @@
             </table>
         </div>
     </div>
-    <hr><hr>
-    {% if owner %}
-        <p style="color: red;">{{ error_message }}</p>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="change_password">
-            <h2 style="margin-bottom: 40px; margin-top: 40px;">Смена пароля</h2>
-            <input type="password" placeholder="Текущий пароль" name="password" style="margin-bottom: 20px; width: 300px;"><br>
-            <input type="password" placeholder="Новый пароль" name="new_password" style="margin-bottom: 20px; width: 300px;"><br>
-            <input type="password" placeholder="Повторить пароль" name="repeat" style="margin-bottom: 20px; width: 300px;"><br>
-            <button type="submit" class="btn btn-light">Сменить пароль</button>
-        </form>
-    {% endif %}
     {% if owner %}
     <hr><hr>
     <h2>Уведомления</h2>
         <form method="POST">
         {% csrf_token %}
         <input type="hidden" name="action" value="notifications">
-        <input type="text" name="chat_id" value="{{ user.userinfo.telegram_chat_id }}" placeholder="telegram chat id"> <a class="btn btn-link" target="_blank" rel="noopener noreferrer" href="https://t.me/sprint_notifications_bot">Бот</a>
     <table>
         <tr>
             <td style="width: 200px;">
