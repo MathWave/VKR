@@ -8,4 +8,6 @@ class RatingView(BaseView):
     required_login = True
 
     def get(self):
-        self.context["users"] = User.objects.all().order_by('-userinfo__rating')
+        self.context["users"] = User.objects.filter(userinfo__verified=True).order_by(
+            "-userinfo__rating", "date_joined"
+        )

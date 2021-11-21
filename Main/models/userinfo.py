@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 from Main.models.group import Group
@@ -21,6 +22,7 @@ class UserInfo(models.Model):
     telegram_chat_id = models.TextField(default="")
     notification_solution_result = models.BooleanField(default=False)
     code = models.IntegerField(null=True)
+    verified = models.BooleanField(default=False)
 
     @property
     def has_favourite_language(self):

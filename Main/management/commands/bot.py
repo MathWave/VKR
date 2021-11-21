@@ -40,6 +40,7 @@ def do_action(message: Message):
         bot.send_message(message.chat.id, "Отлично! Теперь отправь мне свое имя")
     elif user.userinfo.name is None:
         user.userinfo.name = message.text
+        user.userinfo.verified = True
         user.userinfo.save()
         bot.send_message(message.chat.id, f"Регистрация завершена! Теперь можешь ты можешь войти в сервис под именем пользователя: {user.username}")
     else:
