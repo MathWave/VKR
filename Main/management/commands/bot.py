@@ -16,7 +16,7 @@ def do_action(message: Message):
 @bot.message_handler(commands=["register"])
 def register(message: Message):
     username = message.from_user.username
-    if username == "":
+    if username == "" or message.from_user.username is None:
         bot.send_message(message.chat.id, "Добавть имя пользователя к своему телеграм аккаунту")
         return
     ui = UserInfo.objects.filter(telegram_chat_id=message.chat.id).first()
