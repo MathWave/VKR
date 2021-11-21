@@ -105,7 +105,7 @@ class BaseTester:
             self.solution.result = "TL"
         except Exception as e:
             self.solution.result = "TE"
-            print(str(e))
+            raise e
         self.solution.save()
         call(f"docker rm --force solution_{self.solution.id}", shell=True)
         self.solution.user.userinfo.refresh_from_db()
