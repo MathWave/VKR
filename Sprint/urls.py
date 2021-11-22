@@ -10,6 +10,7 @@ urlpatterns = [
     path("account", AccountView.as_view()),
     path("exit", ExitView.as_view()),
     path("admin/task", TaskSettingsView.as_view()),
+    path("admin/set", SetSettingsView.as_view()),
     path("sets", SetsView.as_view()),
     path("task", TaskView.as_view()),
     path("solution", SolutionView.as_view()),

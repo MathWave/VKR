@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+from Main.models.task import Task
+
 
 class Set(models.Model):
     name = models.TextField()
@@ -18,3 +20,7 @@ class Set(models.Model):
             and (self.start_time is None or timezone.now() >= self.start_time)
             and (self.end_time is None or timezone.now() <= self.end_time)
         )
+
+    @property
+    def tasks(self):
+        return Task.objects.filter(settasks__set=self).order_by('settasks__name')

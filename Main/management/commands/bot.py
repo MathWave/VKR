@@ -24,8 +24,17 @@ def register(message: Message):
         bot.send_message(message.chat.id, "Ты уже зарегистрировался")
         return
     user = User.objects.create(username=username)
-    UserInfo.objects.create(user=user, telegram_chat_id=message.chat.id)
-    bot.send_message(message.chat.id, 'Приветствую в Sprint! Сейчас я помогу тебе создать аккаунт.\nДля начала отправь мне свою фамилию')
+    ui = UserInfo.objects.create(user=user, telegram_chat_id=message.chat.id)
+    name = message.from_user.first_name
+    surname = message.from_user.last_name
+    if surname is None or surname == '' or name is None or name == '':
+        bot.send_message(message.chat.id, 'Приветствую в Sprint! Сейчас я помогу тебе создать аккаунт.\nДля начала отправь мне свою фамилию')
+    else:
+        ui.surname = surname
+        ui.name = name
+        ui.verified = True
+        ui.save()
+        bot.send_message(message.chat.id, f"Регистрация завершена! Теперь можешь ты можешь войти в сервис под именем пользователя: {user.username}")
 
 
 @bot.message_handler(content_types=["text"])

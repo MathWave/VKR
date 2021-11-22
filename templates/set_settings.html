@@ -1,0 +1,11 @@
+{% extends 'base_main.html' %}
+
+{% block title %}{{ set.name }}{% endblock %}
+
+{% block main %}
+    <h2>{{ set.name }}</h2>
+    <h4>Таски</h4>
+    {% for settask in set.settasks.all %}
+        <input name="settask_{{ settask.id }}" value="{{ settask.name }}"> {{ settask.task.name }}<br>
+    {% endfor %}
+{% endblock %}

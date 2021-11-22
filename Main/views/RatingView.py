@@ -9,5 +9,5 @@ class RatingView(BaseView):
 
     def get(self):
         self.context["users"] = User.objects.filter(userinfo__verified=True).order_by(
-            "-userinfo__rating", "date_joined"
+            "-userinfo__rating", "-date_joined"
         )

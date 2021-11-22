@@ -3,7 +3,6 @@ from zipfile import ZipFile
 
 from Main.models import Solution, Progress, SolutionFile
 from SprintLib.BaseView import BaseView
-from SprintLib.language import languages
 from SprintLib.queue import send_testing
 from SprintLib.utils import write_bytes
 

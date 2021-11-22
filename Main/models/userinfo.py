@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Q
 from django.utils import timezone
 
+from Main.models.set import Set
 from Main.models.group import Group
 from Main.models.settask import SetTask
 from Main.models.subscription import Subscription
@@ -54,6 +54,10 @@ class UserInfo(models.Model):
         for task in Task.objects.all():
             self._append_task(task, tasks)
         return sorted(tasks, key=lambda x: x.time_estimation)
+
+    @property
+    def available_sets(self):
+        return Set.objects.all()
 
     @property
     def place(self):

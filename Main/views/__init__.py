@@ -12,3 +12,4 @@ from Main.views.TaskRuntimeView import TaskRuntimeView
 from Main.views.SolutionView import SolutionView
 from Main.views.ImageView import ImageView
 from Main.views.SendCodeView import SendCodeView
+from Main.views.SetSettingsView import SetSettingsView

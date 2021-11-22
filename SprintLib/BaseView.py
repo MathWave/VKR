@@ -21,8 +21,8 @@ class BaseView:
     view_file: Optional[str] = None
 
     @classmethod
-    @transaction.atomic
     def as_view(cls):
+        @transaction.atomic
         def execute(request):
             if request.user.is_authenticated:
                 user_info = request.user.userinfo

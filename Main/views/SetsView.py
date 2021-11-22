@@ -7,6 +7,6 @@ class SetsView(BaseView):
     required_login = True
 
     def post(self):
-        task_name = self.request.POST["name"]
-        task = Set.objects.create(name=task_name, creator=self.request.user)
-        return f"/admin/task?task_id={task.id}"
+        set_name = self.request.POST["name"]
+        set = Set.objects.create(name=set_name, creator=self.request.user)
+        return f"/admin/set?set_id={set.id}"
