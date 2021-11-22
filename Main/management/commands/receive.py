@@ -1,3 +1,5 @@
+from time import sleep
+
 import pika
 from django.core.management.base import BaseCommand
 
@@ -19,11 +21,12 @@ class Command(BaseCommand):
             try:
                 id = int(str(body, encoding='utf-8'))
                 print(f"Received id {id}")
-                solution = Solution.objects.get(id=id)
-            except Exception as e:
-                print(e)
-                return
-            try:
+                while True:
+                    try:
+                        solution = Solution.objects.get(id=id)
+                        break
+                    except:
+                        sleep(.5)
                 eval(solution.language.work_name + 'Tester')(solution).execute()
             except Exception as e:
                 print(e)
