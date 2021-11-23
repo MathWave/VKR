@@ -1,5 +1,3 @@
-import os
-
 import telebot
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
@@ -7,7 +5,7 @@ from telebot.types import Message
 
 from Main.models import UserInfo
 
-bot = telebot.TeleBot(os.getenv("BOT_TOKEN"))
+bot = telebot.TeleBot("1994460106:AAGrGsCZjF6DVG_T-zycELuVfxnWw8x7UyU")
 
 
 @bot.message_handler(commands=["start"])
