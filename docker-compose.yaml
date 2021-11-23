@@ -1,17 +1,27 @@
-version: "3"
+version: "3.4"
 
 
 services:
 
-  postgres:
-    restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/postgres/Dockerfile
+  .variables:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: sprint
+      PORT: $PORT
+      HOST: $HOST
+      BOT_TOKEN: $BOT_TOKEN
+      SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
+
+  postgres:
+    restart: always
+    extends:
+      service: .variables
+    build:
+      context: .
+      dockerfile: dockerfiles/postgres/Dockerfile
+    environment:
+
     volumes:
       - /sprint-data/postgres-data:/var/lib/postgresql/data
     ports:
@@ -20,9 +30,8 @@ services:
   web:
     image: mathwave/sprint-repo:sprint
     restart: always
-    environment:
-      PORT: $PORT
-      HOST: $HOST
+    extends:
+      service: .variables
     command: scripts/runserver.sh
     ports:
       - "${PORT}:${PORT}"
@@ -35,6 +44,8 @@ services:
     restart: always
     image: mathwave/sprint-repo:sprint
     command: python manage.py storage
+    extends:
+      service: .variables
     ports:
       - "5555:5555"
     volumes:
@@ -43,14 +54,16 @@ services:
   bot:
     image: mathwave/sprint-repo:sprint
     restart: always
-    environment:
-      HOST: $HOST
+    extends:
+      service: .variables
     command: python manage.py bot
     depends_on:
       - web
 
   rabbitmq:
     restart: always
+    extends:
+      service: .variables
     build:
       context: .
       dockerfile: dockerfiles/rabbitmq/Dockerfile
@@ -63,9 +76,8 @@ services:
     image: mathwave/sprint-repo:sprint
     privileged: true
     command: python manage.py receive
-    environment:
-      SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
-      HOST: $HOST
+    extends:
+      service: .variables
     depends_on:
       - web
       - rabbitmq

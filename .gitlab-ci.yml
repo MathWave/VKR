@@ -35,6 +35,7 @@ deploy-dev:
     PORT: 80
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     HOST: "77.246.159.65"
+    BOT_TOKEN: $BOT_TOKEN
 
 deploy-prod:
   extends:
