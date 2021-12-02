@@ -29,12 +29,9 @@ class Task(models.Model):
     @property
     def samples(self):
         data = []
-        for test in self.tests.order_by('test_number'):
+        for test in self.tests.order_by("test_number"):
             if test.is_sample and test.readable:
-                data.append({
-                    'input': test.text,
-                    'output': test.answer.text
-                })
+                data.append({"input": test.text, "output": test.answer.text})
         count = 1
         for entity in data:
             entity["num"] = count
@@ -43,6 +40,7 @@ class Task(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         from Main.models.progress import Progress
+
         for progress in Progress.objects.filter(task=self):
             progress.user.userinfo.rating -= progress.score
             progress.user.userinfo.save()

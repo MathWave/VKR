@@ -2,7 +2,7 @@ from SprintLib.BaseView import BaseView, AccessError
 
 
 class SolutionView(BaseView):
-    view_file = 'solution.html'
+    view_file = "solution.html"
     required_login = True
     endpoint = "solution"
 

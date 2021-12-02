@@ -23,4 +23,4 @@ class Set(models.Model):
 
     @property
     def tasks(self):
-        return Task.objects.filter(settasks__set=self).order_by('settasks__name')
+        return Task.objects.filter(settasks__set=self).order_by("settasks__name")

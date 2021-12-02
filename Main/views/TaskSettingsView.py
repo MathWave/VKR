@@ -13,47 +13,49 @@ class TaskSettingsView(BaseView):
     def pre_handle(self):
         if self.entities.task not in self.request.user.userinfo.available_tasks:
             raise AccessError()
-        if self.request.method == 'POST':
-            for progress in Progress.objects.filter(task=self.entities.task, finished=False):
+        if self.request.method == "POST":
+            for progress in Progress.objects.filter(
+                task=self.entities.task, finished=False
+            ):
                 progress.start_time = timezone.now()
                 progress.save()
 
     def get(self):
-        self.context['error_message'] = self.request.GET.get('error_message', '')
+        self.context["error_message"] = self.request.GET.get("error_message", "")
 
     def post(self):
         for key, value in self.request.POST.items():
             setattr(self.entities.task, key, value.strip())
-        self.entities.task.public = 'public' in self.request.POST
+        self.entities.task.public = "public" in self.request.POST
         self.entities.task.save()
         return f"/admin/task?task_id={self.entities.task.id}"
 
     def _upload(self, is_test):
-        filename = self.request.FILES['file'].name
+        filename = self.request.FILES["file"].name
         ef, created = None, None
         if is_test:
-            name = filename.strip('.a')
+            name = filename.strip(".a")
             if not name.isnumeric():
-                return f'/admin/task?task_id={self.entities.task.id}&error_message=Формат файла не соответствует тесту'
-            ef, created = ExtraFile.objects.get_or_create(task=self.entities.task, is_test=True, filename=filename)
+                return f"/admin/task?task_id={self.entities.task.id}&error_message=Формат файла не соответствует тесту"
+            ef, created = ExtraFile.objects.get_or_create(
+                task=self.entities.task, is_test=True, filename=filename
+            )
             if not created:
                 ef.is_sample = False
                 ef.save()
-                return f'/admin/task?task_id={self.entities.task.id}'
+                return f"/admin/task?task_id={self.entities.task.id}"
         if ef is None or created is None:
             ef, created = ExtraFile.objects.get_or_create(
-                task=self.entities.task,
-                filename=filename,
-                is_test=is_test
+                task=self.entities.task, filename=filename, is_test=is_test
             )
-        ef.write(self.request.FILES['file'].read())
+        ef.write(self.request.FILES["file"].read())
         try:
             var = ef.text
             ef.readable = True
         except UnicodeDecodeError:
             ef.readable = False
         ef.save()
-        return '/admin/task?task_id=' + str(self.entities.task.id)
+        return "/admin/task?task_id=" + str(self.entities.task.id)
 
     def post_file_upload(self):
         return self._upload(False)
@@ -62,21 +64,23 @@ class TaskSettingsView(BaseView):
         return self._upload(True)
 
     def post_delete_file(self):
-        ef = ExtraFile.objects.get(id=self.request.POST['id'])
+        ef = ExtraFile.objects.get(id=self.request.POST["id"])
         ef.delete()
         return HttpResponse("ok")
 
     def _create(self, is_test):
-        name = self.request.POST['newfile_name']
+        name = self.request.POST["newfile_name"]
 
-        ef, created = ExtraFile.objects.get_or_create(filename=name, task=self.entities.task)
+        ef, created = ExtraFile.objects.get_or_create(
+            filename=name, task=self.entities.task
+        )
         if not created:
-            return f'/admin/task?task_id={self.entities.task.id}&error_message=Файл с таким именем уже существует'
+            return f"/admin/task?task_id={self.entities.task.id}&error_message=Файл с таким именем уже существует"
         ef.write(b"")
         ef.is_test = is_test
         ef.readable = True
         ef.save()
-        return f'/admin/task?task_id={self.entities.task.id}'
+        return f"/admin/task?task_id={self.entities.task.id}"
 
     def post_create_file(self):
         return self._create(False)
@@ -85,9 +89,9 @@ class TaskSettingsView(BaseView):
         return self._create(True)
 
     def post_save_test(self):
-        ef = ExtraFile.objects.get(id=self.request.POST['test_id'])
+        ef = ExtraFile.objects.get(id=self.request.POST["test_id"])
         ef.remove_from_fs()
-        ef.write(self.request.POST['text'].encode('utf-8'))
-        ef.is_sample = 'is_sample' in self.request.POST.keys()
+        ef.write(self.request.POST["text"].encode("utf-8"))
+        ef.is_sample = "is_sample" in self.request.POST.keys()
         ef.save()
-        return f'/admin/task?task_id={self.entities.task.id}'
+        return f"/admin/task?task_id={self.entities.task.id}"

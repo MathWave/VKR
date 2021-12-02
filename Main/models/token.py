@@ -6,7 +6,7 @@ from django.utils import timezone
 
 
 def create_token():
-    symbols = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890'
+    symbols = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
     return "".join([choice(symbols) for _ in range(30)])
 
 

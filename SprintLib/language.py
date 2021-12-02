@@ -50,7 +50,7 @@ languages = [
         file_type="java",
         logo_url="https://upload.wikimedia.org/wikipedia/ru/thumb/3/39/Java_logo.svg/1200px-Java_logo.svg.png",
         image="openjdk",
-        highlight="java"
+        highlight="java",
     ),
     Language(
         id=4,
@@ -59,6 +59,6 @@ languages = [
         file_type="cs",
         logo_url="https://cdn.worldvectorlogo.com/logos/c--4.svg",
         image="mono",
-        highlight="csharp"
-    )
+        highlight="csharp",
+    ),
 ]

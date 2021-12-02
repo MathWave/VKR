@@ -63,12 +63,16 @@ class BaseTester:
             mkdir("solutions")
         mkdir("solutions/" + str(self.solution.id))
         for file in SolutionFile.objects.filter(solution=self.solution):
-            dirs = file.path.split('/')
+            dirs = file.path.split("/")
             for i in range(len(dirs) - 1):
-                name = join(str("solutions/" + self.solution.id), '/'.join(dirs[:i + 1]))
+                name = join(
+                    str("solutions/" + self.solution.id), "/".join(dirs[: i + 1])
+                )
                 if not exists(name):
                     mkdir(name)
-            with open(join("solutions/" + str(self.solution.id), file.path), 'wb') as fs:
+            with open(
+                join("solutions/" + str(self.solution.id), file.path), "wb"
+            ) as fs:
                 fs.write(get_bytes(file.fs_id))
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
@@ -77,7 +81,9 @@ class BaseTester:
         call(docker_command, shell=True)
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
-            with open(join("solutions/" + str(self.solution.id), file.filename), 'wb') as fs:
+            with open(
+                join("solutions/" + str(self.solution.id), file.filename), "wb"
+            ) as fs:
                 fs.write(get_bytes(file.fs_id))
         print("Files copied")
         try:

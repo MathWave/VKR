@@ -25,9 +25,11 @@ class ExtraFile(FileStorageMixin, models.Model):
 
     def delete(self, using=None, keep_parents=False):
         self.remove_from_fs()
-        if self.is_test and self.filename.endswith('.a'):
+        if self.is_test and self.filename.endswith(".a"):
             try:
-                ef = ExtraFile.objects.get(task=self.task, filename=self.filename.rstrip('.a'), is_test=True)
+                ef = ExtraFile.objects.get(
+                    task=self.task, filename=self.filename.rstrip(".a"), is_test=True
+                )
                 ef.is_sample = False
                 ef.save()
             except ObjectDoesNotExist:
@@ -36,4 +38,6 @@ class ExtraFile(FileStorageMixin, models.Model):
 
     @property
     def answer(self):
-        return ExtraFile.objects.get(task=self.task, is_test=True, filename=self.filename + '.a')
+        return ExtraFile.objects.get(
+            task=self.task, is_test=True, filename=self.filename + ".a"
+        )

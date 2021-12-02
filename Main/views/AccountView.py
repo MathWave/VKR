@@ -29,13 +29,17 @@ class AccountView(BaseView):
 
     def post_set_language(self):
         lang_id = int(self.request.POST["language"])
-        self.request.user.userinfo.favourite_language_id = lang_id if lang_id != -1 else None
+        self.request.user.userinfo.favourite_language_id = (
+            lang_id if lang_id != -1 else None
+        )
         self.request.user.userinfo.save()
         return "/account"
 
     def post_notifications(self):
         for attr in dir(self.request.user.userinfo):
-            if attr.startswith('notification'):
-                setattr(self.request.user.userinfo, attr, attr in self.request.POST.keys())
+            if attr.startswith("notification"):
+                setattr(
+                    self.request.user.userinfo, attr, attr in self.request.POST.keys()
+                )
         self.request.user.userinfo.save()
-        return '/account'
+        return "/account"

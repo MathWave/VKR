@@ -36,23 +36,20 @@ class Solution(models.Model):
                 text = file.text
             except:
                 continue
-            entity = {
-                'filename': file.path,
-                'text': text
-            }
-            end = file.path.split('.')[-1]
+            entity = {"filename": file.path, "text": text}
+            end = file.path.split(".")[-1]
             language = None
             for l in languages:
                 if l.file_type == end:
                     language = l
                     break
             if language is None:
-                highlight = 'nohighlight'
+                highlight = "nohighlight"
             else:
-                highlight = 'language-' + language.highlight
-            entity['highlight'] = highlight
+                highlight = "language-" + language.highlight
+            entity["highlight"] = highlight
             data.append(entity)
-        data.sort(key=lambda x: x['filename'])
+        data.sort(key=lambda x: x["filename"])
         return data
 
     @property
@@ -67,5 +64,9 @@ class Solution(models.Model):
     def volume_directory(self):
         return "/sprint-data/worker/" + str(self.id)
 
-    def exec_command(self, command, working_directory='app', timeout=None):
-        return call(f'docker exec -i solution_{self.id} sh -c "cd {working_directory} && {command}"', shell=True, timeout=timeout)
+    def exec_command(self, command, working_directory="app", timeout=None):
+        return call(
+            f'docker exec -i solution_{self.id} sh -c "cd {working_directory} && {command}"',
+            shell=True,
+            timeout=timeout,
+        )

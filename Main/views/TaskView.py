@@ -44,7 +44,7 @@ class TaskView(BaseView):
             return "task?task_id=" + str(self.entities.task.id)
         filename = self.request.FILES["file"].name
         if filename.endswith(".zip"):
-            archive = ZipFile(io.BytesIO(self.request.FILES['file'].read()))
+            archive = ZipFile(io.BytesIO(self.request.FILES["file"].read()))
             for file in archive.infolist():
                 if file.is_dir():
                     continue
@@ -55,7 +55,7 @@ class TaskView(BaseView):
                     fs_id=fs_id,
                 )
         else:
-            fs_id = write_bytes(self.request.FILES['file'].read())
+            fs_id = write_bytes(self.request.FILES["file"].read())
             SolutionFile.objects.create(
                 path=filename,
                 solution=self.solution,

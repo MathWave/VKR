@@ -6,7 +6,7 @@ from Sprint import settings
 def write_bytes(data):
     url = settings.FS_HOST + ":" + str(settings.FS_PORT) + "/upload_file"
     print(url)
-    return post(url, data=data).json()['id']
+    return post(url, data=data).json()["id"]
 
 
 def get_bytes(num):

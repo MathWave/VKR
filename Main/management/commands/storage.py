@@ -3,7 +3,7 @@ from FileStorage.root import runserver
 
 
 class Command(BaseCommand):
-    help = 'starts FileStorage'
+    help = "starts FileStorage"
 
     def handle(self, *args, **options):
         runserver()
