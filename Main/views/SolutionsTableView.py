@@ -8,6 +8,7 @@ from SprintLib.BaseView import BaseView
 class SolutionsTableView(BaseView):
     view_file = 'solutions_table.html'
     required_login = True
+    endpoint = "solutions_table"
 
     def get(self):
         self.context['solutions'] = Solution.objects.filter(

@@ -19,6 +19,7 @@ class BaseView:
     entities = EntityStorage()
     required_login: Optional[bool] = None
     view_file: Optional[str] = None
+    endpoint: Optional[str] = None
 
     @classmethod
     def as_view(cls):

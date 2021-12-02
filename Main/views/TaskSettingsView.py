@@ -8,6 +8,7 @@ from SprintLib.BaseView import BaseView, AccessError
 class TaskSettingsView(BaseView):
     view_file = "task_settings.html"
     required_login = True
+    endpoint = "admin/task"
 
     def pre_handle(self):
         if self.entities.task not in self.request.user.userinfo.available_tasks:

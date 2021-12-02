@@ -5,6 +5,7 @@ from SprintLib.BaseView import BaseView
 class SetsView(BaseView):
     view_file = "sets.html"
     required_login = True
+    endpoint = "sets"
 
     def post(self):
         set_name = self.request.POST["name"]

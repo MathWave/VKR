@@ -7,6 +7,7 @@ from SprintLib.BaseView import BaseView
 class TaskRuntimeView(BaseView):
     view_file = 'task_runtime.html'
     required_login = True
+    endpoint = "task_runtime"
 
     def get(self):
         progress = Progress.objects.get(task=self.entities.task, user=self.request.user)

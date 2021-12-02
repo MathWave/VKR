@@ -7,6 +7,7 @@ from random import randrange
 
 
 class SendCodeView(BaseView):
+    endpoint = "send_code"
     def post_create(self):
         username = self.request.POST["username"]
         user = User.objects.filter(username=username).first()

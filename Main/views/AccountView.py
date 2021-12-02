@@ -7,6 +7,7 @@ from SprintLib.utils import delete_file, write_bytes
 class AccountView(BaseView):
     view_file = "account.html"
     required_login = True
+    endpoint = "account"
 
     def get(self):
         if "username" in self.request.GET.keys():

@@ -10,6 +10,7 @@ from SprintLib.utils import write_bytes
 class TaskView(BaseView):
     required_login = True
     view_file = "task.html"
+    endpoint = "task"
 
     def get(self):
         progress, _ = Progress.objects.get_or_create(

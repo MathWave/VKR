@@ -5,6 +5,7 @@ from SprintLib.BaseView import BaseView
 class TasksView(BaseView):
     view_file = "tasks.html"
     required_login = True
+    endpoint = "tasks"
 
     def post(self):
         task_name = self.request.POST["name"]
