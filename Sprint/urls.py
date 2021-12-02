@@ -4,7 +4,7 @@ from django.urls import path
 import Main.views
 from Main.views import *
 
-urlpatterns = [path("admin/", admin.site.urls)]
+urlpatterns = []
 
 for v in dir(Main.views):
     try:
@@ -13,3 +13,5 @@ for v in dir(Main.views):
         continue
     if hasattr(view, 'endpoint') and view.endpoint is not None:
         urlpatterns.append(path(view.endpoint, view.as_view()))
+
+urlpatterns.append(path("admin/", admin.site.urls))
