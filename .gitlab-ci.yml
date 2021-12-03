@@ -10,14 +10,18 @@ build:
   stage: build
   tags:
     - main
-  script:
+  before_script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
+  script:
     - docker build --cache-from=mathwave/sprint-repo:sprint -t mathwave/sprint-repo:sprint .
     - docker push mathwave/sprint-repo:sprint
+  after_script:
+    - docker image rm mathwave/sprint-repo:sprint
 
 .deploy:
-  script:
+  before_script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
+  script:
     - docker pull mathwave/sprint-repo:sprint
     - docker-compose up -d
 
