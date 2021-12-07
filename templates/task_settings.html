@@ -94,6 +94,11 @@
         <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
     </form>
     <hr><hr>
+    <h3>Редакторы</h3>
+    {% for editor in task.editors %}
+        <i class="fa fa-user"></i> <a href="/account?username={{ editor }}">{{ editor }}</a><br>
+    {% endfor %}
+    <hr><hr>
     <h3 style="margin-bottom: 40px;">Загрузка тестов и файлов</h3>
         <p style="color: red">{{ error_message }}</p>
         <table style="width: 80%;">

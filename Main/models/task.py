@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -14,6 +15,7 @@ class Task(models.Model):
     time_limit = models.IntegerField(default=10000)
     time_estimation = models.IntegerField(default=5)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    editors = ArrayField(models.TextField(), default=list)
 
     def __str__(self):
         return self.name

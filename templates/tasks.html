@@ -43,7 +43,7 @@
             {% endif %}
         </tr>
     </table>
-    {% for task in user.userinfo.available_tasks %}
+    {% for task in tasks %}
         <a href="/task?task_id={{ task.id }}">{{ task.name }}</a> {% if task.creator == user %}<a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a>{% endif %}<br>
     {% endfor %}
 {% endblock %}
