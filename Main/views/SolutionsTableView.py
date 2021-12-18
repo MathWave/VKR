@@ -45,7 +45,7 @@ class SolutionsTableView(BaseView):
             if self.entities.set.creator != self.request.user:
                 raise AccessError()
         if hasattr(self.entities, "task"):
-            if self.entities.task.creator != self.request.user or self.request.user.username in self.entities.task.editors:
+            if self.entities.task.creator != self.request.user and self.request.user.username not in self.entities.task.editors:
                 raise AccessError()
 
     def get(self):
