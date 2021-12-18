@@ -44,6 +44,6 @@
         </tr>
     </table>
     {% for task in tasks %}
-        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a> {% if task.creator == user %}<a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?task_id={{ task.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
+        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a> {% if task.creator == user or user.username in task.editors %}<a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?task_id={{ task.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
     {% endfor %}
 {% endblock %}
