@@ -27,7 +27,10 @@
         jQuery.get('/solutions_table?task_id={{ task.id }}&username={{ user.username }}&page=' + page.toString(), function(data) {
             document.getElementById('solutions').innerHTML = data;
             const name = "page_num_" + page.toString();
-            document.getElementById(name).className = "btn btn-dark";
+            elem = document.getElementById(name);
+            if (elem) {
+                elem.className = "btn btn-dark";
+            }
             jQuery.get('/task_runtime?task_id={{ task.id }}', function(data1) {
                 document.getElementById('runtime').innerHTML = data1;
                 setTimeout(function() {doPoll()}, 2000);

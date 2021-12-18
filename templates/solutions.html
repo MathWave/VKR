@@ -9,7 +9,10 @@
         jQuery.get('/solutions_table?task_id={{ task.id }}&page=' + page.toString(), function(data) {
             document.getElementById('solutions').innerHTML = data;
             const name = "page_num_" + page.toString();
-            document.getElementById(name).className = "btn btn-dark";
+            elem = document.getElementById(name);
+            if (elem) {
+                elem.className = "btn btn-dark";
+            }
             setTimeout(function() {doPoll()}, 2000);
         })
     }
