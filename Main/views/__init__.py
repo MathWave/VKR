@@ -14,3 +14,4 @@ from Main.views.ImageView import ImageView
 from Main.views.SendCodeView import SendCodeView
 from Main.views.SetSettingsView import SetSettingsView
 from Main.views.UsersView import UsersView
+from Main.views.SolutionsView import SolutionsView

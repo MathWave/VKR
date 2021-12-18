@@ -1,4 +1,5 @@
-from os.path import join, exists
+from functools import cached_property
+from os.path import exists
 from shutil import rmtree
 from subprocess import call
 
@@ -8,7 +9,7 @@ from django.utils import timezone
 
 from Main.models.solution_file import SolutionFile
 from Main.models.task import Task
-from Sprint.settings import CONSTS, SOLUTIONS_ROOT, SOLUTIONS_ROOT_EXTERNAL
+from Sprint.settings import CONSTS
 from SprintLib.language import languages
 
 
@@ -28,7 +29,7 @@ class Solution(models.Model):
             rmtree(self.directory)
         super().delete(using=using, keep_parents=keep_parents)
 
-    @property
+    @cached_property
     def files(self):
         data = []
         for file in SolutionFile.objects.filter(solution=self):

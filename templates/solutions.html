@@ -1,0 +1,44 @@
+{% extends 'base_main.html' %}
+
+{% block scripts %}
+    var page = 1;
+    function setPage(number) {
+        page = number;
+    }
+    function doPoll() {
+        jQuery.get('/solutions_table?task_id={{ task.id }}&page=' + page.toString(), function(data) {
+            document.getElementById('solutions').innerHTML = data;
+            const name = "page_num_" + page.toString();
+            document.getElementById(name).className = "btn btn-dark";
+            setTimeout(function() {doPoll()}, 2000);
+        })
+    }
+{% endblock %}
+
+{% block onload %}doPoll(){% endblock %}
+
+{% block main %}
+    <h2>Решения</h2>
+    <h4>Фильтр</h4>
+    <div>
+        <select name="set_id" style="width: 33%">
+            <option value="0">Все сеты</option>
+            {% for set in user.userinfo.available_sets %}
+                <option value="{{ set.id }}" {% if set.id == set_id %}selected{% endif %}>{{ set.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="set_id" style="width: 33%">
+            <option value="0">Все таски</option>
+            {% for task in user.userinfo.available_tasks %}
+                <option value="{{ task.id }}" {% if task.id == task_id %}selected{% endif %}>{{ task.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="set_id" style="width: 33%">
+            <option value="0">Все пользователи</option>
+            {% for u in users %}
+                <option value="{{ user.username }}" {% if user.username == username %}selected{% endif %}>{{ user.userinfo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div id="solutions"></div>
+{% endblock %}

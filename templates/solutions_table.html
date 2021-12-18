@@ -1,7 +1,23 @@
+<table class="table" style="margin-top: 30px;">
+        <thead>
+            <th scope="col">id</th>
+            <th scope="col">Пользователь</th>
+            <th scope="col">Задача</th>
+            <th scope="col">Время отправки</th>
+            <th scope="col">Язык</th>
+            <th scope="col">Результат</th>
+        </thead>
+        <tbody id="solutions">
 {% for solution in solutions %}
     <tr>
         <td>
             <b><a href="/solution?solution_id={{ solution.id }}">{{ solution.id }}</a></b>
+        </td>
+        <td>
+            <img src="{{ solution.user.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ solution.user.username }}">{{ solution.user }}</a>
+        </td>
+        <td>
+            <a href="/task?task_id={{ solution.task.id }}">{{ solution.task.name }}</a>
         </td>
         <td>
             {{ solution.time_sent }}
@@ -17,3 +33,16 @@
         </td>
     </tr>
 {% endfor %}
+        </tbody>
+    </table>
+{% if need_pagination %}
+<div style="display: flex; justify-content: flex-end">
+    <table>
+        <tr>
+            {% for num in count_pages %}
+                <td><button class="btn btn-light" id="page_num_{{ num }}" onclick="setPage({{ num }})">{{ num }}</button></td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+{% endif %}

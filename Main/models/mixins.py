@@ -1,8 +1,10 @@
+from functools import cached_property
+
 from SprintLib.utils import get_bytes, write_bytes, delete_file
 
 
 class FileStorageMixin:
-    @property
+    @cached_property
     def text(self):
         return get_bytes(self.fs_id).decode("utf-8")
 

@@ -19,25 +19,19 @@
         document.getElementById('file-upload').value = null;
         document.getElementById('input0').value = "";
     }
+    var page = 1;
+    function setPage(number) {
+        page = number;
+    }
     function doPoll() {
-        jQuery.get('/solutions_table?task_id={{ task.id }}', function(data) {
+        jQuery.get('/solutions_table?task_id={{ task.id }}&username={{ user.username }}&page=' + page.toString(), function(data) {
+            document.getElementById('solutions').innerHTML = data;
+            const name = "page_num_" + page.toString();
+            document.getElementById(name).className = "btn btn-dark";
             jQuery.get('/task_runtime?task_id={{ task.id }}', function(data1) {
-                if (data == 'done' && data1 == 'done')
-                    return
-                if (data != 'done') {
-                    document.getElementById('solutions').innerHTML = data;
-                }
-                if (data1 != 'done') {
-                    document.getElementById('runtime').innerHTML = data1;
-                }
+                document.getElementById('runtime').innerHTML = data1;
                 setTimeout(function() {doPoll()}, 2000);
             })
-        })
-        jQuery.get('/solutions_table?id={{ task.id }}&render=true', function(data) {
-            document.getElementById('solutions').innerHTML = data;
-        })
-        jQuery.get('/task_runtime?id={{ task.id }}&render=true', function(data) {
-            document.getElementById('runtime').innerHTML = data;
         })
     }
 {% endblock %}
@@ -134,15 +128,5 @@
     </form>
     <hr>
     <h2>Решения</h2>
-    <table class="table" style="margin-top: 30px;">
-        <thead>
-            <th scope="col">id</th>
-            <th scope="col">Время отправки</th>
-            <th scope="col">Язык</th>
-            <th scope="col">Результат</th>
-        </thead>
-        <tbody id="solutions">
-
-        </tbody>
-    </table>
+    <div id="solutions"></div>
 {% endblock %}
