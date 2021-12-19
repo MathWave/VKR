@@ -48,7 +48,7 @@ class AccountView(BaseView):
             elif friendship.verified or friendship.from_user == self.request.user:
                 friendship.delete()
             else:
-                if self.request.POST["todo"] == "yes":
+                if self.request.POST["to_do"] == "yes":
                     friendship.verified = True
                     friendship.save()
                     bot.send_message(self.context["account"].userinfo.telegram_chat_id,
