@@ -1,5 +1,8 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 
+from Main.management.commands.bot import bot
+from Main.models import Friendship
 from SprintLib.BaseView import BaseView
 from SprintLib.utils import delete_file, write_bytes
 
@@ -9,7 +12,7 @@ class AccountView(BaseView):
     required_login = True
     endpoint = "account"
 
-    def get(self):
+    def pre_handle(self):
         if "username" in self.request.GET.keys():
             self.context["account"] = User.objects.get(
                 username=self.request.GET["username"]
@@ -17,7 +20,45 @@ class AccountView(BaseView):
         else:
             self.context["account"] = self.request.user
         self.context["owner"] = self.context["account"] == self.request.user
+
+    def get(self):
         self.context["error_message"] = self.request.GET.get("error_message", "")
+        friendship = Friendship.objects.filter(
+            Q(from_user=self.request.user, to_user=self.context["account"])
+            | Q(to_user=self.request.user, from_user=self.context["account"])
+        ).first()
+        if friendship is None:
+            self.context["friendship_status"] = 0
+        elif friendship.verified:
+            self.context["friendship_status"] = 1
+        elif friendship.from_user == self.request.user:
+            self.context["friendship_status"] = 2
+        else:
+            self.context["friendship_status"] = 3
+
+    def post_friendship(self):
+        if "to_do" in self.request.POST:
+            friendship = Friendship.objects.filter(
+                Q(from_user=self.request.user, to_user=self.context["account"])
+                | Q(to_user=self.request.user, from_user=self.context["account"])
+            ).first()
+            if friendship is None:
+                Friendship.objects.create(from_user=self.request.user, to_user=self.context["account"])
+                bot.send_message(self.context["account"].userinfo.telegram_chat_id, f"Пользователь {self.request.user.username} хочет добавить тебя в друзья")
+            elif friendship.verified or friendship.from_user == self.request.user:
+                friendship.delete()
+            else:
+                if self.request.POST["todo"] == "yes":
+                    friendship.verified = True
+                    friendship.save()
+                    bot.send_message(self.context["account"].userinfo.telegram_chat_id,
+                                     f"Пользователь {self.request.user.username} добавил тебя в друзья")
+                else:
+                    friendship.delete()
+                    bot.send_message(self.context["account"].userinfo.telegram_chat_id,
+                                     f"Пользователь {self.request.user.username} отклонил твою заявку")
+        return "/account?username=" + self.request.GET["username"]
+
 
     def post_upload_photo(self):
         if self.request.user.userinfo.has_profile_pic:

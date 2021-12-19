@@ -1,5 +1,8 @@
+from functools import cached_property
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 from Main.models.set import Set
@@ -27,6 +30,13 @@ class UserInfo(models.Model):
     @property
     def has_favourite_language(self):
         return self.favourite_language_id is not None
+
+    @cached_property
+    def friends(self):
+        return User.objects.filter(
+            Q(to_friendship__to_user=self, to_friendship__verified=True)
+            | Q(from_friendship__from_user=self, from_friendship__verified=True)
+        )
 
     @property
     def favourite_language(self):
