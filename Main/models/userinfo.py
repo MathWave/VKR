@@ -35,7 +35,7 @@ class UserInfo(models.Model):
 
     @cached_property
     def friends(self):
-        return Friendship.objects.filter(Q(to_user=self.user) | Q(from_user=self.user))
+        return Friendship.objects.filter(Q(to_user=self.user) | Q(from_user=self.user)).order_by("verified")
 
     @property
     def favourite_language(self):

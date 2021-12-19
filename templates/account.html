@@ -141,7 +141,7 @@
         <h2 style="margin-bottom: 20px;">Друзья</h2>
         <h5>
         {% for friendship in user.userinfo.friends %}
-            <i class="fa fa-user"></i> <a href="/account?username={% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}">{% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}</a><br>
+            <i class="fa fa-user"></i> <a href="/account?username={% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}">{% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}</a>{% if not friendship.verified %}   <i class="fa fa-circle" style="color: blue;"></i> {% endif %}<br>
         {% endfor %}
         </h5>
     {% endif %}
