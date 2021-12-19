@@ -23,7 +23,7 @@
         <div class="col-9">
             <h3>
                 {{ account.userinfo.surname }} {{ account.userinfo.name }}
-                <span style="margin-left: 15px; margin-bottom: 20px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
+                <span style="margin-left: 15px; margin-bottom: 20px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span> <a href="/chat_with?username={{ account.username }}"><i class="fa fa-comments"></i></a>
                 {% if not owner %}
                     <form method="POST">
                         {% csrf_token %}
@@ -131,6 +131,14 @@
             </td>
             <td>
                 <input type="checkbox" name="notification_friends" {% if user.userinfo.notification_friends %}checked{% endif %}>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 200px;">
+                Сообщения в оффлайн
+            </td>
+            <td>
+                <input type="checkbox" name="notification_messages" {% if user.userinfo.notification_messages %}checked{% endif %}>
             </td>
         </tr>
     </table>

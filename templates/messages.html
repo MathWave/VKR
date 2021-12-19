@@ -1,0 +1,33 @@
+{% if need_pagination %}
+<div style="display: flex; justify-content: flex-end">
+    <table>
+        <tr>
+            {% for num in count_pages %}
+                <td><button class="btn btn-light" id="page_num_{{ num }}" onclick="setPage({{ num }})">{{ num }}</button></td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+{% endif %}
+<div class="container">
+    {% for message in messages %}
+        <div class="row" style="margin-bottom: 15px;">
+            {% if message.user == user %}
+                <div class="col-8"></div>
+                <div class="col-4" style="text-align: end; background-color: #b5deec; border-radius: 25px;">
+            {% else %}
+                <div class="col-4" style="background-color: #8ccde2; border-radius: 25px;">
+            {% endif %}
+                <p style="align-self: end; word-wrap: break-word;">{{ message.text }}</p>
+            {% if message.user == user %}
+                </div>
+            {% else %}
+                </div>
+                <div class="col-8">
+
+                </div>
+            {% endif %}
+
+        </div>
+    {% endfor %}
+</div>

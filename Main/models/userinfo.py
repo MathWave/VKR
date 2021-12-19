@@ -26,6 +26,7 @@ class UserInfo(models.Model):
     telegram_chat_id = models.TextField(default="")
     notification_solution_result = models.BooleanField(default=False)
     notification_friends = models.BooleanField(default=False)
+    notification_messages = models.BooleanField(default=False)
     code = models.IntegerField(null=True)
     verified = models.BooleanField(default=False)
 
