@@ -30,6 +30,8 @@ class BaseTester:
             raise TestException("CE")
 
     def test(self, filename):
+        self.solution.test = int(filename)
+        self.solution.save()
         code = self.solution.exec_command(
             f"< {filename} {self.command} > output.txt",
             timeout=self.solution.task.time_limit / 1000,
@@ -97,6 +99,7 @@ class BaseTester:
                     self.test(test.filename)
             self.after_test()
             self.solution.result = CONSTS["ok_status"]
+            self.solution.test = None
             progress = Progress.objects.get(
                 user=self.solution.user, task=self.solution.task
             )

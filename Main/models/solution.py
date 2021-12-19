@@ -19,6 +19,7 @@ class Solution(models.Model):
     language_id = models.IntegerField(default=0)
     time_sent = models.DateTimeField(default=timezone.now)
     result = models.TextField(default=CONSTS["in_queue_status"])
+    test = models.IntegerField(default=None)
 
     @property
     def language(self):
@@ -56,6 +57,22 @@ class Solution(models.Model):
     @property
     def directory(self):
         return "solutions/" + str(self.id)
+
+    @property
+    def number_result(self):
+        if self.test is None:
+            return self.result
+        return f"{self.result} ({self.test})"
+
+    @property
+    def badge_style(self):
+        if self.result == CONSTS["in_queue_status"]:
+            return "secondary"
+        if self.result == CONSTS["ok_status"]:
+            return "success"
+        if self.result == CONSTS["testing_status"]:
+            return "info"
+        return "danger"
 
     @property
     def testing_directory(self):
