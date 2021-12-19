@@ -19,7 +19,7 @@ class Solution(models.Model):
     language_id = models.IntegerField(default=0)
     time_sent = models.DateTimeField(default=timezone.now)
     result = models.TextField(default=CONSTS["in_queue_status"])
-    test = models.IntegerField(default=None)
+    test = models.IntegerField(default=None, null=True)
 
     @property
     def language(self):
