@@ -1,6 +1,5 @@
 from typing import Optional
 
-from django.db import transaction
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -23,7 +22,6 @@ class BaseView:
 
     @classmethod
     def as_view(cls):
-        @transaction.atomic
         def execute(request):
             if request.user.is_authenticated:
                 user_info = request.user.userinfo
