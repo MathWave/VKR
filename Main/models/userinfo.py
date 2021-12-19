@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
+from Main.models.friendship import Friendship
 from Main.models.set import Set
 from Main.models.group import Group
 from Main.models.settask import SetTask
@@ -24,6 +25,7 @@ class UserInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     telegram_chat_id = models.TextField(default="")
     notification_solution_result = models.BooleanField(default=False)
+    notification_friends = models.BooleanField(default=False)
     code = models.IntegerField(null=True)
     verified = models.BooleanField(default=False)
 
@@ -33,10 +35,7 @@ class UserInfo(models.Model):
 
     @cached_property
     def friends(self):
-        return User.objects.filter(
-            Q(to_friendship__to_user=self, to_friendship__verified=True)
-            | Q(from_friendship__from_user=self, from_friendship__verified=True)
-        )
+        return Friendship.objects.filter(Q(to_user=self.user) | Q(from_user=self.user))
 
     @property
     def favourite_language(self):

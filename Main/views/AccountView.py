@@ -44,19 +44,22 @@ class AccountView(BaseView):
             ).first()
             if friendship is None:
                 Friendship.objects.create(from_user=self.request.user, to_user=self.context["account"])
-                bot.send_message(self.context["account"].userinfo.telegram_chat_id, f"Пользователь {self.request.user.username} хочет добавить тебя в друзья")
+                if self.context["account"].userinfo.notification_friends:
+                    bot.send_message(self.context["account"].userinfo.telegram_chat_id, f"Пользователь {self.request.user.username} хочет добавить тебя в друзья")
             elif friendship.verified or friendship.from_user == self.request.user:
                 friendship.delete()
             else:
                 if self.request.POST["to_do"] == "yes":
                     friendship.verified = True
                     friendship.save()
-                    bot.send_message(self.context["account"].userinfo.telegram_chat_id,
-                                     f"Пользователь {self.request.user.username} добавил тебя в друзья")
+                    if self.context["account"].userinfo.notification_friends:
+                        bot.send_message(self.context["account"].userinfo.telegram_chat_id,
+                                         f"Пользователь {self.request.user.username} добавил тебя в друзья")
                 else:
                     friendship.delete()
-                    bot.send_message(self.context["account"].userinfo.telegram_chat_id,
-                                     f"Пользователь {self.request.user.username} отклонил твою заявку")
+                    if self.context["account"].userinfo.notification_friends:
+                        bot.send_message(self.context["account"].userinfo.telegram_chat_id,
+                                         f"Пользователь {self.request.user.username} отклонил твою заявку")
         return "/account?username=" + self.request.GET["username"]
 
 
