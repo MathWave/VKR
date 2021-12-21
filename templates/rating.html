@@ -8,6 +8,7 @@
                 <th scope="col" style="text-align: center; vertical-align: middle; width: 70px;">#</th>
                 <th scope="col" style="vertical-align: middle;">Пользователь</th>
                 <th scope="col" style="vertical-align: middle;">Дата регистрации</th>
+                <th scope="col" style="vertical-align: middle; text-align: center;">Решено задач</th>
                 <th scope="col" style="text-align: center; vertical-align: middle;">Рейтинг</th>
             </tr>
         </thead>
@@ -26,6 +27,9 @@
                     </td>
                     <td style="vertical-align: middle;">
                         {{ u.date_joined.date }}
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        {{ u.userinfo.tasks_solved }}
                     </td>
                     <td style="text-align: center; vertical-align: middle;">
                         {{ u.userinfo.rating }}

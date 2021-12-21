@@ -1,0 +1,1 @@
+ssh root@77.246.159.65 --password k5lUgVb66FnV

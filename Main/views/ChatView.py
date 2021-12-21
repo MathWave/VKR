@@ -1,7 +1,5 @@
 from typing import Optional
 
-from django.utils import timezone
-
 from Main.management.commands.bot import bot
 from Main.models import Chat, Message
 from Sprint.settings import CONSTS
@@ -25,7 +23,6 @@ class ChatView(BaseView):
             user=self.request.user,
             chat=self.entities.chat,
             text=self.request.POST["text"],
-            time_sent=timezone.now(),
         )
         if (
             self.entities.chat.user.userinfo.activity_status != CONSTS["online_status"]

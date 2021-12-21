@@ -31,6 +31,11 @@ class UserInfo(models.Model):
     verified = models.BooleanField(default=False)
 
     @property
+    def tasks_solved(self):
+        fltr = Task.objects.filter(solution__result=CONSTS["ok_status"], solution__user=self.user).distinct()
+        return len(fltr)
+
+    @property
     def has_favourite_language(self):
         return self.favourite_language_id is not None
 
