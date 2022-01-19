@@ -80,3 +80,15 @@ services:
     volumes:
       - /sprint-data/solutions:/usr/src/app/solutions
       - /var/run/docker.sock:/var/run/docker.sock
+
+  notify-admin:
+    image: mathwave/sprint-repo:sprint
+    command: ./manage.py success_deploy
+    depends_on:
+      - migrations
+      - web
+      - worker
+      - storage
+      - rabbitmq
+      - bot
+      - postgres
