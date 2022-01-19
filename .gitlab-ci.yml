@@ -21,8 +21,6 @@ build:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
     - docker image rm mathwave/sprint-repo:sprint
     - docker pull mathwave/sprint-repo:sprint
-  script:
-    - docker-compose up -d --scale worker=2
   after_script:
     - docker rm sprint_notify-admin_1
     - docker rm sprint_migrations_1
@@ -33,6 +31,8 @@ deploy-dev:
   stage: deploy-dev
   tags:
     - main
+  script:
+    - docker-compose up -d --scale worker=2
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: on_success
