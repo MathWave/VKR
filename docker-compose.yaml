@@ -29,7 +29,7 @@ services:
     environment:
       PORT: $PORT
       HOST: $HOST
-    command: scripts/runserver.sh
+    command: ./manage.py runserver 0.0.0.0:$PORT --noreload
     ports:
       - "${PORT}:${PORT}"
     depends_on:
@@ -40,7 +40,7 @@ services:
   storage:
     restart: always
     image: mathwave/sprint-repo:sprint
-    command: python manage.py storage
+    command: ./manage.py storage
     ports:
       - "5555:5555"
     volumes:
@@ -51,7 +51,7 @@ services:
     restart: always
     environment:
       HOST: $HOST
-    command: python manage.py bot
+    command: ./manage.py bot
     depends_on:
       - web
 
@@ -68,7 +68,7 @@ services:
     restart: always
     image: mathwave/sprint-repo:sprint
     privileged: true
-    command: python manage.py receive
+    command: ./manage.py receive
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
       HOST: $HOST
