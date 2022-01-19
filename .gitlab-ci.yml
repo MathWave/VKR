@@ -22,7 +22,7 @@ build:
     - docker image rm mathwave/sprint-repo:sprint
   script:
     - docker pull mathwave/sprint-repo:sprint
-    - docker-compose up -d
+    - docker-compose up -d --scale worker=2
   after_script:
     - docker rm sprint_notify-admin_1
     - docker rm sprint_migrations_1
