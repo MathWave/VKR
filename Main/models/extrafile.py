@@ -13,6 +13,11 @@ class ExtraFile(FileStorageMixin, models.Model):
     test_number = models.IntegerField(null=True)
     fs_id = models.IntegerField(null=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['task'])
+        ]
+
     @property
     def can_be_sample(self):
         return (

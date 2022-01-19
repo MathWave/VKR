@@ -15,6 +15,11 @@ class Progress(models.Model):
     score = models.IntegerField(default=0)
     finished = models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'task'])
+        ]
+
     @property
     def time(self):
         if not self.finished:

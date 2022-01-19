@@ -21,6 +21,12 @@ class Solution(models.Model):
     result = models.TextField(default=CONSTS["in_queue_status"])
     test = models.IntegerField(default=None, null=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['task', 'user', '-time_sent']),
+            models.Index(fields=['task', '-time_sent'])
+        ]
+
     @property
     def language(self):
         return languages[self.language_id]

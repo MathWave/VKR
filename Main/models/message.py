@@ -11,3 +11,8 @@ class Message(models.Model):
     text = models.TextField()
     read = models.BooleanField(default=False)
     time_sent = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['chat', '-time_sent'])
+        ]

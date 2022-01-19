@@ -18,3 +18,4 @@ from Main.views.SolutionsView import SolutionsView
 from Main.views.ChatView import ChatView
 from Main.views.ChatWithView import ChatWithView
 from Main.views.MessagesView import MessagesView
+from Main.views.SetView import SetView
