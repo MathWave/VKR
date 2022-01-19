@@ -23,6 +23,9 @@ build:
   script:
     - docker pull mathwave/sprint-repo:sprint
     - docker-compose up -d
+  after_script:
+    - docker rm sprint_notify-admin_1
+    - docker rm sprint_migrations_1
 
 deploy-dev:
   extends:
