@@ -17,6 +17,12 @@ services:
     ports:
       - "5432:5432"
 
+  migrations:
+    image: mathwave/sprint-repo:sprint
+    command: ./manage.py migrate
+    depends_on:
+      - postgres
+
   web:
     image: mathwave/sprint-repo:sprint
     restart: always
@@ -27,7 +33,7 @@ services:
     ports:
       - "${PORT}:${PORT}"
     depends_on:
-      - postgres
+      - migrations
       - rabbitmq
       - storage
 
@@ -69,7 +75,7 @@ services:
     depends_on:
       - web
       - rabbitmq
-      - postgres
+      - migrations
       - storage
     volumes:
       - /sprint-data/solutions:/usr/src/app/solutions
