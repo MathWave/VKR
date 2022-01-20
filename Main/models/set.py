@@ -1,6 +1,7 @@
 from functools import cached_property
 
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 
@@ -14,6 +15,8 @@ class Set(models.Model):
     opened = models.BooleanField(default=False)
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(default=timezone.now)
+    editors = ArrayField(models.TextField(), default=list)
+
 
     @property
     def available(self):

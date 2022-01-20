@@ -11,7 +11,6 @@ class SetSettingsView(BaseView):
 
     def get(self):
         self.context['settasks'] = SetTask.objects.filter(set=self.entities.set).order_by('name')
-        self.context['tasks'] = Task.objects.filter(Q(public=True) | Q(creator=self.request.user) | Q(editors__in=self.request.user.username)).order_by('name')
 
     def post_save(self):
         for key, value in self.request.POST.items():

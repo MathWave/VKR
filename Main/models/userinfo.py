@@ -49,30 +49,13 @@ class UserInfo(models.Model):
             return None
         return languages[self.favourite_language_id]
 
-    def _append_task(self, task, tasks):
-        if task.creator == self.user or task.public or self.user.is_superuser:
-            tasks.append(task)
-            return
-        for st in SetTask.objects.filter(task=task):
-            if st.set.public:
-                tasks.append(task)
-                return
-            for group in Group.objects.filter(sets=st.set):
-                for sub in Subscription.objects.filter(group=group):
-                    if sub.user == self.user:
-                        tasks.append(task)
-                        return
-
-    @property
+    @cached_property
     def available_tasks(self):
-        tasks = []
-        for task in Task.objects.all():
-            self._append_task(task, tasks)
-        return sorted(tasks, key=lambda x: x.time_estimation)
+        return Task.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__in=self.user.username)).order_by('name')
 
     @property
     def available_sets(self):
-        return Set.objects.all()
+        return Set.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__in=self.user.username)).order_by('name')
 
     @property
     def place(self):

@@ -29,7 +29,7 @@
                                 <div class="col-12">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="edit">
-                                    {% for task in tasks %}
+                                    {% for task in user.userinfo.available_tasks %}
                                         <input type="checkbox" {% if task in set.tasks %}checked{% endif %} name="task_{{ task.id }}"> <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
                                     {% endfor %}
                                 </div>
