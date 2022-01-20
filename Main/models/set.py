@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -21,6 +23,6 @@ class Set(models.Model):
             and (self.end_time is None or timezone.now() <= self.end_time)
         )
 
-    @property
+    @cached_property
     def tasks(self):
         return Task.objects.filter(settasks__set=self).order_by("settasks__name")

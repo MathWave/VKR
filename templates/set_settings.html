@@ -3,9 +3,45 @@
 {% block title %}{{ set.name }}{% endblock %}
 
 {% block main %}
-    <h2>{{ set.name }}</h2>
-    <h4>Таски</h4>
-    {% for settask in set.settasks.all %}
-        <input name="settask_{{ settask.id }}" value="{{ settask.name }}"> {{ settask.task.name }}<br>
-    {% endfor %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save">
+        <h2><input name="name" value="{{ set.name }}"></h2>
+        <h4>Таски</h4>
+        {% for settask in settasks %}
+            <input name="settask_{{ settask.id }}" style="width: 30px;" value="{{ settask.name }}"> {% if settask.task.creator == user or user.username in settask.task.editors %}<a href="/admin/task?task_id={{ settask.task.id }}">{{ settask.task.name }}</a>{% else %}{{ settask.task.name }}{% endif %}<br>
+        {% endfor %}
+        <button class="btn btn-light" type="submit" style="margin-top: 20px;"><i class="fa fa-save"></i> Установить</button>&emsp;<button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#example"><i class="fa fa-pencil"></i> Редактировать</button>
+    </form>
+    <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="POST">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Редактировать набор задач</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="edit">
+                                    {% for task in tasks %}
+                                        <input type="checkbox" {% if task in set.tasks %}checked{% endif %} name="task_{{ task.id }}"> <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}
