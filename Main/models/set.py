@@ -13,10 +13,9 @@ class Set(models.Model):
     public = models.BooleanField(default=False)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     opened = models.BooleanField(default=False)
-    start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField(default=timezone.now)
+    start_time = models.DateTimeField(default=None, null=True)
+    end_time = models.DateTimeField(default=None, null=True)
     editors = ArrayField(models.TextField(), default=list)
-
 
     @property
     def available(self):
