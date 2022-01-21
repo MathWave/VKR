@@ -14,11 +14,15 @@ class AccessError(Exception):
 
 class BaseView:
     request: WSGIRequest = None
-    context: dict = {}
-    entities = EntityStorage()
+    context: Optional[dict] = None
+    entities: Optional[EntityStorage] = None
     required_login: Optional[bool] = None
     view_file: Optional[str] = None
     endpoint: Optional[str] = None
+
+    def __init__(self):
+        self.context = {}
+        self.entities = EntityStorage()
 
     @classmethod
     def as_view(cls):
