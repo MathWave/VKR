@@ -2,11 +2,18 @@
 
 {% block title %}{{ set.name }}{% endblock %}
 
+{% block scripts %}
+    function handle(value) {
+        const elem = document.getElementById(value);
+        elem.hidden = !elem.hidden;
+    }
+{% endblock %}
+
 {% block main %}
     <form method="POST">
         {% csrf_token %}
         <input type="hidden" name="action" value="save">
-        <h2><input name="name" value="{{ set.name }}"></h2>
+        <h3><input name="name" value="{{ set.name }}"></h3>
         <h4>Таски</h4>
         {% for settask in settasks %}
             <input name="settask_{{ settask.id }}" style="width: 30px;" value="{{ settask.name }}"> {% if settask.task.creator == user or user.username in settask.task.editors %}<a href="/admin/task?task_id={{ settask.task.id }}">{{ settask.task.name }}</a>{% else %}{{ settask.task.name }}{% endif %}<br>
@@ -45,18 +52,22 @@
         </div>
     </div>
     <hr><hr>
-    <h3>Время доступа</h3>
-    <h5>
+    <h3>Настройки доступа</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="time">
+        Набор открыт для решения&emsp;<input type="checkbox" name="opened" {% if set.opened %}checked{% endif %}><br>
+        Набор доступен всем пользователям&emsp;<input type="checkbox" name="public" {% if set.public %}checked{% endif %}>
         <div class="row">
             <div class="col-2">
                 <p>
                     Время начала<br>
                 </p>
                 <p>
-                    Без ограничений&emsp;<input type="checkbox">
+                    Без ограничений&emsp;<input type="checkbox" name="start_time_check" onclick="handle('start_time');" {% if not set.start_time %}checked{% endif %}>
                 </p>
-                <p>
-                    <input type="datetime-local" value="">
+                <p id="start_time" {% if not set.start_time %}hidden{% endif %}>
+                    <input type="datetime-local" name="start_time" value="{{ start_time }}">
                 </p>
             </div>
             <div class="col-2">
@@ -64,12 +75,14 @@
                     Время окончания<br>
                 </p>
                 <p>
-                    Без ограничений&emsp;<input type="checkbox">
+                    Без ограничений&emsp;<input type="checkbox" name="end_time_check" onclick="handle('end_time')" {% if not set.end_time %}checked{% endif %}>
                 </p>
-                <p>
-                    <input type="datetime-local">
+                <p id="end_time" {% if not set.end_time %}hidden{% endif %}>
+                    <input type="datetime-local" name="end_time" value="{{ end_time }}">
                 </p>
             </div>
         </div>
-    </h5>
+        <button class="btn btn-light"><i class="fa fa-save"></i> Сохранить</button>
+    </form>
+    <hr><hr>
 {% endblock %}

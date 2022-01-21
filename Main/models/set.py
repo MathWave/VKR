@@ -18,6 +18,18 @@ class Set(models.Model):
     editors = ArrayField(models.TextField(), default=list)
 
     @property
+    def start_time_format(self):
+        if self.start_time is None:
+            return None
+        return self.start_time.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M")
+
+    @property
+    def end_time_format(self):
+        if self.end_time is None:
+            return None
+        return self.end_time.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M")
+
+    @property
     def available(self):
         return (
             self.opened
