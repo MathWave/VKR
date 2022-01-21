@@ -45,6 +45,8 @@
 
 {% block main %}
     <div id="runtime"></div>
+<div class="row">
+<div class="col">
 {% if task.legend %}
 <h4>Легенда</h4>
 {% autoescape off %}
@@ -107,6 +109,16 @@
                 <hr>
             {% endfor %}
 {% endif %}
+</div>
+{% if in_set %}
+    <div class="col-2">
+        <h5><a href="/set?set_id={{ set.id }}">{{ set.name }}</a></h5>
+        {% for settask in setTask.set.settasks_ordered %}
+            <a href="/task?setTask_id={{ settask.id }}">{% if task == settask.task %}<b>{% endif %}{{ settask.name }}. {{ settask.task.name }}{% if task == settask.task %}</b>{% endif %}</a><br>
+        {% endfor %}
+    </div>
+{% endif %}
+</div>
     <h2>Отправить решение</h2>
     <table style="margin-bottom: 10px;">
         <tr>

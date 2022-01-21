@@ -41,7 +41,7 @@ class BaseView:
                     model_name = key.rstrip("_id")
                     c.entities.add(
                         model_name,
-                        eval(model_name.capitalize()).objects.get(
+                        eval(model_name[0].upper() + model_name[1:]).objects.get(
                             id=int(request.GET[key])
                         ),
                     )

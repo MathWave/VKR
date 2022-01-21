@@ -40,3 +40,7 @@ class Set(models.Model):
     @cached_property
     def tasks(self):
         return Task.objects.filter(settasks__set=self).order_by("settasks__name")
+
+    @cached_property
+    def settasks_ordered(self):
+        return self.settasks.order_by('name')

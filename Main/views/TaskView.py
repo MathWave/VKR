@@ -17,8 +17,12 @@ class TaskView(BaseView):
             user=self.request.user, task=self.entities.task
         )
         self.context["progress"] = progress
+        self.context["in_set"] = hasattr(self.entities, 'setTask')
 
     def pre_handle(self):
+        if hasattr(self.entities, 'setTask'):
+            self.entities.add('task', self.entities.setTask.task)
+            self.entities.add('set', self.entities.setTask.set)
         if self.request.method == "GET":
             return
         self.solution = Solution.objects.create(
