@@ -2,6 +2,8 @@
 
 {% block title %}Задачи{% endblock %}
 
+{% load filters %}
+
 {% block main %}
     <table>
         <tr>
@@ -43,7 +45,9 @@
             {% endif %}
         </tr>
     </table>
-    {% for task in tasks %}
-        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a> {% if task.creator == user or user.username in task.editors %}<a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?task_id={{ task.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
+    {% for task in user.userinfo.available_tasks %}
+        {% with result=user|solved:task %}
+            <a href="/task?task_id={{ task.id }}" style="color: {% if result %}green{% else %}{% if result == False %}red{% else %}#307df6{% endif %}{% endif %};"">{{ task.name }}</a> {% if task.creator == user or user.username in task.editors %}<a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?task_id={{ task.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
+        {% endwith %}
     {% endfor %}
 {% endblock %}

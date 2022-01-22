@@ -7,9 +7,6 @@ class TasksView(BaseView):
     required_login = True
     endpoint = "tasks"
 
-    def get(self):
-        self.context["tasks"] = Task.objects.filter(public=True).order_by('-time_estimation')
-
     def post(self):
         task_name = self.request.POST["name"]
         task = Task.objects.create(name=task_name, creator=self.request.user)

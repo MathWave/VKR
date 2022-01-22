@@ -13,7 +13,7 @@
     <form method="POST">
         {% csrf_token %}
         <input type="hidden" name="action" value="save">
-        <h3><input name="name" value="{{ set.name }}"></h3>
+        <h3><input name="name" placeholder="Название" value="{{ set.name }}"></h3>
         <textarea id="input0" style="width: 1000px; height: 400px; resize: none;" name="description" placeholder="Описание">{{ set.description }}</textarea>
         <h4>Таски</h4>
         {% for settask in settasks %}

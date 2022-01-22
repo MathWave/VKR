@@ -4,11 +4,14 @@
 
 {% block main %}
     <h3>{{ set.name }}</h3>
+    <p>{{ set.description }}</p>
     <h4>Таски</h4>
     {% for settask in set.settasks_ordered %}
         <a href="/task?setTask_id={{ settask.id }}">{{ settask.name }}. {{ settask.task.name }}</a><br>
     {% endfor %}
     <hr><hr>
-    Время начала: {% if not set.start_time %}без ограничений{% else %}{{ set.start_time_moscow }}{% endif %}<br>
-    Время окончания: {% if not set.end_time %}без ограничений{% else %}{{ set.end_time_moscow }}{% endif %}
+    Время начала: <b>{% if not set.start_time %}без ограничений{% else %}{{ set.start_time_moscow }}{% endif %}</b><br>
+    Время окончания: <b>{% if not set.end_time %}без ограничений{% else %}{{ set.end_time_moscow }}{% endif %}</b><br>
+    Публичность: <b>{% if set.public %}публично{% else %}приватно{% endif %}</b><br>
+    Открытость: <b>{% if set.opened %}открыто{% else %}закрыто{% endif %} для просмотра и решения</b><br>
 {% endblock %}
