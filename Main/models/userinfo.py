@@ -7,9 +7,6 @@ from django.utils import timezone
 
 from Main.models.friendship import Friendship
 from Main.models.set import Set
-from Main.models.group import Group
-from Main.models.settask import SetTask
-from Main.models.subscription import Subscription
 from Main.models.task import Task
 from Sprint.settings import CONSTS
 from SprintLib.language import languages
@@ -29,6 +26,7 @@ class UserInfo(models.Model):
     notification_messages = models.BooleanField(default=False)
     code = models.IntegerField(null=True)
     verified = models.BooleanField(default=False)
+    teacher = models.BooleanField(default=False)
 
     @property
     def tasks_solved(self):
@@ -69,8 +67,7 @@ class UserInfo(models.Model):
 
     @property
     def can_create(self):
-        # todo:
-        return self.user.is_superuser
+        return self.user.is_superuser or self.teacher
 
     @property
     def has_profile_pic(self):
