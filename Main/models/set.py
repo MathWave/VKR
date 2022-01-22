@@ -16,18 +16,31 @@ class Set(models.Model):
     start_time = models.DateTimeField(default=None, null=True)
     end_time = models.DateTimeField(default=None, null=True)
     editors = ArrayField(models.TextField(), default=list)
+    description = models.TextField(default='')
+
+    @property
+    def start_time_moscow(self):
+        if self.start_time is None:
+            return None
+        return self.start_time.astimezone(timezone.get_current_timezone())
+
+    @property
+    def end_time_moscow(self):
+        if self.end_time is None:
+            return None
+        return self.end_time.astimezone(timezone.get_current_timezone())
 
     @property
     def start_time_format(self):
         if self.start_time is None:
             return None
-        return self.start_time.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M")
+        return self.start_time_moscow.strftime("%Y-%m-%dT%H:%M")
 
     @property
     def end_time_format(self):
         if self.end_time is None:
             return None
-        return self.end_time.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M")
+        return self.end_time_moscow.strftime("%Y-%m-%dT%H:%M")
 
     @property
     def available(self):

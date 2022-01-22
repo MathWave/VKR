@@ -8,4 +8,7 @@
     {% for settask in set.settasks_ordered %}
         <a href="/task?setTask_id={{ settask.id }}">{{ settask.name }}. {{ settask.task.name }}</a><br>
     {% endfor %}
+    <hr><hr>
+    Время начала: {% if not set.start_time %}без ограничений{% else %}{{ set.start_time_moscow }}{% endif %}<br>
+    Время окончания: {% if not set.end_time %}без ограничений{% else %}{{ set.end_time_moscow }}{% endif %}
 {% endblock %}

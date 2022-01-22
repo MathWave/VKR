@@ -44,6 +44,7 @@ class SetSettingsView(BaseView):
                 st.name = value
                 st.save()
         self.current_set.name = self.request.POST["name"]
+        self.current_set.description = self.request.POST['description']
         self.current_set.save()
         return "/admin/set?set_id=" + str(self.current_set.id)
 
