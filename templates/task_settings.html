@@ -22,7 +22,32 @@
 {% endblock %}
 
 {% block main %}
-    <h3 style="margin-bottom: 40px;">Настройки задачи</h3>
+    <h3 style="margin-bottom: 40px;">Настройки задачи <a data-toggle="modal" data-target="#exampleModalLongcheck"><i class="fa fa-eye"></i></a></h3>
+    <div class="modal fade bd-example-modal-lg" id="exampleModalLongcheck" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlecheck" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitlecheck">Предпросмотр</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <iframe src="/task?task_id={{ task.id }}" style="width: 100%; height: 1000px;" embedded=true></iframe>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                        <input id="action_create" type="hidden" name="action" value="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
     <form method="POST">
         {% csrf_token %}
         <table style="width: 100%;">

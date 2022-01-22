@@ -65,7 +65,9 @@ class BaseView:
                     if data is not None:
                         return data
                 context = {**context, **c.context}
-                return render(request, c.view_file, context)
+                res = render(request, c.view_file, context)
+                res.headers['X-Frame-Options'] = 'ALLOW'
+                return res
             except AccessError:
                 return HttpResponseRedirect("/")
 
