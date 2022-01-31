@@ -4,4 +4,24 @@
 
 {% block main %}
     <h2>Мои группы</h2>
+    <hr><hr>
+    <h2>Топ задач сегодня</h2>
+    {% for task in top_tasks_today %}
+        <a href="/task?task_id={{ task.id }}">{{ task.name }} ({{ task.count }})</a>&emsp;<span class="badge badge-{{ task.solution.badge_style }}">{{ task.solution.number_result }}</span><br>
+    {% endfor %}
+    <hr><hr>
+    <h2>У тебя были попытки, попробуй решить задачи еще раз</h2>
+    {% for task in undone_tasks %}
+        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a>&emsp;<span class="badge badge-{{ task.solution.badge_style }}">{{ task.solution.number_result }}</span><br>
+    {% endfor %}
+    <hr><hr>
+    <h2>Новые задачи</h2>
+    {% for task in new_tasks %}
+        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
+    {% endfor %}
+    <hr><hr>
+    <h2>Топ пользователей</h2>
+    {% for u in top_users %}
+        <a href="/account?username={{ u.user.username }}">{{ u.place }}. <img src="{{ u.profile_pic_url }}" width="50px" height="50px" style="border-radius: 50%; margin-right: 10px;">{{ u.user.username }} ({{ u.rating }})</a><br><br>
+    {% endfor %}
 {% endblock %}
