@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
