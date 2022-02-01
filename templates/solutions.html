@@ -6,7 +6,7 @@
         page = number;
     }
     function doPoll() {
-        jQuery.get('/solutions_table?task_id={{ task.id }}&page=' + page.toString(), function(data) {
+        jQuery.get('/solutions_table?{% if task_id %}task_id={{ task.id }}{% else %}set_id={{ set.id }}{% endif %}&page=' + page.toString(), function(data) {
             var e = document.getElementById('solutions');
             if (e.innerHTML !== data)
                 e.innerHTML = data;
@@ -24,6 +24,7 @@
 
 {% block main %}
     <h2>Решения</h2>
+    <!--
     <h4>Фильтр (пока недоступная опция)</h4>
     <div>
         <select name="set_id" style="width: 33%">
@@ -45,5 +46,6 @@
             {% endfor %}
         </select>
     </div>
+    -->
     <div id="solutions"></div>
 {% endblock %}

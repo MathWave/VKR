@@ -4,6 +4,9 @@
 
 {% block main %}
     <h2>Мои группы</h2>
+    {% for group in groups %}
+        <a href="/group?group_id={{ group.id }}">{{ group.name }}</a>
+    {% endfor %}
     <hr><hr>
     <h2>Топ задач сегодня</h2>
     {% for task in top_tasks_today %}

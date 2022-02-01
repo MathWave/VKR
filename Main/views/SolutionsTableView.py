@@ -14,16 +14,10 @@ class SolutionsTableView(BaseView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.filters = [
-            self.filter_user,
-            self.filter_task,
             self.filter_set,
+            self.filter_task,
         ]
         self.queryset = Solution.objects.all()
-
-    def filter_user(self, queryset: QuerySet):
-        if 'username' in self.request.GET:
-            return queryset.filter(user__username=self.request.GET["username"])
-        return queryset
 
     def filter_task(self, queryset: QuerySet):
         if 'task_id' in self.request.GET:
@@ -32,7 +26,7 @@ class SolutionsTableView(BaseView):
 
     def filter_set(self, queryset: QuerySet):
         if 'set_id' in self.request.GET:
-            return queryset.filter()
+            return queryset.filter(task__settasks__set_id=self.request.GET['set_id']).distinct()
         return queryset
 
     def pre_handle(self):

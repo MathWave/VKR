@@ -19,3 +19,4 @@ from Main.views.ChatView import ChatView
 from Main.views.ChatWithView import ChatWithView
 from Main.views.MessagesView import MessagesView
 from Main.views.SetView import SetView
+from Main.views.GroupView import GroupView

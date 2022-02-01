@@ -1,9 +1,9 @@
 from random import sample
 
-from django.db.models import Count, Max
+from django.db.models import Count, Max, Q
 from django.utils import timezone
 
-from Main.models import Task, UserInfo, Solution
+from Main.models import Task, UserInfo, Solution, Group
 from SprintLib.BaseView import BaseView
 
 
@@ -29,3 +29,4 @@ class MainView(BaseView):
             setattr(task, 'solution', Solution.objects.filter(user=self.request.user, task=task).first())
         new_tasks = set(Task.objects.filter(public=True)) - set(all_tasks)
         self.context['new_tasks'] = sample(new_tasks, k=min(5, len(new_tasks)))
+        self.context['groups'] = Group.objects.filter(Q(editors__in=self.request.user.username) | Q(creator=self.request.user) | Q(users=self.request.user)).distinct()

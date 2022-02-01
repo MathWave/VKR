@@ -37,6 +37,10 @@ class UserInfo(models.Model):
     def has_favourite_language(self):
         return self.favourite_language_id is not None
 
+    @property
+    def verified_friends(self):
+        return User.objects.filter(Q(to_friendship__from_user=self.user) | Q(from_friendship__to_user=self.user))
+
     @cached_property
     def friends(self):
         return Friendship.objects.filter(Q(to_user=self.user) | Q(from_user=self.user)).order_by("verified")
