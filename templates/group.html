@@ -8,7 +8,7 @@
     {% for set in group.sets.all %}
         <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
     {% endfor %}
-    {% if group.creator == user or user.username in user.editors %}
+    {% if group.creator == user or user.username in group.editors %}
         <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#example"><i class="fa fa-pencil"></i> Редактировать</button>
         <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -47,7 +47,7 @@
     {% for u in group.users.all %}
         <img src="{{ u.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ u.username }}">{{ u.username }}</a><br><br>
     {% endfor %}
-    {% if group.creator == user or user.username in user.editors %}
+    {% if group.creator == user or user.username in group.editors %}
         <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#exampleU"><i class="fa fa-pencil"></i> Редактировать</button>
         <div class="modal fade" id="exampleU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleU" aria-hidden="true">
         <div class="modal-dialog" role="document">
