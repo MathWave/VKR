@@ -5,9 +5,15 @@
     {% if group.creator %}Владелец группы: <img src="{{ group.creator.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ group.creator.username }}">{{ group.creator.username }}</a> {% endif %}
     <hr><hr>
     <h2>Сеты</h2>
+    {% if group.creator == user or user.username in group.editors %}
     {% for set in group.sets.all %}
         <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
     {% endfor %}
+    {% else %}
+        {% for set in group.available_sets %}
+        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
+    {% endfor %}
+    {% endif %}
     {% if group.creator == user or user.username in group.editors %}
         <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#example"><i class="fa fa-pencil"></i> Редактировать</button>
         <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
