@@ -30,3 +30,7 @@ class MainView(BaseView):
         new_tasks = set(Task.objects.filter(public=True)) - set(all_tasks)
         self.context['new_tasks'] = sample(new_tasks, k=min(5, len(new_tasks)))
         self.context['groups'] = Group.objects.filter(Q(editors__in=self.request.user.username) | Q(creator=self.request.user) | Q(users=self.request.user)).distinct()
+
+    def post(self):
+        group = Group.objects.create(name=self.request.POST['name'], creator=self.request.user)
+        return '/group?group_id=' + str(group.id)

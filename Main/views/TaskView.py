@@ -2,7 +2,7 @@ import io
 from zipfile import ZipFile
 
 from Main.models import Solution, Progress, SolutionFile
-from SprintLib.BaseView import BaseView
+from SprintLib.BaseView import BaseView, AccessError
 from SprintLib.queue import send_testing
 from SprintLib.utils import write_bytes
 
@@ -23,6 +23,9 @@ class TaskView(BaseView):
         if hasattr(self.entities, 'setTask'):
             self.entities.add('task', self.entities.setTask.task)
             self.entities.add('set', self.entities.setTask.set)
+        else:
+            if not self.entities.task.public and not self.entities.task.creator == self.request.user and not self.request.user.username in self.entities.task.editors:
+                raise AccessError()
         if self.request.method == "GET":
             return
         self.solution = Solution.objects.create(

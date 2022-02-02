@@ -3,9 +3,48 @@
 {% block title %}Главная{% endblock %}
 
 {% block main %}
-    <h2>Мои группы</h2>
+    <table>
+        <tr>
+            <td>
+                <h2>Мои группы</h2>
+            </td>
+            {% if user.userinfo.can_create %}
+                <td>
+                    <button style="margin-left: 20px;" class="btn btn-success" data-toggle="modal" data-target="#example"><i class="fa fa-plus"></i></button>
+                <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+              <form method="POST">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Создать новую группу</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                            {% csrf_token %}
+                            <input type="text" name="name" placeholder="Имя группы">
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Создать</button>
+                  </div>
+                </div>
+              </form>
+              </div>
+            </div>
+                </td>
+            {% endif %}
+        </tr>
+    </table>
     {% for group in groups %}
-        <a href="/group?group_id={{ group.id }}">{{ group.name }}</a>
+        <a href="/group?group_id={{ group.id }}">{{ group.name }}</a><br>
     {% endfor %}
     <hr><hr>
     <h2>Топ задач сегодня</h2>
