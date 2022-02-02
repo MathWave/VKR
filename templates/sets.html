@@ -44,6 +44,6 @@
         </tr>
     </table>
     {% for set in user.userinfo.available_sets %}
-        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a> {% if set.creator == user %}<a href="/admin/set?set_id={{ set.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?set_id={{ set.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
+        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a> {% if set.creator == user or user.username in set.editors %}<a href="/admin/set?set_id={{ set.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?set_id={{ set.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
     {% endfor %}
 {% endblock %}

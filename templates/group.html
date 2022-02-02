@@ -7,7 +7,7 @@
     <h2>Сеты</h2>
     {% if group.creator == user or user.username in group.editors %}
     {% for set in group.sets.all %}
-        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
+        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a> {% if set.creator == user or user.username in set.editors %}<a href="/admin/set?set_id={{ set.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?set_id={{ set.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
     {% endfor %}
     {% else %}
         {% for set in group.available_sets %}
