@@ -1,7 +1,6 @@
 from django.http import HttpResponse
-from django.utils import timezone
 
-from Main.models import ExtraFile, Progress
+from Main.models import ExtraFile
 from SprintLib.BaseView import BaseView, AccessError
 
 
@@ -11,14 +10,8 @@ class TaskSettingsView(BaseView):
     endpoint = "admin/task"
 
     def pre_handle(self):
-        if self.entities.task not in self.request.user.userinfo.available_tasks:
+        if self.request.user != self.entities.task.creator and self.request.user.username not in self.entities.task.editors:
             raise AccessError()
-        if self.request.method == "POST":
-            for progress in Progress.objects.filter(
-                task=self.entities.task, finished=False
-            ):
-                progress.start_time = timezone.now()
-                progress.save()
 
     def get(self):
         self.context["error_message"] = self.request.GET.get("error_message", "")
