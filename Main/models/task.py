@@ -26,7 +26,7 @@ class Task(models.Model):
 
     @property
     def tests(self):
-        return ExtraFile.objects.filter(task=self, is_test=True)
+        return ExtraFile.objects.filter(task=self, is_test=True).order_by('filename')
 
     @property
     def samples(self):
