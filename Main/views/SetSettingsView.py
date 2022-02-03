@@ -93,7 +93,7 @@ class SetSettingsView(BaseView):
                 i = '_'.join(key.split("_")[1:])
                 if i not in current_users:
                     self.entities.set.editors.append(i)
-        to_delete = [i for i in current_users if "user_" + i not in self.request.POST]
+        to_delete = [i for i in current_users if "user_" + i not in self.request.POST and i != self.request.user.username]
         for t in to_delete:
             self.entities.set.editors.remove(t)
         self.entities.set.save()

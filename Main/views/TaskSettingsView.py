@@ -96,7 +96,7 @@ class TaskSettingsView(BaseView):
                 i = '_'.join(key.split("_")[1:])
                 if i not in current_users:
                     self.entities.task.editors.append(i)
-        to_delete = [i for i in current_users if "user_" + i not in self.request.POST]
+        to_delete = [i for i in current_users if "user_" + i not in self.request.POST and i != self.request.user.username]
         for t in to_delete:
             self.entities.task.editors.remove(t)
         self.entities.task.save()
