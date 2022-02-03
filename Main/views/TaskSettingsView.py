@@ -95,3 +95,16 @@ class TaskSettingsView(BaseView):
         ef.is_sample = "is_sample" in self.request.POST.keys()
         ef.save()
         return f"/admin/task?task_id={self.entities.task.id}"
+
+    def post_users_edit(self):
+        current_users = self.entities.task.editors
+        for key, value in self.request.POST.items():
+            if key.startswith("user_"):
+                i = '_'.join(key.split("_")[1:])
+                if i not in current_users:
+                    self.entities.task.editors.append(i)
+        to_delete = [i for i in current_users if "user_" + i not in self.request.POST]
+        for t in to_delete:
+            self.entities.task.editors.remove(t)
+        self.entities.task.save()
+        return "/admin/task?task_id=" + str(self.entities.task.id)
