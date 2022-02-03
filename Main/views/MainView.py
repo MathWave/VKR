@@ -26,7 +26,7 @@ class MainView(BaseView):
         undone_tasks = set(all_tasks) - set(ok_tasks)
         self.context['undone_tasks'] = sample(undone_tasks, k=min(5, len(undone_tasks)))
         for task in self.context['undone_tasks']:
-            setattr(task, 'solution', Solution.objects.filter(user=self.request.user, task=task).first())
+            setattr(task, 'solution', Solution.objects.filter(user=self.request.user, task=task).last())
         new_tasks = set(Task.objects.filter(public=True)) - set(all_tasks)
         self.context['new_tasks'] = sample(new_tasks, k=min(5, len(new_tasks)))
         self.context['groups'] = Group.objects.filter(Q(editors__in=self.request.user.username) | Q(creator=self.request.user) | Q(users=self.request.user)).distinct()
