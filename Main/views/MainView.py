@@ -19,7 +19,7 @@ class MainView(BaseView):
         if len(self.context['top_tasks_today']) < 5:
             self.context['top_tasks_today'] = Task.objects.filter(public=True).order_by('name')[:5]
         for task in self.context['top_tasks_today']:
-            setattr(task, 'solution', Solution.objects.filter(user=self.request.user, task=task).first())
+            setattr(task, 'solution', Solution.objects.filter(user=self.request.user, task=task).last())
         self.context['top_users'] = UserInfo.objects.filter(verified=True).order_by('-rating')[:5]
         all_tasks = Task.objects.filter(solution__user=self.request.user).distinct()
         ok_tasks = all_tasks.filter(solution__result="OK").distinct()
