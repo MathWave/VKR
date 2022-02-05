@@ -37,7 +37,7 @@ class BaseTester:
         if code != 0:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read()
-        print("got result")
+        print("got result", result)
         if result.strip() != self.predicted.strip():
             raise TestException("WA")
 

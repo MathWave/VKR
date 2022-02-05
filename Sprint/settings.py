@@ -142,7 +142,7 @@ for root in DATA_ROOT, EXTRA_FILES_ROOT:
 
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
-RABBIT_HOST = HOST
+RABBIT_HOST = "0.0.0.0"
 RABBIT_PORT = 5672
 
 FS_HOST = "http://" + HOST
