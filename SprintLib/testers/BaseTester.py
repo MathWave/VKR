@@ -37,6 +37,7 @@ class BaseTester:
         if code != 0:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read()
+        print("got result")
         if result.strip() != self.predicted.strip():
             raise TestException("WA")
 
@@ -94,6 +95,7 @@ class BaseTester:
                     self.predicted = ExtraFile.objects.get(
                         task=self.solution.task, filename=test.filename + ".a"
                     ).text
+                    print('presicted:', self.predicted)
                     self.solution.test = int(test.filename)
                     self.solution.save()
                     self.test(test.filename)

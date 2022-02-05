@@ -62,7 +62,6 @@ class AccountView(BaseView):
                                          f"Пользователь {self.request.user.username} отклонил твою заявку")
         return "/account?username=" + self.request.GET["username"]
 
-
     def post_upload_photo(self):
         if self.request.user.userinfo.has_profile_pic:
             delete_file(self.request.user.userinfo.profile_picture_fs_id)
