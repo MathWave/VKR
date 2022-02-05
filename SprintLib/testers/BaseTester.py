@@ -38,7 +38,7 @@ class BaseTester:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read()
         print("got result", result)
-        if result.strip() != self.predicted.strip():
+        if result.strip().replace('\r\n', '\n') != self.predicted.strip().replace('\r\n', '\n'):
             raise TestException("WA")
 
     def after_test(self):
