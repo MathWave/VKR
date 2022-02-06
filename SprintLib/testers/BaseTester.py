@@ -84,7 +84,7 @@ class BaseTester:
             with open(
                 join(self.path, file.path), "wb"
             ) as fs:
-                fs.write(get_bytes(file.fs_id))
+                fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
         docker_command = f"docker run --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
@@ -95,7 +95,7 @@ class BaseTester:
             with open(
                 join(self.path, file.filename), "wb"
             ) as fs:
-                fs.write(get_bytes(file.fs_id))
+                fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
         print("Files copied")
         for file in listdir(self.path):
             chmod(join(self.path, file), 0o777)
