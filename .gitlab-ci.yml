@@ -1,7 +1,7 @@
 stages:
   - build
   - deploy-dev
-  - deploy-prod
+#  - deploy-prod
 
 variables:
   SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
@@ -10,19 +10,19 @@ build:
   stage: build
   tags:
     - main
-  before_script:
-    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
+#  before_script:
+#    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
     - docker build --cache-from=mathwave/sprint-repo:sprint -t mathwave/sprint-repo:sprint .
-    - docker push mathwave/sprint-repo:sprint
+#    - docker push mathwave/sprint-repo:sprint
 
 .deploy:
   before_script:
-    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
+#    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
     - docker image rm mathwave/sprint-repo:sprint
-    - docker pull mathwave/sprint-repo:sprint
+#    - docker pull mathwave/sprint-repo:sprint
   script:
-    - docker-compose up -d --scale worker=2
+    - docker-compose up -d
   after_script:
     - docker rm sprint_notify-admin_1
     - docker rm sprint_migrations_1
@@ -42,17 +42,17 @@ deploy-dev:
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     HOST: "77.246.159.65"
 
-deploy-prod:
-  extends:
-    - .deploy
-  stage: deploy-prod
-  tags:
-    - prod
-  only:
-    - master
-  when: manual
-  variables:
-    PORT: 443
-    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-    DB_HOST: "postgres"
-    RABBIT_HOST: "rabbitmq"
+#deploy-prod:
+#  extends:
+#    - .deploy
+#  stage: deploy-prod
+#  tags:
+#    - prod
+#  only:
+#    - master
+#  when: manual
+#  variables:
+#    PORT: 443
+#    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+#    DB_HOST: "postgres"
+#    RABBIT_HOST: "rabbitmq"
