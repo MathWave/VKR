@@ -93,14 +93,13 @@ class BaseTester:
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
             with open(
-                join(self.path, file.filename), "wb"
+                join(self.path, file.filename), "w" if file.filename == 'checker.sh' else 'wb'
             ) as fs:
                 bts = get_bytes(file.fs_id)
                 if file.filename == 'checker.sh':
-                    bts = bts.replace(b"\r\n", b"\n")
+                    fs.write(bts.decode("utf-8"))
                 else:
-                    bts = bts.replace(b"\r\n", b"\n")
-                fs.write(bts)
+                    fs.write(bts)
         print("Files copied")
         for file in listdir(self.path):
             chmod(join(self.path, file), 0o777)
