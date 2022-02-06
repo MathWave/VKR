@@ -36,14 +36,14 @@ class BaseTester:
         )
         if code != 0:
             raise TestException("RE")
-        result = open(join(self.solution.testing_directory, "output.txt"), "r").read()
+        result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
         if exists(f"solutions/{self.solution.id}/checker.sh"):
             code = self.solution.exec_command(f"./checker.sh --expected {self.predicted} --output {result}")
             if code != 0:
                 raise TestException("WA")
         else:
-            if result.strip().replace('\r\n', '\n') != self.predicted.strip().replace('\r\n', '\n'):
+            if result != self.predicted:
                 raise TestException("WA")
 
     def after_test(self):
@@ -99,8 +99,8 @@ class BaseTester:
                 if not test.filename.endswith(".a"):
                     self.predicted = ExtraFile.objects.get(
                         task=self.solution.task, filename=test.filename + ".a"
-                    ).text
-                    print('presicted:', self.predicted)
+                    ).text.strip().replace('\r\n', '\n')
+                    print('predicted:', self.predicted)
                     self.solution.test = int(test.filename)
                     self.solution.save()
                     self.test(test.filename)
