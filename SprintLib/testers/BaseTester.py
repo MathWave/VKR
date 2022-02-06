@@ -97,7 +97,7 @@ class BaseTester:
             ) as fs:
                 bts = get_bytes(file.fs_id)
                 if file.filename == 'checker.sh':
-                    bts = bts.replace(b"\r\n", b"\r")
+                    bts = bts.replace(b"\r\n", b"\n")
                 else:
                     bts = bts.replace(b"\r\n", b"\n")
                 fs.write(bts)
