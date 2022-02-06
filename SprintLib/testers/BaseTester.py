@@ -95,7 +95,12 @@ class BaseTester:
             with open(
                 join(self.path, file.filename), "wb"
             ) as fs:
-                fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
+                bts = get_bytes(file.fs_id)
+                if file.filename == 'checker.sh':
+                    bts = bts.replace(b"\r\n", b"\r")
+                else:
+                    bts = bts.replace(b"\r\n", b"\n")
+                fs.write(bts)
         print("Files copied")
         for file in listdir(self.path):
             chmod(join(self.path, file), 0o777)
