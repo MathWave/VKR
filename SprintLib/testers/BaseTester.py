@@ -39,7 +39,7 @@ class BaseTester:
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
         if exists(join(self.path, "checker.sh")):
-            call(f"chmod 777 {join(self.path, 'checker.sh')}")
+            self.solution.exec_command(f"chmod 777 checker.sh")
             code = self.solution.exec_command(f"./checker.sh --expected {self.predicted} --output {result}")
             if code != 0:
                 raise TestException("WA")
