@@ -38,7 +38,8 @@ class BaseTester:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
-        if exists(f"solutions/{self.solution.id}/checker.sh"):
+        if exists(join(self.path, "checker.sh")):
+            self.solution.exec_command("chmod 777 checker.sh")
             code = self.solution.exec_command(f"./checker.sh --expected {self.predicted} --output {result}")
             if code != 0:
                 raise TestException("WA")
@@ -57,6 +58,10 @@ class BaseTester:
     def build_command(self):
         return ""
 
+    @property
+    def path(self):
+        return join("solutions", str(self.solution.id))
+
     def __init__(self, solution):
         self.solution = solution
 
@@ -67,17 +72,17 @@ class BaseTester:
     def execute(self):
         if not exists("solutions"):
             mkdir("solutions")
-        mkdir("solutions/" + str(self.solution.id))
+        mkdir(self.path)
         for file in SolutionFile.objects.filter(solution=self.solution):
             dirs = file.path.split("/")
             for i in range(len(dirs) - 1):
                 name = join(
-                    str("solutions/" + self.solution.id), "/".join(dirs[: i + 1])
+                    self.path, "/".join(dirs[: i + 1])
                 )
                 if not exists(name):
                     mkdir(name)
             with open(
-                join("solutions/" + str(self.solution.id), file.path), "wb"
+                join(self.path, file.path), "wb"
             ) as fs:
                 fs.write(get_bytes(file.fs_id))
         self.solution.result = CONSTS["testing_status"]
@@ -88,11 +93,9 @@ class BaseTester:
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
             with open(
-                join("solutions/" + str(self.solution.id), file.filename), "wb"
+                join(self.path, file.filename), "wb"
             ) as fs:
                 fs.write(get_bytes(file.fs_id))
-        for file in listdir("solutions/" + str(self.solution.id)):
-            call("chmod 777 " + "solutions/" + str(self.solution.id) + "/" + file)
         print("Files copied")
         try:
             self.before_test()
