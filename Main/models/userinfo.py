@@ -53,11 +53,11 @@ class UserInfo(models.Model):
 
     @cached_property
     def available_tasks(self):
-        return Task.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__in=self.user.username)).order_by('name')
+        return Task.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__contains=[self.user.username])).order_by('name')
 
     @property
     def available_sets(self):
-        return Set.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__in=self.user.username)).order_by('name')
+        return Set.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__contains=[self.user.username])).order_by('name')
 
     @property
     def place(self):

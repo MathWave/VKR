@@ -168,7 +168,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td valign="top">
                     {% for test in task.tests %}
                         <div id="file_{{ test.id }}">
                         <i class="fa fa-file"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
@@ -213,10 +213,43 @@
                         {% csrf_token %}
                     </form>
                 </td>
-                <td>
-                    {% for file in task.files %}
-                        <div id="file_{{ file.id }}">
-                        <i class="fa fa-file"></i> <button class="btn btn-link" {% if not file.readable %}style="color: red;"{% endif %}>{{ file.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ file.id }});"><i class="fa fa-times"></i> </button><br>
+                <td valign="top">
+                    {% for test in task.files %}
+                        <div id="file_{{ test.id }}">
+                       <i class="fa {% if test.filename == "checker.sh" %}fa-cogs{% else %}fa-file{% endif %}"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                    {% if test.readable %}
+<form method="POST">{% csrf_token %}
+                        <!-- Modal -->
+                        <div class="modal fade bd-example-modal-lg" id="filesModalLong{{ test.id }}" tabindex="-1" role="dialog" aria-labelledby="filesModalLongTitle{{ test.id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="filesModalLongTitle{{ test.id }}">{{ test.filename }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-12">
+<textarea cols="82" rows="30" name="text">{{ test.text }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                {% if test.can_be_sample %}Использовать как пример <input type="checkbox" name="is_sample" {% if test.is_sample %}checked{% endif %}>{% endif %}
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                                  <input name="action" value="save_test" type="hidden">
+                                  <input name="test_id" value="{{ test.id }}" type="hidden">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </form>
+                        {% endif %}
                         </div>
                     {% endfor %}
                     <input type="file" style="display: none;" form="form_file_upload" onchange="this.form.submit();" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
@@ -251,7 +284,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
                         <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
-                        <input id="action_create" type="hidden" name="action" value="create_test">
+                        <input id="action_create" type="hidden" name="action" value="create_file">
                       </div>
                     </div>
                   </div>

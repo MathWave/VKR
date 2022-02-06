@@ -38,8 +38,13 @@ class BaseTester:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read()
         print("got result", result)
-        if result.strip().replace('\r\n', '\n') != self.predicted.strip().replace('\r\n', '\n'):
-            raise TestException("WA")
+        if exists(f"solutions/{self.solution.id}/checker.sh"):
+            code = self.solution.exec_command(f"./checker.sh --expected {self.predicted} --output {result}")
+            if code != 0:
+                raise TestException("WA")
+        else:
+            if result.strip().replace('\r\n', '\n') != self.predicted.strip().replace('\r\n', '\n'):
+                raise TestException("WA")
 
     def after_test(self):
         pass
