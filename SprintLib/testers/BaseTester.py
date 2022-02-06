@@ -91,6 +91,8 @@ class BaseTester:
                 join("solutions/" + str(self.solution.id), file.filename), "wb"
             ) as fs:
                 fs.write(get_bytes(file.fs_id))
+        for file in listdir("solutions/" + str(self.solution.id)):
+            call("chmod 777 " + "solutions/" + str(self.solution.id) + "/" + file)
         print("Files copied")
         try:
             self.before_test()

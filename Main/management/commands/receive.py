@@ -1,3 +1,6 @@
+from os.path import join, exists
+from shutil import rmtree
+
 import pika
 from django.core.management.base import BaseCommand
 
@@ -27,6 +30,10 @@ class Command(BaseCommand):
                 print(e)
                 solution.result = "TE"
                 solution.save()
+            finally:
+                path = join("solutions", str(id))
+                if exists(path):
+                    rmtree(path)
 
         channel.basic_consume(queue="test", on_message_callback=callback, auto_ack=True)
         channel.start_consuming()
