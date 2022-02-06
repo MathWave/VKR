@@ -1,4 +1,4 @@
-from os import listdir, mkdir
+from os import listdir, mkdir, chmod
 from os.path import join, exists
 from subprocess import call, TimeoutExpired
 
@@ -97,6 +97,8 @@ class BaseTester:
             ) as fs:
                 fs.write(get_bytes(file.fs_id))
         print("Files copied")
+        for file in listdir(self.path):
+            chmod(join(self.path, file), 0o777)
         try:
             self.before_test()
             print("before test finished")
