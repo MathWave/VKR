@@ -208,9 +208,34 @@
                     {% endfor %}
                     <input type="file" style="display: none;" form="form_test_upload" onchange="this.form.submit();" class="btn form-control-file" id="test-upload" value="Выбрать файл" name="file">
                     <label for="test-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить тесты</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewtest" onclick="setActionCreate('create_test');"><i class="fa fa-plus"></i></button>
-                    <form method="POST" enctype="multipart/form-data" id="form_test_upload">
-                        <input name="action" type="hidden" value="test_upload">
+                    <form method="POST">
                         {% csrf_token %}
+                        <div class="modal fade" id="exampleModalLongnewtest" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewtest" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitlenewtest">Создать новый тест</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <input type="text" placeholder="Имя теста" name="newfile_name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
+                                    <input id="action_create" type="hidden" name="action" value="create_test">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                     </form>
                 </td>
                 <td valign="top">
@@ -253,41 +278,38 @@
                         </div>
                     {% endfor %}
                     <input type="file" style="display: none;" form="form_file_upload" onchange="this.form.submit();" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
-                    <label for="file-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить файлы</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewtest" onclick="setActionCreate('create_file');"><i class="fa fa-plus"></i></button>
-                    <form method="POST" enctype="multipart/form-data" id="form_file_upload">
-                        <input name="action" type="hidden" value="file_upload">
+                    <label for="file-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить файлы</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewfile" onclick="setActionCreate('create_file');"><i class="fa fa-plus"></i></button>
+                    <form method="POST">
                         {% csrf_token %}
+                        <div class="modal fade" id="exampleModalLongnewfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewfile" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitlenewfile">Создать новый файл</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <input type="text" placeholder="Имя файла" name="newfile_name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
+                                    <input id="action_create" type="hidden" name="action" value="create_file">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                     </form>
                 </td>
             </tr>
         </table>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="modal fade" id="exampleModalLongnewtest" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewtest" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitlenewtest">Создать новый файл</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    <input type="text" placeholder="Имя файла" name="newfile_name">
-                                </div>
-                            </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
-                        <input id="action_create" type="hidden" name="action" value="create_file">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-        </form>
+
 {% endblock %}
