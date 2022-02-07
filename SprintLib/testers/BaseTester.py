@@ -1,5 +1,6 @@
 from os import listdir, mkdir, chmod
 from os.path import join, exists
+from shutil import copyfile
 from subprocess import call, TimeoutExpired
 
 from Main.management.commands.bot import bot
@@ -38,9 +39,10 @@ class BaseTester:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
-        if exists(join(self.path, "checker.sh")):
-            self.solution.exec_command(f"chmod 777 checker.sh")
-            code = self.solution.exec_command(f"./checker.sh --expected {self.predicted} --output {result}")
+        if exists(join(self.path, "checker.py")):
+            copyfile(join(self.path, filename + '.a'), join(self.path, 'expected.txt'))
+            call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
+            code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', timeout=1)
             if code != 0:
                 raise TestException("WA")
         else:
@@ -93,16 +95,11 @@ class BaseTester:
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
             with open(
-                join(self.path, file.filename), "w" if file.filename == 'checker.sh' else 'wb'
+                join(self.path, file.filename), 'wb'
             ) as fs:
                 bts = get_bytes(file.fs_id)
-                if file.filename == 'checker.sh':
-                    fs.write(bts.decode("utf-8"))
-                else:
-                    fs.write(bts)
+                fs.write(bts)
         print("Files copied")
-        for file in listdir(self.path):
-            chmod(join(self.path, file), 0o777)
         try:
             self.before_test()
             print("before test finished")
