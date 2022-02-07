@@ -16,6 +16,7 @@ class TestException(Exception):
 
 class BaseTester:
     working_directory = "app"
+    checker_code = ''
 
     def before_test(self):
         files = [
@@ -39,9 +40,11 @@ class BaseTester:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
-        if exists(join(self.path, "checker.py")):
+        if self.checker_code is not None:
             with open(join(self.path, 'expected.txt'), 'w') as fs:
                 fs.write(self.predicted)
+            with open(join(self.path, 'checker.py'), 'w') as fs:
+                fs.write(self.checker_code)
             code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', shell=True, timeout=1)
             if code != 0:
                 raise TestException("WA")
@@ -92,7 +95,9 @@ class BaseTester:
         docker_command = f"docker run --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
         call(docker_command, shell=True)
-        if len(ExtraFile.objects.filter(task=self.solution.task, filename='checker.py')) != 0:
+        checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()
+        if checker is not None:
+            self.checker_code = checker.text
             call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
