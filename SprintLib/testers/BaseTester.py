@@ -41,6 +41,7 @@ class BaseTester:
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
         if self.checker_code is not None:
+            print('using checker')
             with open(join(self.path, 'expected.txt'), 'w') as fs:
                 fs.write(self.predicted)
             with open(join(self.path, 'checker.py'), 'w') as fs:
@@ -49,8 +50,11 @@ class BaseTester:
             if code != 0:
                 raise TestException("WA")
         else:
+            print('using simple check')
             if result != self.predicted:
+                print('incorrect')
                 raise TestException("WA")
+            print('correct')
 
     def after_test(self):
         pass
