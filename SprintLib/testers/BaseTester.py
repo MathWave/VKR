@@ -42,7 +42,7 @@ class BaseTester:
         if exists(join(self.path, "checker.py")):
             copyfile(join(self.path, filename + '.a'), join(self.path, 'expected.txt'))
             call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
-            code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', timeout=1)
+            code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', shell=True, timeout=1)
             if code != 0:
                 raise TestException("WA")
         else:
