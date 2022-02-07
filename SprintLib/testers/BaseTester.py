@@ -43,7 +43,6 @@ class BaseTester:
             with open(join(self.path, 'expected.txt'), 'w') as fs:
                 fs.write(self.predicted)
             try:
-                call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
                 code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', shell=True, timeout=1)
             finally:
                 call(f"docker rm --force  solution_{self.solution.id}_checker", shell=True)
@@ -96,6 +95,8 @@ class BaseTester:
         docker_command = f"docker run --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
         call(docker_command, shell=True)
+        if len(ExtraFile.objects.filter(task=self.solution.task, filename='checker.py')) != 0:
+            call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
         print("Container created")
         for file in ExtraFile.objects.filter(task=self.solution.task):
             with open(
