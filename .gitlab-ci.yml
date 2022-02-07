@@ -17,9 +17,9 @@ build:
 #    - docker push mathwave/sprint-repo:sprint
 
 .deploy:
-  before_script:
+#  before_script:
 #    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
-    - docker image rm mathwave/sprint-repo:sprint
+#    - docker image rm mathwave/sprint-repo:sprint
 #    - docker pull mathwave/sprint-repo:sprint
   script:
     - docker-compose up -d
