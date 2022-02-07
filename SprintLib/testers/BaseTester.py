@@ -42,10 +42,7 @@ class BaseTester:
         if exists(join(self.path, "checker.py")):
             with open(join(self.path, 'expected.txt'), 'w') as fs:
                 fs.write(self.predicted)
-            try:
-                code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', shell=True, timeout=1)
-            finally:
-                call(f"docker rm --force  solution_{self.solution.id}_checker", shell=True)
+            code = call(f'docker exec -i solution_{self.solution.id}_checker sh -c "cd app && python checker.py"', shell=True, timeout=1)
             if code != 0:
                 raise TestException("WA")
         else:
@@ -137,6 +134,7 @@ class BaseTester:
             raise e
         self.solution.save()
         call(f"docker rm --force solution_{self.solution.id}", shell=True)
+        call(f"docker rm --force  solution_{self.solution.id}_checker", shell=True)
         self.solution.user.userinfo.refresh_from_db()
         if self.solution.user.userinfo.notification_solution_result:
             bot.send_message(
