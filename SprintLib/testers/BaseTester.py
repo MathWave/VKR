@@ -16,7 +16,7 @@ class TestException(Exception):
 
 class BaseTester:
     working_directory = "app"
-    checker_code = ''
+    checker_code = None
 
     def before_test(self):
         files = [
