@@ -3,6 +3,7 @@ from functools import cached_property
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.db.models.functions import Length
 from django.utils import timezone
 
 from Main.models.task import Task
@@ -56,4 +57,4 @@ class Set(models.Model):
 
     @cached_property
     def settasks_ordered(self):
-        return self.settasks.order_by('name')
+        return self.settasks.order_by(Length('name'), 'name')
