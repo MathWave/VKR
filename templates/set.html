@@ -1,5 +1,7 @@
 {% extends 'base_main.html' %}
 
+{% load filters %}
+
 {% block title %}{{ set.name }}{% endblock %}
 
 {% block main %}
@@ -7,7 +9,9 @@
     <p>{{ set.description }}</p>
     <h4>Таски</h4>
     {% for settask in set.settasks_ordered %}
-        <a href="/task?setTask_id={{ settask.id }}">{{ settask.name }}. {{ settask.task.name }}</a><br>
+        {% with result=user|solved:settask.task %}
+            <a href="/task?setTask_id={{ settask.id }}" style="color: {% if result %}green{% else %}{% if result == False %}red{% else %}#307df6{% endif %}{% endif %};">{{ settask.name }}. {{ settask.task.name }}</a><br>
+        {% endwith %}
     {% endfor %}
     <hr><hr>
     Время начала: <b>{% if not set.start_time %}без ограничений{% else %}{{ set.start_time_moscow }}{% endif %}</b><br>

@@ -1,5 +1,7 @@
 {% extends 'base_main.html' %}
 
+{% load filters %}
+
 {% block title %}{{ task.name }}{% endblock %}
 
 {% block scripts %}
@@ -114,7 +116,9 @@
     <div class="col-2">
         <h5><a href="/set?set_id={{ set.id }}">{{ set.name }}</a></h5>
         {% for settask in setTask.set.settasks_ordered %}
-            <a href="/task?setTask_id={{ settask.id }}">{% if task == settask.task %}<b>{% endif %}{{ settask.name }}. {{ settask.task.name }}{% if task == settask.task %}</b>{% endif %}</a><br>
+            {% with result=user|solved:settask.task %}
+                <a href="/task?setTask_id={{ settask.id }}" style="color: {% if result %}green{% else %}{% if result == False %}red{% else %}#307df6{% endif %}{% endif %};">{% if task == settask.task %}<b>{% endif %}{{ settask.name }}. {{ settask.task.name }}{% if task == settask.task %}</b>{% endif %}</a><br>
+            {% endwith %}
         {% endfor %}
     </div>
 {% endif %}
