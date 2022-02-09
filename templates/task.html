@@ -26,7 +26,7 @@
         page = number;
     }
     function doPoll() {
-        jQuery.get('/solutions_table?task_id={{ task.id }}&username={{ user.username }}&page=' + page.toString(), function(data) {
+        jQuery.get('/solutions_table?task_id={{ task.id }}&only_my=true&page=' + page.toString(), function(data) {
             var e = document.getElementById('solutions');
             if (e.innerHTML !== data)
                 e.innerHTML = data;

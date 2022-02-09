@@ -43,6 +43,8 @@ class SolutionsTableView(BaseView):
                 raise AccessError()
 
     def get(self):
+        if 'only_my' in self.request.GET:
+            self.queryset = self.queryset.filter(user=self.request.user)
         for fltr in self.filters:
             self.queryset = fltr(self.queryset)
         offset = self.page_size * (self.page - 1)
