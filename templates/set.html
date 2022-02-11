@@ -19,7 +19,6 @@
     Публичность: <b>{% if set.public %}публично{% else %}приватно{% endif %}</b><br>
     Открытость: <b>{% if set.opened %}открыто{% else %}закрыто{% endif %} для просмотра и решения</b><br>
     <hr><hr>
-    <h3>Языки программирования</h3>
     {% for language in set.language_models %}
         <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
     {% endfor %}
