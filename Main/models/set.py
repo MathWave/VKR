@@ -7,6 +7,7 @@ from django.db.models.functions import Length
 from django.utils import timezone
 
 from Main.models.task import Task
+from SprintLib.language import languages
 
 
 class Set(models.Model):
@@ -17,7 +18,12 @@ class Set(models.Model):
     start_time = models.DateTimeField(default=None, null=True)
     end_time = models.DateTimeField(default=None, null=True)
     editors = ArrayField(models.TextField(), default=list)
+    languages = ArrayField(models.IntegerField(), default=list)
     description = models.TextField(default='')
+
+    @property
+    def language_models(self):
+        return [languages[lang] for lang in self.languages]
 
     @property
     def start_time_moscow(self):

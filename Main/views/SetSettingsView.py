@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from Main.models import SetTask, Set
 from SprintLib.BaseView import BaseView, AccessError
+from SprintLib.language import languages
 
 
 class SetSettingsView(BaseView):
@@ -36,6 +37,7 @@ class SetSettingsView(BaseView):
             if self.current_set.end_time
             else timezone.now().strftime("%Y-%m-%dT%H:%M")
         )
+        self.context['languages'] = languages
 
     def post_save(self):
         for key, value in self.request.POST.items():
@@ -97,4 +99,17 @@ class SetSettingsView(BaseView):
         for t in to_delete:
             self.entities.set.editors.remove(t)
         self.entities.set.save()
-        return "/admin/task?task_id=" + str(self.entities.task.id)
+        return "/admin/set?set_id=" + str(self.entities.set.id)
+
+    def post_languages_edit(self):
+        current_languages = self.entities.set.languages
+        for key, value in self.request.POST.items():
+            if key.startswith("language_"):
+                i = int(key.split("_")[1])
+                if i not in current_languages:
+                    self.entities.set.languages.append(i)
+        to_delete = [i for i in current_languages if "language_" + str(i) not in self.request.POST]
+        for t in to_delete:
+            self.entities.set.languages.remove(t)
+        self.entities.set.save()
+        return "/admin/set?set_id=" + str(self.entities.set.id)
