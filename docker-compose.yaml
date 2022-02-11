@@ -83,11 +83,11 @@ services:
 
   apply-languages:
     image: mathwave/sprint-repo:sprint
-      command: ./manage.py apply_languages
-      depends_on:
-        - migrations
-        - web
-        - postgres
+    command: ./manage.py apply_languages
+    depends_on:
+      - migrations
+      - web
+      - postgres
 
   notify-admin:
     image: mathwave/sprint-repo:sprint
