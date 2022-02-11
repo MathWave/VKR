@@ -25,14 +25,14 @@ class TaskView(BaseView):
             self.entities.add('task', self.entities.setTask.task)
             self.entities.add('set', self.entities.setTask.set)
             self.context['languages'] = self.entities.set.language_models
-            for lang in self.context['languages']:
-                print(lang)
         else:
             if not self.entities.task.public and not self.entities.task.creator == self.request.user and not self.request.user.username in self.entities.task.editors:
                 raise AccessError()
             self.context['languages'] = languages
         if self.request.method == "GET":
             return
+        if hasattr(self.entities, 'set') and int(self.request.POST["language"]) not in self.entities.set.languages:
+            raise AccessError()
         self.solution = Solution.objects.create(
             task=self.entities.task,
             user=self.request.user,
