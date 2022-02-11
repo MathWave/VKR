@@ -4,6 +4,7 @@ from django.db.models import Q
 from Main.management.commands.bot import bot
 from Main.models import Friendship
 from SprintLib.BaseView import BaseView
+from SprintLib.language import languages
 from SprintLib.utils import delete_file, write_bytes
 
 
@@ -23,6 +24,7 @@ class AccountView(BaseView):
 
     def get(self):
         self.context["error_message"] = self.request.GET.get("error_message", "")
+        self.context['languages'] = languages
         friendship = Friendship.objects.filter(
             Q(from_user=self.request.user, to_user=self.context["account"])
             | Q(to_user=self.request.user, from_user=self.context["account"])
