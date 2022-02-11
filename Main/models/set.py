@@ -19,6 +19,7 @@ class Set(models.Model):
     end_time = models.DateTimeField(default=None, null=True)
     editors = ArrayField(models.TextField(), default=list)
     languages = ArrayField(models.IntegerField(), default=list)
+    auto_add_new_languages = models.BooleanField(default=True)
     description = models.TextField(default='')
 
     @property

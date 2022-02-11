@@ -144,6 +144,7 @@
                                 <div class="col-12">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="languages_edit">
+                                    <input type="checkbox" name="auto_add" {% if set.auto_add_new_languages %}checked{% endif %}> Обновлять список при добавлении нового языка<br>
                                     {% for language in languages %}
                                         <input type="checkbox" {% if language.id in set.languages %}checked{% endif %} name="language_{{ language.id }}"> <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
                                     {% endfor %}

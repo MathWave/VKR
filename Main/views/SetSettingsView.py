@@ -103,6 +103,7 @@ class SetSettingsView(BaseView):
 
     def post_languages_edit(self):
         current_languages = self.entities.set.languages
+        self.entities.set.auto_add_new_languages = 'auto_add' in self.request.POST
         for key, value in self.request.POST.items():
             if key.startswith("language_"):
                 i = int(key.split("_")[1])
