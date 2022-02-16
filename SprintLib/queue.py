@@ -3,7 +3,9 @@ import pika
 from Sprint import settings
 
 
-def send_testing(solution_id):
+def send_testing(solution):
+    if solution.set is not None and len(solution.set.checkers.all()) != 0:
+        return
     with pika.BlockingConnection(
         pika.ConnectionParameters(host=settings.RABBIT_HOST, port=settings.RABBIT_PORT)
     ) as connection:
@@ -12,5 +14,5 @@ def send_testing(solution_id):
         channel.basic_publish(
             exchange="",
             routing_key="test",
-            body=bytes(str(solution_id), encoding="utf-8"),
+            body=bytes(str(solution.id), encoding="utf-8"),
         )

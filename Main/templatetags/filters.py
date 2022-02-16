@@ -1,6 +1,6 @@
 from django import template
 
-from Main.models import Solution
+from Main.models import Solution, SetTask
 
 register = template.Library()
 
@@ -13,3 +13,8 @@ def solved(user, task):
     if len(solutions) != 0:
         return False
     return None
+
+
+@register.filter('settask')
+def settask(set, task):
+    return SetTask.objects.get(set=set, task=task)

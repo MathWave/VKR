@@ -4,6 +4,7 @@ from typing import Optional
 import pytz
 from django.utils import timezone
 
+from Checker.models import Checker
 from Main.models import SetTask, Set
 from SprintLib.BaseView import BaseView, AccessError
 from SprintLib.language import languages
@@ -114,3 +115,11 @@ class SetSettingsView(BaseView):
             self.entities.set.languages.remove(t)
         self.entities.set.save()
         return "/admin/set?set_id=" + str(self.entities.set.id)
+
+    def post_new_checker(self):
+        Checker.objects.create(name=self.request.POST['name'], set=self.entities.set, last_request=timezone.now() - datetime.timedelta(days=1))
+        return '/admin/set?set_id=' + str(self.entities.set.id)
+
+    def post_delete_checker(self):
+        Checker.objects.get(id=self.request.POST['checker_id']).delete()
+        return '/admin/set?set_id=' + str(self.entities.set.id)

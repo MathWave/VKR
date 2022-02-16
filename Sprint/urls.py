@@ -1,10 +1,13 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 import Main.views
 from Main.views import *
 
-urlpatterns = []
+
+urlpatterns = [
+    path("checker/", include("Checker.urls"))
+]
 
 for v in dir(Main.views):
     try:

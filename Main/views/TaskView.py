@@ -37,6 +37,7 @@ class TaskView(BaseView):
             task=self.entities.task,
             user=self.request.user,
             language_id=int(self.request.POST["language"]),
+            set=self.entities.set if hasattr(self.entities, 'setTask') else None
         )
 
     def post_0(self):
@@ -47,8 +48,8 @@ class TaskView(BaseView):
             solution=self.solution,
             fs_id=fs_id,
         )
-        send_testing(self.solution.id)
-        return "task?task_id=" + str(self.entities.task.id)
+        send_testing(self.solution)
+        return ("/task?setTask_id=" + str(self.entities.setTask.id)) if hasattr(self.entities, 'setTask') else ("/task?task_id=" + str(self.entities.task.id))
 
     def post_1(self):
         # отправка решения через файл
@@ -73,5 +74,5 @@ class TaskView(BaseView):
                 solution=self.solution,
                 fs_id=fs_id,
             )
-        send_testing(self.solution.id)
-        return "task?task_id=" + str(self.entities.task.id)
+        send_testing(self.solution)
+        return ("/task?setTask_id=" + str(self.entities.setTask.id)) if hasattr(self.entities, 'setTask') else ("/task?task_id=" + str(self.entities.task.id))

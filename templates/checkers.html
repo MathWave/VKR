@@ -1,0 +1,34 @@
+{% for checker in set.checkers.all %}
+    {% with status=checker.status %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_checker">
+            <input type="hidden" name="checker_id" value="{{ checker.id }}">
+            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#exampleCheckers{{ checker.id }}">{{ checker.name }}</button> <span class="badge badge-{% if status == 'Active' %}success{% else %}{% if status == 'Testing' %}info{% else %}danger{% endif %}{% endif %}">{{ status }}</span>{% if status != 'Testing' %}<button type="submit" class="btn btn-link" style="color: black;"><i class="fa fa-times"></i></button>{% endif %}<br>
+        </form>
+    {% endwith %}
+    <div class="modal fade" id="exampleCheckers{{ checker.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleCheckers{{ checker.id }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitleCheckers{{ checker.id }}">Токен {{ checker.name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                {{ checker.token }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

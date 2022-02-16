@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+from Main.models import Set
 from Main.models.solution_file import SolutionFile
 from Main.models.task import Task
 from Sprint.settings import CONSTS
@@ -20,11 +21,13 @@ class Solution(models.Model):
     time_sent = models.DateTimeField(default=timezone.now)
     result = models.TextField(default=CONSTS["in_queue_status"])
     test = models.IntegerField(default=None, null=True)
+    set = models.ForeignKey(Set, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         indexes = [
             models.Index(fields=['task', 'user', '-time_sent']),
-            models.Index(fields=['task', '-time_sent'])
+            models.Index(fields=['task', '-time_sent']),
+            models.Index(fields=['set', '-time_sent']),
         ]
 
     @property

@@ -3,11 +3,24 @@
 {% block title %}{{ set.name }}{% endblock %}
 
 {% block scripts %}
+    var saved_data = "";
     function handle(value) {
         const elem = document.getElementById(value);
         elem.hidden = !elem.hidden;
     }
+    function doPoll() {
+        jQuery.get('/admin/checkers?set_id={{ set.id }}', function(data) {
+            var e = document.getElementById('checkers');
+            if (saved_data.length != data.length) {
+                saved_data = data;
+                e.innerHTML = data;
+            }
+            setTimeout(function() {doPoll()}, 2000);
+        })
+    }
 {% endblock %}
+
+{% block onload %}doPoll(){% endblock %}
 
 {% block main %}
     <form method="POST">
@@ -155,6 +168,39 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr><hr>
+    <h3>Чекеры</h3>
+    <div id="checkers"></div>
+    <button class="btn btn-light" data-toggle="modal" data-target="#exampleCheckers"><i class="fa fa-plus"></i> Добавить чекер</button>
+    <div class="modal fade" id="exampleCheckers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleCheckers" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="POST">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitleCheckers">Создать новый чекер</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="new_checker">
+                                    <input type="text" name="name" placeholder="Имя чекера">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Создать</button>
                     </div>
                 </div>
             </form>

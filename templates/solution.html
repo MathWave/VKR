@@ -1,5 +1,7 @@
 {% extends 'base_main.html' %}
 
+{% load filters %}
+
 {% block main %}
     <h4>
     <table class="table" style="width: 30%;">
@@ -16,7 +18,7 @@
                 Задача
             </td>
             <td>
-                <a href="/task?task_id={{ solution.task.id }}">{{ solution.task.name }}</a>
+                <a href="/task?{% if solution.set %}{% with settask=solution.set|settask:solution.task %}setTask_id={{ settask.id }}{% endwith %}{% else %}task_id={{ solution.task.id }}{% endif %}">{{ solution.task.name }}</a>
             </td>
         </tr>
         <tr>
