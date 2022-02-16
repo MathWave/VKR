@@ -1,5 +1,5 @@
 from multiprocessing import Process
-from os import getenv
+from os import getenv, environ
 from os.path import join
 from tempfile import TemporaryDirectory
 from time import sleep
@@ -9,6 +9,8 @@ from requests import get
 
 from language import languages
 from testers import *
+
+host = "http://dev.sprinthub.ru/"
 
 
 def process_solution(path, data, language_id, solution_id, timeout):
@@ -26,13 +28,17 @@ def process_solution(path, data, language_id, solution_id, timeout):
 
 
 def poll(token):
-    while True:
-        print(get("http://127.0.0.1:8000/checker/status", params={"token": token}).json())
-        sleep(2)
+    correct_token = True
+    while correct_token:
+        code = get(f"{host}checker/status", params={"token": token}).status_code
+        if code != 200:
+            correct_token = False
+        else:
+            sleep(2)
 
 
 def main():
-    request = get("http://127.0.0.1:8000/checker/get_dynamic", params={"token": getenv("TOKEN")})
+    request = get(f"{host}checker/get_dynamic", params={"token": getenv("TOKEN")})
     if request.status_code != 200:
         print("Error happened: " + request.json()['status'])
         exit(1)
@@ -40,7 +46,7 @@ def main():
     p = Process(target=poll, args=(dynamic_token,))
     p.start()
     while True:
-        data = get("http://127.0.0.1:8000/checker/available", params={"token": dynamic_token})
+        data = get(f"{host}checker/available", params={"token": dynamic_token})
         if data.status_code == 200:
             sleep(2)
             continue
@@ -53,14 +59,17 @@ def main():
                     int(data.headers['solution_id']),
                     int(data.headers['timeout']),
                 )
-                get("http://127.0.0.1:8000/checker/set_result", params={
+                get(f"{host}checker/set_result", params={
                     "token": dynamic_token,
                     "solution_id": data.headers['solution_id'],
                     "result": result
                 })
-
+        elif data.status_code == 403:
+            print("token removed")
+            exit(1)
         else:
             print("unknown status")
+            exit(1)
 
 
 if __name__ == '__main__':

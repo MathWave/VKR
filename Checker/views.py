@@ -44,6 +44,8 @@ def available(request):
             return JsonResponse({"id": None})
         solution.result = "Testing"
         solution.save()
+        checker.testing_solution = solution
+        checker.save()
         with TemporaryDirectory() as tempdir:
             with ZipFile(join(tempdir, "package.zip"), 'w') as zip_file:
                 for sf in SolutionFile.objects.filter(solution=solution):
@@ -68,6 +70,8 @@ def set_result(request):
             return JsonResponse({"status": "incorrect solution"}, status=403)
         solution.result = result
         solution.save()
+        checker.testing_solution = None
+        checker.save()
         return JsonResponse({"status": True})
     except ObjectDoesNotExist:
         return JsonResponse({"status": "incorrect token"}, status=403)
