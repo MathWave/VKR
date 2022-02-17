@@ -1,5 +1,5 @@
 from multiprocessing import Process
-from os import getenv, environ
+from os import getenv
 from os.path import join
 from tempfile import TemporaryDirectory
 from time import sleep

@@ -7,7 +7,7 @@ from Main.models import Solution, Set
 
 
 def generate_token():
-    letters = '1234567890qwertyuiopasdfghjklzxcvbnm!@#$%^&*()QWERTYUIOPASDFGHJKLZXCVBNM'
+    letters = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
     return ''.join([choice(letters) for _ in range(30)])
 
 
