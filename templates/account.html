@@ -23,7 +23,7 @@
         <div class="col-9">
             <h3>
                 {{ account.userinfo.surname }} {{ account.userinfo.name }}
-                <span style="margin-left: 15px; margin-bottom: 20px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span> <a href="/chat_with?username={{ account.username }}"><i class="fa fa-comments"></i></a>
+                <span style="margin-left: 15px; margin-bottom: 20px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
                 {% if not owner %}
                     <form method="POST">
                         {% csrf_token %}

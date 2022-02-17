@@ -13,11 +13,7 @@ from Main.views.SolutionView import SolutionView
 from Main.views.ImageView import ImageView
 from Main.views.SendCodeView import SendCodeView
 from Main.views.SetSettingsView import SetSettingsView
-from Main.views.UsersView import UsersView
 from Main.views.SolutionsView import SolutionsView
-from Main.views.ChatView import ChatView
-from Main.views.ChatWithView import ChatWithView
-from Main.views.MessagesView import MessagesView
 from Main.views.SetView import SetView
 from Main.views.GroupView import GroupView
 from Main.views.CheckersView import CheckersView

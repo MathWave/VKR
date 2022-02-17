@@ -9,6 +9,4 @@ from Main.models.extrafile import ExtraFile
 from Main.models.progress import Progress
 from Main.models.solution_file import SolutionFile
 from Main.models.friendship import Friendship
-from Main.models.chat import Chat
-from Main.models.message import Message
 from Main.models.language_apply import LanguageApply
