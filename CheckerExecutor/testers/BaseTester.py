@@ -34,6 +34,7 @@ class BaseTester:
             raise TestException("CE")
 
     def test(self, filename):
+        print('testing ' + filename)
         code = self.exec_command(
             f"< {filename} {self.command} > output.txt",
             timeout=self.timeout / 1000,

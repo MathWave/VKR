@@ -15,5 +15,3 @@ RUN pip install requests
 COPY . /usr/src/app/
 
 CMD ["python", "main.py"]
-
-docker run --name runner --volume=/var/run/docker.sock:/var/run/docker.sock --privileged -e TOKEN=1DGan0xqx51N^wN@i7aqcF@npzrZJr runner

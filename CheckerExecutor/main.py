@@ -1,6 +1,7 @@
 from multiprocessing import Process
-from os import getenv
-from os.path import join
+from os import getenv, mkdir
+from os.path import join, exists
+from shutil import rmtree
 from tempfile import TemporaryDirectory
 from time import sleep
 from zipfile import ZipFile
@@ -51,7 +52,9 @@ def main():
             sleep(2)
             continue
         elif data.status_code == 201:
-            with TemporaryDirectory() as tempdir:
+            tempdir = "/var/tmp/solution/"
+            try:
+                mkdir(tempdir)
                 result = process_solution(
                     tempdir,
                     data.content,
@@ -64,6 +67,9 @@ def main():
                     "solution_id": data.headers['solution_id'],
                     "result": result
                 })
+            finally:
+                if exists(tempdir):
+                    rmtree(tempdir)
         elif data.status_code == 403:
             print("token removed")
             exit(1)

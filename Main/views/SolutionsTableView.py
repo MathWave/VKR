@@ -26,7 +26,7 @@ class SolutionsTableView(BaseView):
 
     def filter_set(self, queryset: QuerySet):
         if 'set_id' in self.request.GET:
-            return queryset.filter(task__settasks__set_id=self.request.GET['set_id']).distinct()
+            return queryset.filter(set_id=self.request.GET['set_id']).distinct()
         return queryset
 
     def pre_handle(self):
