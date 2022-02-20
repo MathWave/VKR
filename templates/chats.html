@@ -1,0 +1,25 @@
+{% extends 'base_main.html' %}
+
+{% block scripts %}
+    var chat_id = 1;
+    var page = 1;
+    function doPoll() {
+        jQuery.get('/messaging/chat_window?chat_id=' + chat_id.toString() + '&page=' + page.toString(), function(data) {
+            var e = document.getElementById('chats');
+            e.innerHTML = data;
+            setTimeout(function() {doPoll()}, 1000);
+        })
+    }
+{% endblock %}
+
+{% block onload %}doPoll(){% endblock %}
+
+{% block main %}
+    <div id="chats"></div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-9" style="position: absolute; bottom: 0;">
+            <textarea name="text" style="width: 100%; height: 80px; resize: none;"></textarea>
+        </div>
+    </div>
+{% endblock %}

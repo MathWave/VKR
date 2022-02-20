@@ -6,7 +6,8 @@ from Main.views import *
 
 
 urlpatterns = [
-    path("checker/", include("Checker.urls"))
+    path("checker/", include("Checker.urls")),
+    path("messaging/", include("Messaging.urls")),
 ]
 
 for v in dir(Main.views):

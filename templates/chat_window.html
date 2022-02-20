@@ -1,0 +1,20 @@
+<div class="row" style="bottom: 0; height: 90%; position: absolute; top: 5%; left: 10%; right: 10%;">
+    <div class="col-3" style="overflow-y: scroll;">
+        <h3>Чаты</h3>
+        {% for membership in memberships %}
+            <div {% if membership.chat == current_chat %}style="background-color: #DDDDDD;"{% endif %}>
+            <hr>
+                <h4>{{ membership.chat.name }}</h4>
+                <b>{{ membership.chat.last_message.sender.username }}</b>: {{ membership.chat.last_message.text }} {% if not membership.chat.last_message.is_read %}<i class="fa fa-circle"></i>{% endif %}
+            <hr>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-9" style="position: relative; align-content: end;">
+        <div style="position: absolute; bottom: 0; right: 0; left: 0;">
+            {% for message in messages %}
+                <b>{{ message.sender.username }}</b>: {{ message.text }}<br>
+            {% endfor %}
+        </div>
+    </div>
+</div>
