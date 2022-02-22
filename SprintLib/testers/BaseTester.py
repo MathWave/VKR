@@ -1,6 +1,5 @@
-from os import listdir, mkdir, chmod
+from os import listdir, mkdir
 from os.path import join, exists
-from shutil import copyfile
 from subprocess import call, TimeoutExpired
 
 from Main.management.commands.bot import bot

@@ -20,9 +20,10 @@ class BaseView:
     view_file: Optional[str] = None
     endpoint: Optional[str] = None
 
-    def __init__(self):
+    def __init__(self, request):
         self.context = {}
         self.entities = EntityStorage()
+        self.request = request
 
     @classmethod
     def as_view(cls):
@@ -31,14 +32,13 @@ class BaseView:
                 user_info = request.user.userinfo
                 user_info.last_request = timezone.now()
                 user_info.save()
-            c = cls()
+            c = cls(request)
             if c.required_login is not None:
                 if c.required_login and not request.user.is_authenticated:
                     return HttpResponseRedirect("/enter")
                 if not c.required_login and request.user.is_authenticated:
                     return HttpResponseRedirect("/")
             request_method = request.method.lower()
-            c.request = request
             exec("from Main.models import *")
             for key in request.GET.keys():
                 if key.endswith("_id"):

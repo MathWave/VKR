@@ -3,19 +3,30 @@ from random import sample
 from django.db.models import Count, Max, Q
 from django.utils import timezone
 
+from Checker.models import Checker
 from Main.models import Task, UserInfo, Solution, Group
-from SprintLib.BaseView import BaseView
+from SprintLib.BaseView import BaseView, AccessError
+from SprintLib.language import languages
 
 
 class MainView(BaseView):
-    view_file = "main.html"
-    required_login = True
     endpoint = ""
 
-    def get(self):
-        self.context['top_tasks_today'] = Task.objects.filter(public=True, solution__time_sent__date=timezone.now().date()).annotate(count=Count('solution__task_id')).order_by('-count')[:5]
+    @property
+    def view_file(self):
+        if self.request.user.is_authenticated:
+            return "main.html"
+        return "landing.html"
+
+    def get_main(self):
+        self.context['top_tasks_today'] = Task.objects.filter(public=True,
+                                                              solution__time_sent__date=timezone.now().date()).annotate(
+            count=Count('solution__task_id')).order_by('-count')[:5]
         if len(self.context['top_tasks_today']) < 5:
-            self.context['top_tasks_today'] = Task.objects.filter(public=True, solution__time_sent__isnull=False).annotate(time_sent=Max('solution__time_sent'), count=Count('solution__task_id')).order_by('-count', '-time_sent')[:5]
+            self.context['top_tasks_today'] = Task.objects.filter(public=True,
+                                                                  solution__time_sent__isnull=False).annotate(
+                time_sent=Max('solution__time_sent'), count=Count('solution__task_id')).order_by('-count',
+                                                                                                 '-time_sent')[:5]
         if len(self.context['top_tasks_today']) < 5:
             self.context['top_tasks_today'] = Task.objects.filter(public=True).order_by('name')[:5]
         for task in self.context['top_tasks_today']:
@@ -29,8 +40,25 @@ class MainView(BaseView):
             setattr(task, 'solution', Solution.objects.filter(user=self.request.user, task=task).last())
         new_tasks = set(Task.objects.filter(public=True)) - set(all_tasks)
         self.context['new_tasks'] = sample(new_tasks, k=min(5, len(new_tasks)))
-        self.context['groups'] = Group.objects.filter(Q(editors__in=self.request.user.username) | Q(creator=self.request.user) | Q(users=self.request.user)).distinct()
+        self.context['groups'] = Group.objects.filter(
+            Q(editors__in=self.request.user.username) | Q(creator=self.request.user) | Q(
+                users=self.request.user)).distinct()
+
+    def get_landing(self):
+        self.context['solutions'] = len(Solution.objects.all())
+        self.context['tasks'] = len(Task.objects.all())
+        self.context['users'] = len(UserInfo.objects.all())
+        self.context['languages'] = len(languages)
+        self.context['groups'] = len(Group.objects.all())
+        self.context['runners'] = len(Checker.objects.all())
+
+    def get(self):
+        if self.request.user.is_authenticated:
+            return self.get_main()
+        return self.get_landing()
 
     def post(self):
+        if not self.request.user.userinfo.teacher:
+            raise AccessError()
         group = Group.objects.create(name=self.request.POST['name'], creator=self.request.user)
         return '/group?group_id=' + str(group.id)
