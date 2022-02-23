@@ -4,11 +4,7 @@ from django.db import models
 from django.utils import timezone
 
 from Main.models import Solution, Set
-
-
-def generate_token():
-    letters = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
-    return ''.join([choice(letters) for _ in range(30)])
+from SprintLib.utils import generate_token
 
 
 class Checker(models.Model):

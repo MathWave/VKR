@@ -29,6 +29,10 @@ class Task(models.Model):
         return ExtraFile.objects.filter(task=self, is_test=True).order_by('filename')
 
     @property
+    def tests_count(self):
+        return len(self.tests) // 2
+
+    @property
     def samples(self):
         data = []
         for test in self.tests.order_by("test_number"):

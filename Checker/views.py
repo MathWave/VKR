@@ -7,9 +7,10 @@ from django.http import JsonResponse, HttpResponse
 
 from django.utils import timezone
 
-from Checker.models import Checker, generate_token
+from Checker.models import Checker
 from FileStorage.sync import synchronized_method
 from Main.models import Solution, SolutionFile, ExtraFile
+from SprintLib.utils import generate_token
 
 
 def get_dynamic(request):

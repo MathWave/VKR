@@ -31,6 +31,12 @@ class Solution(models.Model):
         ]
 
     @property
+    def percentage_done(self):
+        if self.test is None:
+            return 0
+        return self.test * 100 // self.task.tests_count
+
+    @property
     def language(self):
         return languages[self.language_id]
 

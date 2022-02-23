@@ -1,3 +1,5 @@
+from random import choice
+
 from requests import get, post
 
 from Sprint import settings
@@ -19,3 +21,8 @@ def delete_file(num: int):
     url = settings.FS_HOST + ":" + str(settings.FS_PORT) + "/delete_file?id=" + str(num)
     print(url)
     post(url)
+
+
+def generate_token():
+    letters = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
+    return ''.join([choice(letters) for _ in range(30)])
