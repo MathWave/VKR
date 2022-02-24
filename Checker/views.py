@@ -76,3 +76,17 @@ def set_result(request):
         return JsonResponse({"status": True})
     except ObjectDoesNotExist:
         return JsonResponse({"status": "incorrect token"}, status=403)
+
+
+def current_test(request):
+    try:
+        checker = Checker.objects.get(dynamic_token=request.GET['token'])
+        solution = Solution.objects.get(id=request.GET['solution_id'])
+        if checker.set != solution.set:
+            return JsonResponse({"status": "incorrect solution"}, status=403)
+        test = int(request.GET['test'])
+        solution.test = test
+        solution.save()
+        return JsonResponse({"status": True})
+    except ObjectDoesNotExist:
+        return JsonResponse({"status": "incorrect token"}, status=403)

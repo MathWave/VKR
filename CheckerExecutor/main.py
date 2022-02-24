@@ -14,14 +14,14 @@ from testers import *
 host = "http://dev.sprinthub.ru/"
 
 
-def process_solution(path, data, language_id, solution_id, timeout):
+def process_solution(path, data, language_id, solution_id, timeout, token, host):
     with open(join(path, "package.zip"), 'wb') as fs:
         fs.write(data)
     with ZipFile(join(path, "package.zip"), 'r') as zip_ref:
         zip_ref.extractall(path)
     language = languages[language_id]
     try:
-        result = eval(language.work_name + "Tester")(path, solution_id, language_id, timeout).execute()
+        result = eval(language.work_name + "Tester")(path, solution_id, language_id, timeout, token, host).execute()
     except Exception as e:
         print(str(e))
         result = "TE"
@@ -61,6 +61,8 @@ def main():
                     int(data.headers['language_id']),
                     int(data.headers['solution_id']),
                     int(data.headers['timeout']),
+                    dynamic_token,
+                    host
                 )
                 get(f"{host}checker/set_result", params={
                     "token": dynamic_token,

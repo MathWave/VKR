@@ -3,6 +3,9 @@ from os.path import join, exists
 from subprocess import call, TimeoutExpired
 
 from language import *
+from requests import get
+
+from SprintLib.language import languages
 
 
 class TestException(Exception):
@@ -78,11 +81,13 @@ class BaseTester:
     def language(self):
         return languages[self.language_id]
 
-    def __init__(self, path, solution_id, language_id, timeout):
+    def __init__(self, path, solution_id, language_id, timeout, token, host):
         self.solution_id = solution_id
         self._path = path
         self.language_id = language_id
         self.timeout = timeout
+        self.token = token
+        self.host = host
 
     def execute(self):
         docker_command = f"docker run --name solution --volume={self.path}:/{self.working_directory} -t -d {self.language.image}"
@@ -101,6 +106,7 @@ class BaseTester:
                 if not file.endswith(".a") and exists(join(self.path, file + '.a')):
                     self.predicted = open(join(self.path, file + '.a'), 'r').read().strip().replace('\r\n', '\n')
                     print('predicted:', self.predicted)
+                    get(f"{self.host}checker/current_test", params={"token": self.token, 'test': file})
                     self.test(file)
             self.after_test()
             result = "OK"
