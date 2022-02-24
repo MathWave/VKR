@@ -70,6 +70,8 @@ def set_result(request):
         if checker.set != solution.set:
             return JsonResponse({"status": "incorrect solution"}, status=403)
         solution.result = result
+        if result == 'OK':
+            solution.test = None
         solution.save()
         checker.testing_solution = None
         checker.save()
