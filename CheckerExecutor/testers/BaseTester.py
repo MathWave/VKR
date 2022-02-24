@@ -5,8 +5,6 @@ from subprocess import call, TimeoutExpired
 from language import *
 from requests import get
 
-from SprintLib.language import languages
-
 
 class TestException(Exception):
     pass
@@ -106,7 +104,7 @@ class BaseTester:
                 if not file.endswith(".a") and exists(join(self.path, file + '.a')):
                     self.predicted = open(join(self.path, file + '.a'), 'r').read().strip().replace('\r\n', '\n')
                     print('predicted:', self.predicted)
-                    get(f"{self.host}checker/current_test", params={"token": self.token, 'test': file})
+                    get(f"{self.host}checker/current_test", params={"token": self.token, 'test': file, 'solution_id': self.solution_id})
                     self.test(file)
             self.after_test()
             result = "OK"
