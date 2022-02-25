@@ -121,7 +121,11 @@ class BaseTester:
                     ).text.strip().replace('\r\n', '\n')
                     print('predicted:', self.predicted)
                     self.solution.test = int(test.filename)
-                    self.solution.extras[test.filename] = {'predicted': test.text, 'output': ''}
+                    try:
+                        predicted = self.predicted.decode('utf-8')
+                    except UnicodeDecodeError:
+                        predicted = ''
+                    self.solution.extras[test.filename] = {'predicted': predicted, 'output': ''}
                     self.solution.save()
                     try:
                         self.test(test.filename)

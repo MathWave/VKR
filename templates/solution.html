@@ -43,24 +43,26 @@
     {% for entity in solution.files %}
         <h5>{{ entity.filename }}</h5>
 <pre><code class="{{ entity.highlight }}" style="border: 1px solid black;">{{ entity.text }}</code></pre>
-        <hr>
+        <hr><hr>
     {% endfor %}
 
     {% if solution.task.creator == user or user.username in solution.task.editors or solution.set and solution.set.creator == user or solution.set and user.username in solution.set.editors %}
         <h4>Лог тестрования</h4>
         {% for key, value in solution.extras.items %}
-            <h5>{{ key }}</h5>
+            <h5>Тест {{ key }}</h5>
             Затраченное время: {{ value.time_spent }} мс
             <div class="row">
-            <div class="col-2"></div>
-                <div class="col-2" style="background-color: #DDDDDD;">
+                <div class="col-4" style="background-color: #DDDDDD;">
+                    Ожидаемый вывод:<br>
                     {{ value.predicted }}
                 </div>
                 <div class="col-4"></div>
-                <div class="col-2" style="background-color: #DDDDDD;">
+                <div class="col-4" style="background-color: #DDDDDD;">
+                    Фактический вывод:<br>
                     {{ value.output }}
                 </div>
             </div>
+            <hr>
         {% endfor %}
     {% endif %}
 {% endblock %}
