@@ -18,8 +18,12 @@ class SolutionsTableView(BaseView):
         queryset = Solution.objects.all()
         if 'teacher' in self.request.GET.keys():
             if 'set_id' in self.request.GET.keys():
+                if self.request.user != self.entities.set.creator and self.request.user.username not in self.entities.set.editors:
+                    raise AccessError()
                 queryset = queryset.filter(set_id=self.request.GET['set_id'])
             elif 'task_id' in self.request.GET.keys():
+                if self.request.user != self.entities.task.creator and self.request.user.username not in self.entities.task.editors:
+                    raise AccessError()
                 queryset = queryset.filter(task_id=self.request.GET['task_id'], set=None)
             else:
                 raise AccessError()

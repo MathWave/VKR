@@ -4,13 +4,21 @@
 
 {% block main %}
     <h4>
-    <table class="table" style="width: 30%;">
+    <table class="table" style="width: 50%;">
         <tr>
             <td>
                 Id решения
             </td>
             <td>
                 {{ solution.id }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Пользователь
+            </td>
+            <td>
+                <a href="/account?username={{ solution.user.username }}"><img src="{{ solution.user.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;">{{ solution.user.username }}</a>
             </td>
         </tr>
         <tr>
@@ -23,10 +31,18 @@
         </tr>
         <tr>
             <td>
+                Время отправки
+            </td>
+            <td>
+                {{ solution.time_sent }}
+            </td>
+        </tr>
+        <tr>
+            <td>
                 Язык
             </td>
             <td>
-                <img src="{{ solution.language.logo_url }}" width="30px" height="30px">
+                <img src="{{ solution.language.logo_url }}" width="30px" height="30px"> {{ solution.language.name }}
             </td>
         </tr>
         <tr>
@@ -39,6 +55,7 @@
         </tr>
     </table>
     </h4>
+    <hr><hr>
     <h4>Файлы решения</h4>
     {% for entity in solution.files %}
         <h5>{{ entity.filename }}</h5>
