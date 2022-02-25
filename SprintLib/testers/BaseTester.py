@@ -120,12 +120,12 @@ class BaseTester:
                     ).text.strip().replace('\r\n', '\n')
                     print('predicted:', self.predicted)
                     self.solution.test = int(test.filename)
+                    self.solution.extras[test.filename] = {'predicted': test.text, 'output': ''}
                     self.solution.save()
                     try:
                         with Timer(self.solution, test.filename) as timer:
                             self.test(test.filename)
                     finally:
-                        self.solution.extras[test.filename]['predicted'] = test.text
                         if exists(join(self.path, "output.txt")):
                             try:
                                 self.solution.extras[test.filename]['output'] = open(join(self.path, 'output.txt'), 'r').read()
