@@ -1,3 +1,4 @@
+import datetime
 from random import choice
 
 from requests import get, post
@@ -26,3 +27,20 @@ def delete_file(num: int):
 def generate_token():
     letters = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
     return ''.join([choice(letters) for _ in range(30)])
+
+
+class Timer:
+    start_time = None
+    end_time = None
+
+    def __init__(self, solution, test):
+        self.solution = solution
+        self.test = test
+
+    def __enter__(self):
+        assert self.start_time is None
+        self.start_time = datetime.datetime.now()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.end_time = datetime.datetime.now()
+        self.solution.extras[self.test]['time_spent'] = (self.end_time - self.start_time).total_seconds() * 1000

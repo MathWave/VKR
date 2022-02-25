@@ -6,7 +6,7 @@ from Main.management.commands.bot import bot
 from Main.models import ExtraFile, SolutionFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
-from SprintLib.utils import get_bytes
+from SprintLib.utils import get_bytes, Timer
 
 
 class TestException(Exception):
@@ -121,7 +121,16 @@ class BaseTester:
                     print('predicted:', self.predicted)
                     self.solution.test = int(test.filename)
                     self.solution.save()
-                    self.test(test.filename)
+                    try:
+                        with Timer(self.solution, test.filename) as timer:
+                            self.test(test.filename)
+                    finally:
+                        self.solution.extras[test.filename]['predicted'] = test.text
+                        if exists(join(self.path, "output.txt")):
+                            try:
+                                self.solution.extras[test.filename]['output'] = open(join(self.path, 'output.txt'), 'r').read()
+                            except UnicodeDecodeError:
+                                self.solution.extras[test.filename]['output'] = ''
             self.after_test()
             self.solution.result = CONSTS["ok_status"]
             self.solution.test = None

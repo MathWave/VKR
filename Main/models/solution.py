@@ -4,6 +4,7 @@ from shutil import rmtree
 from subprocess import call
 
 from django.contrib.auth.models import User
+from django.db.models import JSONField
 from django.db import models
 from django.utils import timezone
 
@@ -22,6 +23,7 @@ class Solution(models.Model):
     result = models.TextField(default=CONSTS["in_queue_status"])
     test = models.IntegerField(default=None, null=True)
     set = models.ForeignKey(Set, null=True, on_delete=models.SET_NULL)
+    extras = JSONField(default=dict)
 
     class Meta:
         indexes = [

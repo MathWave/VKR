@@ -11,7 +11,10 @@ class FileStorageMixin:
 
     @cached_property
     def text(self):
-        return self.bytes.decode("utf-8")
+        try:
+            return self.bytes.decode("utf-8")
+        except UnicodeDecodeError:
+            return ""
 
     def write(self, bytes):
         self.fs_id = write_bytes(bytes)
