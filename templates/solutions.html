@@ -6,7 +6,7 @@
         page = number;
     }
     function doPoll() {
-        jQuery.get('/solutions_table?{% if task_id %}task_id={{ task.id }}{% else %}set_id={{ set.id }}{% endif %}&page=' + page.toString(), function(data) {
+        jQuery.get('/solutions_table?{% if task %}task_id={{ task.id }}{% else %}set_id={{ set.id }}{% endif %}&teacher=true&page=' + page.toString(), function(data) {
             var e = document.getElementById('solutions');
             if (e.innerHTML !== data)
                 e.innerHTML = data;
