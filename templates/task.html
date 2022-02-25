@@ -26,7 +26,7 @@
         page = number;
     }
     function doPoll() {
-        jQuery.get('/solutions_table?{% if in_set %}setTask={{ setTask.id }}{% else %}task_id={{ task.id }}{% endif %}&page=' + page.toString(), function(data) {
+        jQuery.get('/solutions_table?{% if in_set %}setTask_id={{ setTask.id }}{% else %}task_id={{ task.id }}{% endif %}&page=' + page.toString(), function(data) {
             var e = document.getElementById('solutions');
             if (e.innerHTML !== data)
                 e.innerHTML = data;
