@@ -33,14 +33,6 @@ class SolutionsTableView(BaseView):
         if 'page' not in self.request.GET:
             raise AccessError()
         self.page = int(self.request.GET['page'])
-        if "username" in self.request.GET and self.request.user.username == self.request.GET['username']:
-            return
-        if hasattr(self.entities, "set"):
-            if self.entities.set.creator != self.request.user and self.request.user.username not in self.entities.set.editors:
-                raise AccessError()
-        if hasattr(self.entities, "task"):
-            if self.entities.task.creator != self.request.user and self.request.user.username not in self.entities.task.editors:
-                raise AccessError()
 
     def get(self):
         if 'only_my' in self.request.GET:
