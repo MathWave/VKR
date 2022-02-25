@@ -31,10 +31,11 @@ class BaseTester:
             raise TestException("CE")
 
     def test(self, filename):
-        code = self.solution.exec_command(
-            f"< {filename} {self.command} > output.txt",
-            timeout=self.solution.task.time_limit / 1000,
-        )
+        with Timer(self.solution, filename):
+            code = self.solution.exec_command(
+                f"< {filename} {self.command} > output.txt",
+                timeout=self.solution.task.time_limit / 1000,
+            )
         if code != 0:
             raise TestException("RE")
         result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
@@ -123,8 +124,7 @@ class BaseTester:
                     self.solution.extras[test.filename] = {'predicted': test.text, 'output': ''}
                     self.solution.save()
                     try:
-                        with Timer(self.solution, test.filename) as timer:
-                            self.test(test.filename)
+                        self.test(test.filename)
                     finally:
                         if exists(join(self.path, "output.txt")):
                             try:
