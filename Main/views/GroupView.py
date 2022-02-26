@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 
 from SprintLib.BaseView import BaseView, AccessError
+from SprintLib.utils import generate_token
 
 
 class GroupView(BaseView):
@@ -45,3 +46,16 @@ class GroupView(BaseView):
         for t in to_delete:
             self.entities.group.users.remove(t)
         return "/group?group_id=" + str(self.entities.group.id)
+
+    def link_action(self, value):
+        if not self.owner:
+            raise AccessError()
+        self.entities.group.access_token = value
+        self.entities.group.save()
+        return "/group?group_id=" + str(self.entities.group.id)
+
+    def post_open_link(self):
+        return self.link_action(generate_token())
+
+    def post_close_link(self):
+        return self.link_action(None)

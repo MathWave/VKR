@@ -8,6 +8,38 @@
             <td>
                 <h2>Мои группы</h2>
             </td>
+            <td>
+                <button style="margin-left: 20px;" class="btn btn-primary" data-toggle="modal" data-target="#exampletoken"><i class="fa fa-sign-in"></i></button>
+                <div class="modal fade" id="exampletoken" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitletoken" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+              <form method="POST">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitletoken">Войти в группу по токену</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                            {% csrf_token %}
+                            <inout type="hidden" name="action" value="token"></inout>
+                            <input type="token" name="name" placeholder="Токен">
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Войти</button>
+                  </div>
+                </div>
+              </form>
+              </div>
+            </div>
+            </td>
             {% if user.userinfo.can_create %}
                 <td>
                     <button style="margin-left: 20px;" class="btn btn-success" data-toggle="modal" data-target="#example"><i class="fa fa-plus"></i></button>

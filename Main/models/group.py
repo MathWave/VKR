@@ -13,6 +13,7 @@ class Group(models.Model):
     creator = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     users = models.ManyToManyField(User, related_name="user_groups")
     editors = ArrayField(models.TextField(), default=list)
+    access_token = models.CharField(max_length=30, null=True)
 
     @property
     def available_sets(self):

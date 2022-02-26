@@ -54,7 +54,20 @@
         <img src="{{ u.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ u.username }}">{{ u.username }}</a><br><br>
     {% endfor %}
     {% if group.creator == user or user.username in group.editors %}
-        <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#exampleU"><i class="fa fa-pencil"></i> Редактировать</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleU"><i class="fa fa-pencil"></i> Редактировать</button>
+        {% if group.access_token %}
+            <button type="submit" form="close_link" class="btn btn-danger"><i class="fa fa-lock"></i> Закрыть доступ по токену</button><input style="width: 300px; margin-left: 10px;" value="{{ group.access_token }}">
+            <form method="POST" id="close_link">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="close_link">
+            </form>
+        {% else %}
+            <button type="submit" form="open_link" class="btn btn-success"><i class="fa fa-unlock"></i> Открыть доступ по токену</button>
+            <form method="POST" id="open_link">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="open_link">
+            </form>
+        {% endif %}
         <div class="modal fade" id="exampleU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleU" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <form method="POST">

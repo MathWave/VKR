@@ -1,5 +1,6 @@
 from random import sample
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Max, Q
 from django.utils import timezone
 
@@ -62,3 +63,12 @@ class MainView(BaseView):
             raise AccessError()
         group = Group.objects.create(name=self.request.POST['name'], creator=self.request.user)
         return '/group?group_id=' + str(group.id)
+
+    def post_token(self):
+        token = self.request.POST['token']
+        try:
+            group = Group.objects.get(access_token=token)
+            group.users.add(self.request.user)
+            return '/group?group_id=' + str(group.id)
+        except ObjectDoesNotExist:
+            return "/"
