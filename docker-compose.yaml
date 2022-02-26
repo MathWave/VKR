@@ -55,6 +55,15 @@ services:
     depends_on:
       - web
 
+  loop:
+    image: mathwave/sprint-repo:sprint
+    restart: always
+    environment:
+      HOST: $HOST
+    command: ./manage.py loop
+    depends_on:
+      - web
+
   rabbitmq:
     restart: always
     build:
@@ -101,3 +110,4 @@ services:
       - bot
       - postgres
       - apply-languages
+      - loop

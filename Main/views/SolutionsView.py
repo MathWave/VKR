@@ -12,4 +12,7 @@ class SolutionsView(BaseView):
             queries.append('task_id=' + self.request.GET['task_id'])
         if 'set_id' in self.request.GET.keys():
             queries.append('set_id=' + self.request.GET['set_id'])
+            self.context['in_set'] = True
+        else:
+            self.context['in_set'] = False
         self.context['query'] = '&'.join(queries)

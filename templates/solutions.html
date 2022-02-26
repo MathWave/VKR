@@ -23,7 +23,7 @@
 {% block onload %}doPoll(){% endblock %}
 
 {% block main %}
-    <h2>Решения</h2>
+    <h2>Решения <a href="{% if in_set %}/set?set_id={{ set.id }}{% else %}/task?task_id={{ task.id }}{% endif %}">{% if in_set %}{{ set.name }}{% else %}{{ task.name }}{% endif %}</a></h2>
     <!--
     <h4>Фильтр (пока недоступная опция)</h4>
     <div>
