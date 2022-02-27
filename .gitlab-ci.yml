@@ -38,7 +38,7 @@ deploy-dev:
       when: on_success
     - when: manual
   variables:
-    PORT: 443
+    PORT: 80
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     HOST: "77.246.159.65"
 
