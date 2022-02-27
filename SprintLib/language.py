@@ -61,4 +61,13 @@ languages = [
         image="mono",
         highlight="csharp",
     ),
+    Language(
+        id=5,
+        name="Swift",
+        work_name="Swift",
+        file_type="swift",
+        logo_url="https://cdn.worldvectorlogo.com/logos/swift-15.svg",
+        image="swift",
+        highlight="swift",
+    ),
 ]
