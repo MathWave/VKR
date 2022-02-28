@@ -16,6 +16,7 @@ class Task(models.Model):
     time_estimation = models.IntegerField(default=5)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     editors = ArrayField(models.TextField(), default=list)
+    allow_sharing = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
