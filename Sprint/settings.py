@@ -29,10 +29,8 @@ HOST = os.getenv("HOST", "77.246.159.65")
 SECRET_KEY = "-w#*mn6*fa8a=(-c0@klx&$vl%hpiy&l(u*3%0a#2)wdt##(z2"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEPLOY = False
-DEBUG = not DEPLOY
+DEBUG = os.getenv('debug', 'true') == 'true'
 
-SECURE_SSL_REDIRECT = DEPLOY
 
 ALLOWED_HOSTS = ["*"]
 

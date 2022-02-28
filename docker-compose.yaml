@@ -29,6 +29,7 @@ services:
     environment:
       PORT: $PORT
       HOST: $HOST
+      debug: false
     command: ./manage.py runserver 0.0.0.0:$PORT --noreload
     ports:
       - "${PORT}:${PORT}"
