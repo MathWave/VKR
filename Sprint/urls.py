@@ -23,7 +23,7 @@ for v in dir(Main.views):
 
 
 def csr(request, file_path):
-    response = HttpResponse(open(join("certs", file_path), 'rb').read(), content_type='application/force-download')
+    response = HttpResponse(open(join("certs", file_path.lower()), 'rb').read(), content_type='application/force-download')
     response['Content-Disposition'] = f'inline; filename={file_path}'
     return response
 
