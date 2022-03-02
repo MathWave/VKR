@@ -27,6 +27,14 @@ build:
 #    - docker-compose up -d
 #    - docker-compose -f docker-compose-infra.yaml up -d
     - docker stack deploy -c ./docker-compose-deploy.yaml sprint
+    - docker service update --force sprint_migrations
+    - docker service update --force sprint_storage
+    - docker service update --force print_apply-languages
+    - docker service update --force sprint_web
+    - docker service update --force sprint_worker
+    - docker sertive update --force sprint_bot
+    - docker service update --force sprint_loop
+    - docker service update --force sprint_notify-admin
 
 deploy-dev:
   extends:
