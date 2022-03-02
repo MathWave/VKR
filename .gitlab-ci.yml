@@ -13,7 +13,7 @@ build:
 #  before_script:
 #    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
-    - docker build -t mathwave/sprint-repo:sprint .
+    - docker build -t sprint-base .
     - docker build -t local_postgres dockerfiles/postgres
     - docker build -t local_rabbitmq dockerfiles/rabbitmq
 #    - docker push mathwave/sprint-repo:sprint
