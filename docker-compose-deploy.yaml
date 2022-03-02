@@ -19,7 +19,7 @@ services:
         condition: on-failure
 
   migrations:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     command: ./manage.py migrate
     depends_on:
       - postgres
@@ -29,7 +29,7 @@ services:
         condition: none
 
   web:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     environment:
       PORT: $PORT
       HOST: $HOST
@@ -47,7 +47,7 @@ services:
         condition: on-failure
 
   storage:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     command: ./manage.py storage
     ports:
       - "5555:5555"
@@ -59,7 +59,7 @@ services:
         condition: on-failure
 
   bot:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     environment:
       HOST: $HOST
     command: ./manage.py bot
@@ -71,7 +71,7 @@ services:
         condition: on-failure
 
   loop:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     environment:
       HOST: $HOST
     command: ./manage.py loop
@@ -93,7 +93,7 @@ services:
         condition: on-failure
 
   worker:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     privileged: true
     command: ./manage.py receive
     environment:
@@ -114,7 +114,7 @@ services:
         condition: on-failure
 
   apply-languages:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     command: ./manage.py apply_languages
     depends_on:
       - migrations
@@ -126,7 +126,7 @@ services:
         condition: none
 
   notify-admin:
-    image: sprint-base
+    image: mathwave/sprint-repo:sprint
     command: ./manage.py success_deploy
     depends_on:
       - migrations
