@@ -37,7 +37,8 @@ class TaskView(BaseView):
             task=self.entities.task,
             user=self.request.user,
             language_id=int(self.request.POST["language"]),
-            set=self.entities.set if hasattr(self.entities, 'setTask') else None
+            set=self.entities.set if hasattr(self.entities, 'setTask') else None,
+            extras=dict(),
         )
 
     def post_0(self):

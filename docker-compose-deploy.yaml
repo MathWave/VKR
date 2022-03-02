@@ -8,6 +8,8 @@ services:
     command: ./manage.py migrate
     deploy:
       mode: replicated
+      restart_policy:
+        condition: never
 
   web:
     image: mathwave/sprint-repo:sprint
@@ -21,6 +23,7 @@ services:
       - "80:80"
     deploy:
       mode: replicated
+      restart-policy: on-failure
 
   bot:
     image: mathwave/sprint-repo:sprint
@@ -32,6 +35,7 @@ services:
       - web
     deploy:
       mode: replicated
+      restart-policy: on-failure
 
   loop:
     image: mathwave/sprint-repo:sprint
@@ -43,6 +47,7 @@ services:
       - web
     deploy:
       mode: replicated
+      restart-policy: on-failure
 
   worker:
     restart: always
@@ -61,6 +66,7 @@ services:
     deploy:
       mode: replicated
       replicas: 4
+      restart-policy: on-failure
 
   apply-languages:
     image: mathwave/sprint-repo:sprint
@@ -69,6 +75,7 @@ services:
       - migrations
     deploy:
       mode: replicated
+      restart-policy: never
 
   notify-admin:
     image: mathwave/sprint-repo:sprint
@@ -82,3 +89,4 @@ services:
       - loop
     deploy:
       mode: replicated
+      restart-policy: never
