@@ -4,10 +4,7 @@ version: "3"
 services:
 
   postgres:
-    restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/postgres/Dockerfile
+    image: local_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
@@ -90,10 +87,7 @@ services:
         condition: on-failure
 
   rabbitmq:
-    restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/rabbitmq/Dockerfile
+    image: local_rabbitmq
     ports:
       - "15672:15672"
       - "5672:5672"
