@@ -10,31 +10,21 @@ build:
   stage: build
   tags:
     - main
-#  before_script:
-#    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
+  before_script:
+    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
     - docker build -t sprint-base .
     - docker build -t local_postgres dockerfiles/postgres
     - docker build -t local_rabbitmq dockerfiles/rabbitmq
-#    - docker push mathwave/sprint-repo:sprint
+    - docker push mathwave/sprint-repo:sprint
 
 .deploy:
-#  before_script:
-#    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
-#    - docker image rm mathwave/sprint-repo:sprint
-#    - docker pull mathwave/sprint-repo:sprint
+  before_script:
+    - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
 #    - docker-compose up -d
 #    - docker-compose -f docker-compose-infra.yaml up -d
     - docker stack deploy -c ./docker-compose-deploy.yaml sprint
-    - docker service update --force sprint_migrations
-    - docker service update --force sprint_storage
-    - docker service update --force print_apply-languages
-    - docker service update --force sprint_web
-    - docker service update --force sprint_worker
-    - docker sertive update --force sprint_bot
-    - docker service update --force sprint_loop
-    - docker service update --force sprint_notify-admin
 
 deploy-dev:
   extends:
