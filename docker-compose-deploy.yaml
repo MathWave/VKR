@@ -9,11 +9,10 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: never
+        condition: none
 
   web:
     image: mathwave/sprint-repo:sprint
-    restart: always
     environment:
       PORT: 80
       HOST: $HOST
@@ -28,7 +27,6 @@ services:
 
   bot:
     image: mathwave/sprint-repo:sprint
-    restart: always
     environment:
       HOST: $HOST
     command: ./manage.py bot
@@ -41,7 +39,6 @@ services:
 
   loop:
     image: mathwave/sprint-repo:sprint
-    restart: always
     environment:
       HOST: $HOST
     command: ./manage.py loop
@@ -53,9 +50,7 @@ services:
         condition: on-failure
 
   worker:
-    restart: always
     image: mathwave/sprint-repo:sprint
-    privileged: true
     command: ./manage.py receive
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
@@ -80,7 +75,7 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: never
+        condition: none
 
   notify-admin:
     image: mathwave/sprint-repo:sprint
@@ -95,4 +90,4 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: never
+        condition: none
