@@ -22,8 +22,7 @@ build:
 #    - docker image rm mathwave/sprint-repo:sprint
 #    - docker pull mathwave/sprint-repo:sprint
   script:
-    - docker-compose up -d -f docker-compose-infra.yaml
-    - docker stack deploy -c ./docker-compose-deploy.yaml sprint
+    - docker-compose up -d
 
 deploy-dev:
   extends:
