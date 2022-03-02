@@ -1,27 +1,13 @@
-version: "3"
+version: "3.2"
 
 
 services:
 
-  postgres:
-    restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/postgres/Dockerfile
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_DB: sprint
-    volumes:
-      - /sprint-data/postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
   migrations:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py migrate
-    depends_on:
-      - postgres
+    deploy:
+      mode: replicated
 
   web:
     image: mathwave/sprint-repo:sprint
@@ -33,19 +19,8 @@ services:
     command: ./manage.py runserver 0.0.0.0:$PORT --noreload
     ports:
       - "${PORT}:${PORT}"
-    depends_on:
-      - migrations
-      - rabbitmq
-      - storage
-
-  storage:
-    restart: always
-    image: mathwave/sprint-repo:sprint
-    command: ./manage.py storage
-    ports:
-      - "5555:5555"
-    volumes:
-      - /sprint-data/data:/usr/src/app/data
+    deploy:
+      mode: replicated
 
   bot:
     image: mathwave/sprint-repo:sprint
@@ -55,6 +30,8 @@ services:
     command: ./manage.py bot
     depends_on:
       - web
+    deploy:
+      mode: replicated
 
   loop:
     image: mathwave/sprint-repo:sprint
@@ -64,15 +41,8 @@ services:
     command: ./manage.py loop
     depends_on:
       - web
-
-  rabbitmq:
-    restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/rabbitmq/Dockerfile
-    ports:
-      - "15672:15672"
-      - "5672:5672"
+    deploy:
+      mode: replicated
 
   worker:
     restart: always
@@ -84,20 +54,21 @@ services:
       HOST: $HOST
     depends_on:
       - web
-      - rabbitmq
       - migrations
-      - storage
     volumes:
       - /sprint-data/solutions:/usr/src/app/solutions
       - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: replicated
+      replicas: 4
 
   apply-languages:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py apply_languages
     depends_on:
       - migrations
-      - web
-      - postgres
+    deploy:
+      mode: replicated
 
   notify-admin:
     image: mathwave/sprint-repo:sprint
@@ -106,9 +77,8 @@ services:
       - migrations
       - web
       - worker
-      - storage
-      - rabbitmq
       - bot
-      - postgres
       - apply-languages
       - loop
+    deploy:
+      mode: replicated

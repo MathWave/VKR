@@ -22,7 +22,8 @@ build:
 #    - docker image rm mathwave/sprint-repo:sprint
 #    - docker pull mathwave/sprint-repo:sprint
   script:
-    - docker-compose up -d --scale worker=4
+    - docker-compose up -d -f docker-compose-infra.yaml
+    - docker stack deploy -c ./docker-compose-deploy.yaml sprint
 
 deploy-dev:
   extends:

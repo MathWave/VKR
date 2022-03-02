@@ -1,0 +1,36 @@
+version: "3"
+
+
+services:
+
+  postgres:
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/postgres/Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: sprint
+    volumes:
+      - /sprint-data/postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  storage:
+    restart: always
+    image: mathwave/sprint-repo:sprint
+    command: ./manage.py storage
+    ports:
+      - "5555:5555"
+    volumes:
+      - /sprint-data/data:/usr/src/app/data
+
+  rabbitmq:
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/rabbitmq/Dockerfile
+    ports:
+      - "15672:15672"
+      - "5672:5672"
