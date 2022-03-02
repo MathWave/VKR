@@ -23,7 +23,8 @@ services:
       - "80:80"
     deploy:
       mode: replicated
-      restart-policy: on-failure
+      restart_policy:
+        condition: on-failure
 
   bot:
     image: mathwave/sprint-repo:sprint
@@ -35,7 +36,8 @@ services:
       - web
     deploy:
       mode: replicated
-      restart-policy: on-failure
+      restart_policy:
+        condition: on-failure
 
   loop:
     image: mathwave/sprint-repo:sprint
@@ -47,7 +49,8 @@ services:
       - web
     deploy:
       mode: replicated
-      restart-policy: on-failure
+      restart_policy:
+        condition: on-failure
 
   worker:
     restart: always
@@ -66,7 +69,8 @@ services:
     deploy:
       mode: replicated
       replicas: 4
-      restart-policy: on-failure
+      restart_policy:
+        condition: on-failure
 
   apply-languages:
     image: mathwave/sprint-repo:sprint
@@ -75,7 +79,8 @@ services:
       - migrations
     deploy:
       mode: replicated
-      restart-policy: never
+      restart_policy:
+        condition: never
 
   notify-admin:
     image: mathwave/sprint-repo:sprint
@@ -89,4 +94,5 @@ services:
       - loop
     deploy:
       mode: replicated
-      restart-policy: never
+      restart_policy:
+        condition: never
