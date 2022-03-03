@@ -28,6 +28,14 @@ services:
       restart_policy:
         condition: none
 
+  static:
+    image: mathwave/sprint-repo:sprint
+    command: ./manage.py collectstatic
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: none
+
   web:
     image: mathwave/sprint-repo:sprint
     environment:
