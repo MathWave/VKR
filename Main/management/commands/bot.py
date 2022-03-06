@@ -7,6 +7,8 @@ from telebot.types import Message
 
 from Main.models import UserInfo
 
+
+# инстанс бота
 bot = telebot.TeleBot(os.getenv("TELEGRAM_TOKEN"))
 
 
