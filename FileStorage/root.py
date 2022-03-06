@@ -14,7 +14,7 @@ def runserver():
     if not exists("data/meta.txt"):
         with open("data/meta.txt", "w") as fs:
             fs.write("0")
-    web.run_app(app, host=os.getenv("FS_HOST", "0.0.0.0"), port=5555)
+    web.run_app(app, host="0.0.0.0", port=5555)
 
 
 if __name__ == "__main__":
