@@ -7,7 +7,7 @@ services:
     image: local_postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: sprint
     volumes:
       - /sprint-data/postgres-data:/var/lib/postgresql/data
@@ -42,6 +42,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -65,6 +66,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -84,6 +86,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -102,6 +105,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -123,6 +127,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -140,6 +145,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -165,6 +171,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -185,6 +192,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
