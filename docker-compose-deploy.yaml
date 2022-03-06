@@ -27,6 +27,7 @@ services:
       PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
       RABBIT_HOST: $RABBIT_HOST
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
@@ -123,15 +124,6 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
-    environment:
-      PORT: 80
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
-      DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
-      DEBUG: $DEBUG
-      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     deploy:
       mode: replicated
       restart_policy:
