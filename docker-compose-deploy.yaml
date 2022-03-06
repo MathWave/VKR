@@ -1,14 +1,5 @@
 version: "3"
 
-environment:
-  PORT: 80
-  SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-  DB_HOST: $DB_HOST
-  RABBIT_HOST: $RABBIT_HOST
-  FS_HOST: $FS_HOST
-  DEBUG: $DEBUG
-  TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-
 
 services:
 
@@ -32,6 +23,14 @@ services:
     command: ./manage.py migrate
     depends_on:
       - postgres
+    environment:
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     deploy:
       mode: replicated
       restart_policy:
@@ -40,9 +39,13 @@ services:
   web:
     image: mathwave/sprint-repo:sprint
     environment:
-      PORT: $PORT
-      HOST: $HOST
-      debug: "false"
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     command: ./manage.py runserver 0.0.0.0:$PORT --noreload
     ports:
       - "${PORT}:${PORT}"
@@ -58,6 +61,14 @@ services:
   storage:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py storage
+    environment:
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     ports:
       - "5555:5555"
     volumes:
@@ -70,7 +81,13 @@ services:
   bot:
     image: mathwave/sprint-repo:sprint
     environment:
-      HOST: $HOST
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     command: ./manage.py bot
     depends_on:
       - web
@@ -82,7 +99,13 @@ services:
   loop:
     image: mathwave/sprint-repo:sprint
     environment:
-      HOST: $HOST
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     command: ./manage.py loop
     depends_on:
       - web
@@ -96,6 +119,14 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    environment:
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     deploy:
       mode: replicated
       restart_policy:
@@ -106,8 +137,13 @@ services:
     privileged: true
     command: ./manage.py receive
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "${SOLUTIONS_ROOT_EXTERNAL}"
-      HOST: $HOST
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     depends_on:
       - web
       - rabbitmq
@@ -125,6 +161,14 @@ services:
   apply-languages:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py apply_languages
+    environment:
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     depends_on:
       - migrations
       - web
@@ -137,6 +181,14 @@ services:
   notify-admin:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py success_deploy
+    environment:
+      PORT: 80
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     depends_on:
       - migrations
       - web
