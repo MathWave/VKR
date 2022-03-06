@@ -1,7 +1,7 @@
 stages:
   - build
   - deploy-dev
-#  - deploy-prod
+  - deploy-prod
 
 variables:
   SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
@@ -9,7 +9,7 @@ variables:
 build:
   stage: build
   tags:
-    - main
+    - demo
   before_script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
@@ -22,8 +22,6 @@ build:
   before_script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
-#    - docker-compose up -d
-#    - docker-compose -f docker-compose-infra.yaml up -d
     - docker stack deploy -c ./docker-compose-deploy.yaml sprint
 
 deploy-dev:
@@ -31,7 +29,7 @@ deploy-dev:
     - .deploy
   stage: deploy-dev
   tags:
-    - main
+    - demo
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: on_success
@@ -39,19 +37,25 @@ deploy-dev:
   variables:
     PORT: 80
     SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-    HOST: "77.246.159.65"
+    DB_HOST: "82.146.35.103"
+    RABBIT_HOST: "82.146.35.103"
+    FS_HOST: "82.146.35.103"
+    DEBUG: "true"
+    TELEGRAM_TOKEN: "$TELEGRAM_TOKEN_DEMO"
 
-#deploy-prod:
-#  extends:
-#    - .deploy
-#  stage: deploy-prod
-#  tags:
-#    - prod
-#  only:
-#    - master
-#  when: manual
-#  variables:
-#    PORT: 443
-#    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-#    DB_HOST: "postgres"
-#    RABBIT_HOST: "rabbitmq"
+deploy-prod:
+  extends:
+    - .deploy
+  stage: deploy-prod
+  tags:
+    - main
+  only:
+    - master
+  when: manual
+  variables:
+    PORT: 80
+    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+    DB_HOST: "77.246.159.65"
+    RABBIT_HOST: "77.246.159.65"
+    FS_HOST: "77.246.159.65"
+    TELEGRAM_TOKEN: "$TELEGRAM_TOKEN"

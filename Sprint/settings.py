@@ -20,8 +20,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-HOST = os.getenv("HOST", "77.246.159.65")
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -29,7 +27,7 @@ HOST = os.getenv("HOST", "77.246.159.65")
 SECRET_KEY = "-w#*mn6*fa8a=(-c0@klx&$vl%hpiy&l(u*3%0a#2)wdt##(z2"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('debug', 'true') == 'true'
+DEBUG = os.getenv('DEBUG', 'true') == 'true'
 
 
 ALLOWED_HOSTS = ["*"]
@@ -88,8 +86,8 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "sprint",
         "USER": "postgres",
-        "PASSWORD": os.getenv("DB_PASSWORD", "password"),
-        "HOST": HOST,
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
         "PORT": 5432,
     }
 }
@@ -145,10 +143,10 @@ for root in DATA_ROOT, EXTRA_FILES_ROOT:
 
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
-RABBIT_HOST = HOST
+RABBIT_HOST = os.getenv("RABBIT_HOST")
 RABBIT_PORT = 5672
 
-FS_HOST = "http://" + HOST
+FS_HOST = "http://" + os.getenv("FS_HOST")
 FS_PORT = 5555
 
 # Authentication backends
