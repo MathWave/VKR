@@ -70,13 +70,4 @@ languages = [
         image="swift",
         highlight="swift",
     ),
-    Language(
-        id=6,
-        name="JavaScript",
-        work_name="JavaScript",
-        file_type="js",
-        logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/JavaScript-logo.png/240px-JavaScript-logo.png",
-        image="node",
-        highlight="javascript",
-    )
 ]
