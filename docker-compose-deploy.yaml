@@ -3,6 +3,17 @@ version: "3"
 
 services:
 
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+
   postgres:
     image: postgres
     environment:
@@ -25,7 +36,6 @@ services:
     depends_on:
       - postgres
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -41,7 +51,6 @@ services:
   web:
     image: mathwave/sprint-repo:sprint
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -49,9 +58,9 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    command: ./manage.py runserver 0.0.0.0:$PORT --noreload
+    command: ./manage.py runserver 0.0.0.0:8000 --noreload
     ports:
-      - "${PORT}:${PORT}"
+      - "8000:8000"
     depends_on:
       - migrations
       - rabbitmq
@@ -65,7 +74,6 @@ services:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py storage
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -85,7 +93,6 @@ services:
   bot:
     image: mathwave/sprint-repo:sprint
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -104,7 +111,6 @@ services:
   loop:
     image: mathwave/sprint-repo:sprint
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -135,7 +141,6 @@ services:
     privileged: true
     command: ./manage.py receive
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -161,7 +166,6 @@ services:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py apply_languages
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
@@ -182,7 +186,6 @@ services:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py success_deploy
     environment:
-      PORT: 80
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
