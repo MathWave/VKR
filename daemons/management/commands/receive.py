@@ -3,7 +3,7 @@ from shutil import rmtree
 
 import pika
 from django.core.management.base import BaseCommand
-from pika.adapters.utils.connection_workflow import AMQPConnectionWorkflowFailed
+from pika.adapters.utils.connection_workflow import AMQPConnectorException
 
 from Main.models import Solution
 from Sprint import settings
@@ -40,5 +40,5 @@ class Command(BaseCommand):
 
                 channel.basic_consume(queue="test", on_message_callback=callback, auto_ack=True)
                 channel.start_consuming()
-            except AMQPConnectionWorkflowFailed:
+            except AMQPConnectorException:
                 print("connection to rabbit failed: reconnecting")

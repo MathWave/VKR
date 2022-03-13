@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "Main.apps.MainConfig",
     "Checker.apps.CheckerConfig",
     "Messaging.apps.MessagingConfig",
+    "daemons.apps.DaemonsConfig",
 ]
 
 MIDDLEWARE = [

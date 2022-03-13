@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
-from Main.management.commands.bot import bot
+from daemons.management import bot
 
 
 class Command(BaseCommand):
