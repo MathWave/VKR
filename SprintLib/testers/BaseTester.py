@@ -2,7 +2,7 @@ from os import listdir, mkdir
 from os.path import join, exists
 from subprocess import call, TimeoutExpired
 
-from daemons import bot
+from daemons.management.commands.bot import bot
 from Main.models import ExtraFile, SolutionFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS

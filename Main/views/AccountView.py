@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from daemons import bot
+from daemons.management.commands.bot import bot
 from Main.models import Friendship
 from SprintLib.BaseView import BaseView
 from SprintLib.language import languages

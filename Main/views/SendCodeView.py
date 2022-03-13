@@ -1,6 +1,6 @@
 from django.contrib.auth import login
 
-from daemons import bot
+from daemons.management.commands.bot import bot
 from SprintLib.BaseView import BaseView
 from django.contrib.auth.models import User
 from random import randrange
