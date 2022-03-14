@@ -1,8 +1,6 @@
-import json
-from enum import Enum, auto
-from typing import Union
-
 import pika
+from django.core.management import BaseCommand
+from pika.adapters.utils.connection_workflow import AMQPConnectorException
 
 from Sprint import settings
 
@@ -22,43 +20,24 @@ def send_testing(solution):
         )
 
 
-class Queue(str, Enum):
-    test = auto()
-    notification = auto()
+class MessagingSupport(BaseCommand):
+    queue_name = None
 
+    def consume(self, ch, method, properties, body):
+        raise NotImplementedError
 
-class QueueAccessor:
-
-    def publish(self, queue: Union[Queue, str], message: Union[bytes, dict]):
-        if isinstance(message, dict):
-            message = json.dumps(message).encode("UTF-8")
-        if isinstance(queue, str):
-            queue = Queue(queue)
-        with pika.BlockingConnection(
-                pika.ConnectionParameters(host=settings.RABBIT_HOST, port=settings.RABBIT_PORT)
-        ) as connection:
-            channel = connection.channel()
-            channel.queue_declare(queue=queue.name)
-            channel.basic_publish(
-                exchange="",
-                routing_key=queue.name,
-                body=message,
-            )
-
-
-def message_handler(queue: Union[Queue, str]):
-    if isinstance(queue, str):
-        queue = Queue(queue)
-
-    def decorator(func):
-        def new_func(*args, **kwargs):
-            print("Enter listener for queue", queue)
-            with pika.BlockingConnection(
-                pika.ConnectionParameters(host=settings.RABBIT_HOST)
-            ) as connection:
+    def handle(self, *args, **options):
+        if self.queue_name is None:
+            raise NotImplementedError("Queue name must be declared")
+        print("start listening " + self.queue_name)
+        while True:
+            try:
+                connection = pika.BlockingConnection(
+                    pika.ConnectionParameters(host=settings.RABBIT_HOST)
+                )
                 channel = connection.channel()
-                channel.queue_declare(queue=queue.name)
-                channel.basic_consume(queue=queue.name, on_message_callback=func, auto_ack=True)
+                channel.queue_declare(queue=self.queue_name)
+                channel.basic_consume(queue=self.queue_name, on_message_callback=self.consume, auto_ack=True)
                 channel.start_consuming()
-        return new_func
-    return decorator
+            except AMQPConnectorException:
+                print("connection to rabbit failed: reconnecting")
