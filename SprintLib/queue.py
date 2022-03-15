@@ -1,3 +1,5 @@
+import json
+
 import pika
 from django.core.management import BaseCommand
 from pika.adapters.utils.connection_workflow import AMQPConnectorException
@@ -16,15 +18,18 @@ def send_testing(solution):
         channel.basic_publish(
             exchange="",
             routing_key="test",
-            body=bytes(str(solution.id), encoding="utf-8"),
+            body=json.dumps({"id": solution.id}).encode('utf-8'),
         )
 
 
 class MessagingSupport(BaseCommand):
     queue_name = None
 
-    def consume(self, ch, method, properties, body):
+    def process(self, payload: dict):
         raise NotImplementedError
+
+    def consume(self, ch, method, properties, body):
+        self.process(json.loads(body.decode('utf-8')))
 
     def handle(self, *args, **options):
         if self.queue_name is None:
