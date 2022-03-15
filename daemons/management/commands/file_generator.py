@@ -51,7 +51,7 @@ class Command(MessagingSupport):
                     fs.write(ef.bytes)
             with ZipFile(dump_filename, 'w') as zipfile:
                 for file in listdir(tempdir):
-                    zipfile.write(join(tempdir, file))
+                    zipfile.write(join(tempdir, file), file)
             fs_id = write_bytes(open(dump_filename, 'rb').read())
             dump.fs_id = fs_id
             dump.save()
