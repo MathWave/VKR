@@ -47,7 +47,7 @@ class Command(MessagingSupport):
             with open(join(tempdir, 'meta.json'), 'w') as fs:
                 json.dump(task_data, fs)
             for ef in ExtraFile.objects.filter(task=dump.task):
-                with open(join(tempdir, ef.id), 'wb') as fs:
+                with open(join(tempdir, str(ef.id)), 'wb') as fs:
                     fs.write(ef.bytes)
             with ZipFile(dump_filename, 'w') as zipfile:
                 for file in listdir(tempdir):
