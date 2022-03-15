@@ -7,18 +7,16 @@ from pika.adapters.utils.connection_workflow import AMQPConnectorException
 from Sprint import settings
 
 
-def send_testing(solution):
-    if solution.set is not None and len(solution.set.checkers.all()) != 0:
-        return
+def send_to_queue(queue_name, payload):
     with pika.BlockingConnection(
         pika.ConnectionParameters(host=settings.RABBIT_HOST, port=settings.RABBIT_PORT)
     ) as connection:
         channel = connection.channel()
-        channel.queue_declare(queue="test")
+        channel.queue_declare(queue=queue_name)
         channel.basic_publish(
             exchange="",
-            routing_key="test",
-            body=json.dumps({"id": solution.id}).encode('utf-8'),
+            routing_key=queue_name,
+            body=json.dumps(payload).encode('utf-8'),
         )
 
 
