@@ -22,4 +22,4 @@ class Dump(FileStorageMixin, models.Model):
     @property
     def filename(self):
         if self.task is not None:
-            return f"dump-task-{self.task.id}-{self.str_date}"
+            return f"dump-task-{self.task.id}-{self.str_date}.zip"
