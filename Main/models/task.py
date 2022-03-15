@@ -2,6 +2,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.contrib.auth.models import User
 
+from Main.models.dump import Dump
 from Main.models.extrafile import ExtraFile
 
 
@@ -20,6 +21,10 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def dumps(self):
+        return Dump.objects.filter(task=self).order_by("-timestamp")
 
     @property
     def files(self):

@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 
-from Main.models import ExtraFile
+from Main.models import ExtraFile, Dump
 from SprintLib.BaseView import BaseView, AccessError
+from SprintLib.queue import send_to_queue
 
 
 class TaskSettingsView(BaseView):
@@ -21,6 +22,11 @@ class TaskSettingsView(BaseView):
             setattr(self.entities.task, key, value.strip())
         self.entities.task.public = "public" in self.request.POST
         self.entities.task.save()
+        return f"/admin/task?task_id={self.entities.task.id}"
+
+    def post_dump(self):
+        dump = Dump.objects.create(executor=self.request.user, task=self.entities.task)
+        send_to_queue("files", {"id": dump.id})
         return f"/admin/task?task_id={self.entities.task.id}"
 
     def _upload(self, is_test):

@@ -10,3 +10,4 @@ from Main.models.progress import Progress
 from Main.models.solution_file import SolutionFile
 from Main.models.friendship import Friendship
 from Main.models.language_apply import LanguageApply
+from Main.models.dump import Dump
