@@ -10,8 +10,8 @@ class Command(MessagingSupport):
     help = "Tests solution"
     queue_name = "test"
 
-    def consume(self, ch, method, properties, body):
-        id = int(str(body, encoding="utf-8"))
+    def process(self, payload: dict):
+        id = payload['id']
         print(f"Received id {id}")
         solution = Solution.objects.get(id=id)
         try:
