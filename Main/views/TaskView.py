@@ -1,7 +1,8 @@
 import io
+from typing import Optional
 from zipfile import ZipFile
 
-from Main.models import Solution, Progress, SolutionFile
+from Main.models import Solution, Progress, SolutionFile, SetTask, Task, Set
 from SprintLib.BaseView import BaseView, AccessError
 from SprintLib.language import languages
 from SprintLib.queue import send_to_queue
@@ -12,32 +13,37 @@ class TaskView(BaseView):
     required_login = True
     view_file = "task.html"
     endpoint = "task"
+    setTask: Optional[SetTask] = None
+    task: Optional[Task] = None
+    set: Optional[Set] = None
 
     def get(self):
         progress, _ = Progress.objects.get_or_create(
-            user=self.request.user, task=self.entities.task
+            user=self.request.user, task=self.task
         )
         self.context["progress"] = progress
-        self.context["in_set"] = hasattr(self.entities, 'setTask')
+        self.context["in_set"] = self.set is not None
 
     def pre_handle(self):
-        if hasattr(self.entities, 'setTask'):
-            self.entities.add('task', self.entities.setTask.task)
-            self.entities.add('set', self.entities.setTask.set)
-            self.context['languages'] = self.entities.set.language_models
+        if self.setTask:
+            self.set = self.setTask.set
+            self.task = self.setTask.task
+            self.context['set'] = self.set
+            self.context['task'] = self.task
+            self.context['languages'] = self.set.language_models
         else:
-            if not self.entities.task.public and not self.entities.task.creator == self.request.user and not self.request.user.username in self.entities.task.editors:
+            if not self.task.public and self.task.creator != self.request.user and self.request.user.username not in self.task.editors:
                 raise AccessError()
             self.context['languages'] = languages
         if self.request.method == "GET":
             return
-        if hasattr(self.entities, 'set') and int(self.request.POST["language"]) not in self.entities.set.languages:
+        if self.set and int(self.request.POST["language"]) not in self.set.languages:
             raise AccessError()
         self.solution = Solution.objects.create(
-            task=self.entities.task,
+            task=self.task,
             user=self.request.user,
             language_id=int(self.request.POST["language"]),
-            set=self.entities.set if hasattr(self.entities, 'setTask') else None,
+            set=self.set,
             extras=dict(),
         )
 
@@ -50,12 +56,12 @@ class TaskView(BaseView):
             fs_id=fs_id,
         )
         self.send_testing()
-        return ("/task?setTask_id=" + str(self.entities.setTask.id)) if hasattr(self.entities, 'setTask') else ("/task?task_id=" + str(self.entities.task.id))
+        return ("/task?setTask_id=" + str(self.setTask.id)) if self.set else ("/task?task_id=" + str(self.task.id))
 
     def post_1(self):
         # отправка решения через файл
         if "file" not in self.request.FILES:
-            return "task?task_id=" + str(self.entities.task.id)
+            return "task?task_id=" + str(self.task.id)
         filename = self.request.FILES["file"].name
         if filename.endswith(".zip"):
             archive = ZipFile(io.BytesIO(self.request.FILES["file"].read()))
@@ -76,7 +82,7 @@ class TaskView(BaseView):
                 fs_id=fs_id,
             )
         self.send_testing()
-        return ("/task?setTask_id=" + str(self.entities.setTask.id)) if hasattr(self.entities, 'setTask') else ("/task?task_id=" + str(self.entities.task.id))
+        return ("/task?setTask_id=" + str(self.setTask.id)) if self.set else ("/task?task_id=" + str(self.task.id))
 
     def send_testing(self):
         if self.solution.set is not None and len(self.solution.set.checkers.all()) != 0:

@@ -5,8 +5,6 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from SprintLib.EntityStorage import EntityStorage
-
 
 class AccessError(Exception):
     pass
@@ -15,14 +13,12 @@ class AccessError(Exception):
 class BaseView:
     request: WSGIRequest = None
     context: Optional[dict] = None
-    entities: Optional[EntityStorage] = None
     required_login: Optional[bool] = None
     view_file: Optional[str] = None
     endpoint: Optional[str] = None
 
     def __init__(self, request):
         self.context = {}
-        self.entities = EntityStorage()
         self.request = request
 
     @classmethod
@@ -40,16 +36,18 @@ class BaseView:
                     return HttpResponseRedirect("/")
             request_method = request.method.lower()
             exec("from Main.models import *")
+            context = {}
             for key in request.GET.keys():
                 if key.endswith("_id"):
                     model_name = key.rstrip("_id")
-                    c.entities.add(
+                    setattr(
+                        c,
                         model_name,
                         eval(model_name[0].upper() + model_name[1:]).objects.get(
                             id=int(request.GET[key])
                         ),
                     )
-            context = c.entities.entities
+                    context[model_name] = getattr(c, model_name)
             if "action" in request.POST.keys():
                 request_method += "_" + request.POST["action"]
             method = getattr(c, request_method, None)
@@ -66,7 +64,7 @@ class BaseView:
                         return data
                 context = {**context, **c.context}
                 res = render(request, c.view_file, context)
-                res.headers['X-Frame-Options'] = 'ALLOW'
+                res.headers["X-Frame-Options"] = "ALLOW"
                 return res
             except AccessError:
                 return HttpResponseRedirect("/")
