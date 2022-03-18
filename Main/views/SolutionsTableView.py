@@ -1,3 +1,5 @@
+from typing import Optional
+
 from Main.models import Solution, Set, Task, SetTask
 from SprintLib.BaseView import BaseView, AccessError
 
@@ -8,9 +10,9 @@ class SolutionsTableView(BaseView):
     endpoint = "solutions_table"
     page_size = 20
     page = None
-    set: Set
-    task: Task
-    setTask: SetTask
+    set: Optional[Set] = None
+    task: Optional[Task] = None
+    setTask: Optional[SetTask] = None
 
     def pre_handle(self):
         if 'page' not in self.request.GET:
