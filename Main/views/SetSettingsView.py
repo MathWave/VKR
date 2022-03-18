@@ -1,5 +1,4 @@
 import datetime
-from typing import Optional
 
 import pytz
 from django.utils import timezone
@@ -14,28 +13,27 @@ class SetSettingsView(BaseView):
     required_login = True
     view_file = "set_settings.html"
     endpoint = "admin/set"
-    current_set: Optional[Set] = None
+    set: Set
 
     def pre_handle(self):
-        self.current_set = self.entities.set
         if (
-            self.request.user != self.current_set.creator
-            and self.request.user.username not in self.current_set.editors
+            self.request.user != self.set.creator
+            and self.request.user.username not in self.set.editors
         ):
             raise AccessError()
 
     def get(self):
         self.context["settasks"] = SetTask.objects.filter(
-            set=self.current_set
+            set=self.set
         ).order_by("name")
         self.context["start_time"] = (
-            self.current_set.start_time_format
-            if self.current_set.start_time
+            self.set.start_time_format
+            if self.set.start_time
             else timezone.now().strftime("%Y-%m-%dT%H:%M")
         )
         self.context["end_time"] = (
-            self.current_set.end_time_format
-            if self.current_set.end_time
+            self.set.end_time_format
+            if self.set.end_time
             else timezone.now().strftime("%Y-%m-%dT%H:%M")
         )
         self.context['languages'] = languages
@@ -46,61 +44,61 @@ class SetSettingsView(BaseView):
                 st = SetTask.objects.get(id=key.split("_")[1])
                 st.name = value
                 st.save()
-        self.current_set.name = self.request.POST["name"]
-        self.current_set.description = self.request.POST['description']
-        self.current_set.save()
-        return "/admin/set?set_id=" + str(self.current_set.id)
+        self.set.name = self.request.POST["name"]
+        self.set.description = self.request.POST['description']
+        self.set.save()
+        return "/admin/set?set_id=" + str(self.set.id)
 
     def post_edit(self):
-        current_tasks = self.entities.set.tasks
+        current_tasks = self.set.tasks
         task_ids = [task.id for task in current_tasks]
         for key, value in self.request.POST.items():
             if key.startswith("task_"):
                 i = int(key.split("_")[1])
                 if i not in task_ids:
-                    SetTask.objects.create(set=self.entities.set, task_id=i)
+                    SetTask.objects.create(set=self.set, task_id=i)
         to_delete = [i for i in task_ids if "task_" + str(i) not in self.request.POST]
         SetTask.objects.filter(task_id__in=to_delete).delete()
-        return "/admin/set?set_id=" + str(self.entities.set.id)
+        return "/admin/set?set_id=" + str(self.set.id)
 
     def post_time(self):
         try:
             tz = pytz.timezone("Europe/Moscow")
             if "start_time_check" in self.request.POST:
-                self.current_set.start_time = None
+                self.set.start_time = None
             else:
-                self.current_set.start_time = tz.localize(
+                self.set.start_time = tz.localize(
                     datetime.datetime.strptime(
                         self.request.POST["start_time"], "%Y-%m-%dT%H:%M"
                     )
                 )
             if "end_time_check" in self.request.POST:
-                self.current_set.end_time = None
+                self.set.end_time = None
             else:
-                self.current_set.end_time = tz.localize(
+                self.set.end_time = tz.localize(
                     datetime.datetime.strptime(
                         self.request.POST["end_time"], "%Y-%m-%dT%H:%M"
                     )
                 )
-            self.current_set.opened = 'opened' in self.request.POST.keys()
-            self.current_set.public = 'public' in self.request.POST.keys()
+            self.set.opened = 'opened' in self.request.POST.keys()
+            self.set.public = 'public' in self.request.POST.keys()
         except ValueError:
-            return "/admin/set?set_id=" + str(self.current_set.id)
-        self.current_set.save()
-        return "/admin/set?set_id=" + str(self.current_set.id)
+            return "/admin/set?set_id=" + str(self.set.id)
+        self.set.save()
+        return "/admin/set?set_id=" + str(self.set.id)
 
     def post_users_edit(self):
-        current_users = self.entities.set.editors
+        current_users = self.set.editors
         for key, value in self.request.POST.items():
             if key.startswith("user_"):
                 i = '_'.join(key.split("_")[1:])
                 if i not in current_users:
-                    self.entities.set.editors.append(i)
+                    self.set.editors.append(i)
         to_delete = [i for i in current_users if "user_" + i not in self.request.POST and i != self.request.user.username]
         for t in to_delete:
-            self.entities.set.editors.remove(t)
-        self.entities.set.save()
-        return "/admin/set?set_id=" + str(self.entities.set.id)
+            self.set.editors.remove(t)
+        self.set.save()
+        return "/admin/set?set_id=" + str(self.set.id)
 
     def post_languages_edit(self):
         current_languages = self.entities.set.languages
