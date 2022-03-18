@@ -101,23 +101,23 @@ class SetSettingsView(BaseView):
         return "/admin/set?set_id=" + str(self.set.id)
 
     def post_languages_edit(self):
-        current_languages = self.entities.set.languages
-        self.entities.set.auto_add_new_languages = 'auto_add' in self.request.POST
+        current_languages = self.set.languages
+        self.set.auto_add_new_languages = 'auto_add' in self.request.POST
         for key, value in self.request.POST.items():
             if key.startswith("language_"):
                 i = int(key.split("_")[1])
                 if i not in current_languages:
-                    self.entities.set.languages.append(i)
+                    self.set.languages.append(i)
         to_delete = [i for i in current_languages if "language_" + str(i) not in self.request.POST]
         for t in to_delete:
-            self.entities.set.languages.remove(t)
-        self.entities.set.save()
-        return "/admin/set?set_id=" + str(self.entities.set.id)
+            self.set.languages.remove(t)
+        self.set.save()
+        return "/admin/set?set_id=" + str(self.set.id)
 
     def post_new_checker(self):
-        Checker.objects.create(name=self.request.POST['name'], set=self.entities.set, last_request=timezone.now() - datetime.timedelta(days=1))
-        return '/admin/set?set_id=' + str(self.entities.set.id)
+        Checker.objects.create(name=self.request.POST['name'], set=self.set, last_request=timezone.now() - datetime.timedelta(days=1))
+        return '/admin/set?set_id=' + str(self.set.id)
 
     def post_delete_checker(self):
         Checker.objects.get(id=self.request.POST['checker_id']).delete()
-        return '/admin/set?set_id=' + str(self.entities.set.id)
+        return '/admin/set?set_id=' + str(self.set.id)

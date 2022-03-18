@@ -31,7 +31,7 @@ class SolutionsTableView(BaseView):
             else:
                 raise AccessError()
         else:
-            if hasattr(self.entities, 'setTask'):
+            if self.set:
                 queryset = queryset.filter(user=self.request.user, task=self.setTask.task, set=self.setTask.set)
             else:
                 queryset = queryset.filter(user=self.request.user, task=self.task, set=None)
