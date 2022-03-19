@@ -47,7 +47,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    command: ./manage.py runserver 0.0.0.0:80
+    command: ./manage.py runserver 0.0.0.0:80 --no-realod
     ports:
       - "80:80"
     depends_on:
