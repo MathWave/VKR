@@ -62,11 +62,10 @@ class TasksView(BaseView):
                         readable=readable,
                         task=task,
                     )
-        except Exception as e:
+        except:
             for fs_id in fs_ids.values():
                 delete_file(fs_id[0])
             created = False
-            raise e
         if created:
             return f"/admin/task?task_id={task.id}"
         return '/tasks'
