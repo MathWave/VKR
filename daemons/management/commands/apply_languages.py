@@ -18,3 +18,10 @@ class Command(BaseCommand):
                 obj, _ = LanguageApply.objects.get_or_create(language_id=language.id)
                 obj.applied = True
                 obj.save()
+        language_ids = [language.id for language in languages]
+        for apply in LanguageApply.objects.all():
+            if apply.language_id not in language_ids:
+                for s in Set.objects.filter(languages__in=apply.language_id):
+                    s.languages.remove(apply.language_id)
+                    s.save()
+                apply.delete()
