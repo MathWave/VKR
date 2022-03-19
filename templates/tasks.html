@@ -34,7 +34,10 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-primary"><i class="fa fa-arrow-up"></i> Загрузить</button>
+                    <label for="file-upload" class="btn btn-primary">
+                        <i class="fa fa-arrow-up"></i> Загрузить архив
+                    </label>
+                    <input type="file" form="fileform" style="display: none;" accept=".zip" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file" onchange="this.form.submit();">
                     <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
                     <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Создать</button>
                   </div>
@@ -43,6 +46,10 @@
               </div>
             </div>
                 </td>
+                <form method="POST" enctype="multipart/form-data" id="fileform">
+                        <input type="hidden" name="action" value="upload_file">
+                        {% csrf_token %}
+                    </form>
             {% endif %}
         </tr>
     </table>

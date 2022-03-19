@@ -30,8 +30,6 @@ class Command(MessagingSupport):
             'filename',
             'is_test',
             'is_sample',
-            'readable',
-            'test_number'
         ]
         task_data['files'] = [
             {
