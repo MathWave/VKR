@@ -35,7 +35,7 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: none
+        condition: on-failure
 
   web:
     image: mathwave/sprint-repo:sprint
@@ -190,7 +190,7 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: none
+        condition: on-failure
 
   notify-admin:
     image: mathwave/sprint-repo:sprint
@@ -216,4 +216,4 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: none
+        condition: on-failure
