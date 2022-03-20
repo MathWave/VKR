@@ -18,6 +18,9 @@ services:
       mode: replicated
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   migrations:
     image: mathwave/sprint-repo:sprint
@@ -72,6 +75,9 @@ services:
       mode: replicated
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   storage:
     image: mathwave/sprint-repo:sprint
@@ -92,6 +98,9 @@ services:
       mode: replicated
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   bot:
     image: mathwave/sprint-repo:sprint
@@ -108,6 +117,9 @@ services:
       mode: replicated
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: stop-first
 
   loop:
     image: mathwave/sprint-repo:sprint
@@ -124,6 +136,9 @@ services:
       mode: replicated
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: stop-first
 
   rabbitmq:
     image: rabbitmq:3.7.9-management
@@ -134,6 +149,9 @@ services:
       mode: replicated
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   worker:
     image: mathwave/sprint-repo:sprint
@@ -154,6 +172,9 @@ services:
       replicas: 4
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   file_generator:
     image: mathwave/sprint-repo:sprint
@@ -171,6 +192,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   notification_manager:
     image: mathwave/sprint-repo:sprint
@@ -188,6 +212,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
 
   apply-languages:
     image: mathwave/sprint-repo:sprint
