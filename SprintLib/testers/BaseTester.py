@@ -2,7 +2,7 @@ from os import listdir, mkdir
 from os.path import join, exists
 from subprocess import call, TimeoutExpired
 
-from daemons.management.commands.bot import bot
+from SprintLib.queue import notify
 from Main.models import ExtraFile, SolutionFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
@@ -153,12 +153,10 @@ class BaseTester:
         call(f"docker rm --force solution_{self.solution.id}", shell=True)
         call(f"docker rm --force  solution_{self.solution.id}_checker", shell=True)
         self.solution.user.userinfo.refresh_from_db()
-        if self.solution.user.userinfo.notification_solution_result:
-            bot.send_message(
-                self.solution.user.userinfo.telegram_chat_id,
-                f"Задача: {self.solution.task.name}\n"
-                f"Результат: {self.solution.result}\n"
-                f"Очки решения: {Progress.by_solution(self.solution).score}\n"
-                f"Текущий рейтинг: {self.solution.user.userinfo.rating}",
-                parse_mode="html",
-            )
+        notify(
+            self.solution.user,
+            "solution_result",
+            f"Задача: {self.solution.task.name}\n"
+            f"Результат: {self.solution.result}\n"
+            f"Очки решения: {Progress.by_solution(self.solution).score}\n"
+            f"Текущий рейтинг: {self.solution.user.userinfo.rating}")

@@ -1,9 +1,10 @@
-from django.contrib.auth import login
-
-from daemons.management.commands.bot import bot
-from SprintLib.BaseView import BaseView
-from django.contrib.auth.models import User
 from random import randrange
+
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+from SprintLib.BaseView import BaseView
+from SprintLib.queue import notify
 
 
 class SendCodeView(BaseView):
@@ -20,9 +21,7 @@ class SendCodeView(BaseView):
         code = randrange(10000, 100000)
         user.userinfo.code = code
         user.userinfo.save()
-        bot.send_message(
-            user.userinfo.telegram_chat_id, "Код для входа в сервис: " + str(code)
-        )
+        notify(user, "any", "Код для входа в сервис: " + str(code))
         return {"success": True, "message": "Код отправлен"}
 
     def post_check(self):

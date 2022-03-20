@@ -1,6 +1,7 @@
 import json
 
 import pika
+from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from pika.adapters.utils.connection_workflow import AMQPConnectorException
 
@@ -44,3 +45,11 @@ class MessagingSupport(BaseCommand):
                 channel.start_consuming()
             except AMQPConnectorException:
                 print("connection to rabbit failed: reconnecting")
+
+
+def notify(user: User, notification_type: str, text: str):
+    send_to_queue("notifications", {
+        'user_id': user,
+        'notification_type': notification_type,
+        'text': text,
+    })

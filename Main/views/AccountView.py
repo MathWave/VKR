@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from daemons.management.commands.bot import bot
+from SprintLib.queue import notify
 from Main.models import Friendship
 from SprintLib.BaseView import BaseView
 from SprintLib.language import languages
@@ -46,22 +46,17 @@ class AccountView(BaseView):
             ).first()
             if friendship is None:
                 Friendship.objects.create(from_user=self.request.user, to_user=self.context["account"])
-                if self.context["account"].userinfo.notification_friends:
-                    bot.send_message(self.context["account"].userinfo.telegram_chat_id, f"Пользователь {self.request.user.username} хочет добавить тебя в друзья")
+                notify(self.context['account'], 'friends', f"Пользователь {self.request.user.username} хочет добавить тебя в друзья")
             elif friendship.verified or friendship.from_user == self.request.user:
                 friendship.delete()
             else:
                 if self.request.POST["to_do"] == "yes":
                     friendship.verified = True
                     friendship.save()
-                    if self.context["account"].userinfo.notification_friends:
-                        bot.send_message(self.context["account"].userinfo.telegram_chat_id,
-                                         f"Пользователь {self.request.user.username} добавил тебя в друзья")
+                    notify(self.context['account'], 'friends', f"Пользователь {self.request.user.username} добавил тебя в друзья")
                 else:
                     friendship.delete()
-                    if self.context["account"].userinfo.notification_friends:
-                        bot.send_message(self.context["account"].userinfo.telegram_chat_id,
-                                         f"Пользователь {self.request.user.username} отклонил твою заявку")
+                    notify(self.context['account'], 'friends', f"Пользователь {self.request.user.username} отклонил твою заявку")
         return "/account?username=" + self.request.GET["username"]
 
     def post_upload_photo(self):
