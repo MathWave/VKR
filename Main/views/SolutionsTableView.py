@@ -18,6 +18,9 @@ class SolutionsTableView(BaseView):
         if 'page' not in self.request.GET:
             raise AccessError()
         self.page = int(self.request.GET['page'])
+        if self.setTask is not None:
+            self.set = self.setTask.set
+            self.task = self.setTask.task
 
     def get(self):
         queryset = Solution.objects.all()
@@ -33,10 +36,7 @@ class SolutionsTableView(BaseView):
             else:
                 raise AccessError()
         else:
-            if self.set:
-                queryset = queryset.filter(user=self.request.user, task=self.setTask.task, set=self.setTask.set)
-            else:
-                queryset = queryset.filter(user=self.request.user, task=self.task, set=None)
+            queryset = queryset.filter(user=self.request.user, task=self.task, set=self.set)
         offset = self.page_size * (self.page - 1)
         limit = self.page_size
         self.context["solutions"] = queryset.order_by("-id")[offset:offset + limit]

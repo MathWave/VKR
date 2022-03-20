@@ -24,8 +24,7 @@
 
 {% block main %}
     <h2>Решения <a href="{% if in_set %}/set?set_id={{ set.id }}{% else %}/task?task_id={{ task.id }}{% endif %}">{% if in_set %}{{ set.name }}{% else %}{{ task.name }}{% endif %}</a></h2>
-    <!--
-    <h4>Фильтр (пока недоступная опция)</h4>
+    <h4>Фильтр</h4>
     <div>
         <select name="set_id" style="width: 33%">
             <option value="0">Все сеты</option>
@@ -46,6 +45,5 @@
             {% endfor %}
         </select>
     </div>
-    -->
     <div id="solutions"></div>
 {% endblock %}
