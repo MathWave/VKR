@@ -50,6 +50,6 @@ class MessagingSupport(BaseCommand):
 def notify(user: User, notification_type: str, text: str):
     send_to_queue("notifications", {
         'user_id': user.id,
-        'notification_type': notification_type,
+        'type': notification_type,
         'text': text,
     })
