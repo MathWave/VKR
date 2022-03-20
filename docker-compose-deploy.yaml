@@ -48,8 +48,6 @@ services:
     volumes:
       - /sprint-data/static:/usr/src/app/static
     command: ./manage.py collectstatic --noinput
-    ports:
-      - "80:80"
     deploy:
       mode: replicated
       restart_policy:
