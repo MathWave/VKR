@@ -22,8 +22,6 @@ services:
   migrations:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py migrate
-    depends_on:
-      - postgres
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: $DB_HOST
@@ -37,6 +35,26 @@ services:
       restart_policy:
         condition: on-failure
 
+  collect_static:
+    image: mathwave/sprint-repo:sprint
+      environment:
+        SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+        DB_HOST: $DB_HOST
+        DB_PASSWORD: $DB_PASSWORD
+        RABBIT_HOST: $RABBIT_HOST
+        FS_HOST: $FS_HOST
+        DEBUG: $DEBUG
+        TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      volumes:
+        - /sprint-data/static:/usr/src/app/static
+      command: ./manage.py collectstatic --noinput
+      ports:
+        - "80:80"
+      deploy:
+        mode: replicated
+        restart_policy:
+          condition: on-failure
+
   web:
     image: mathwave/sprint-repo:sprint
     environment:
@@ -47,13 +65,11 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    volumes:
+      - /sprint-data/static:/usr/src/app/static
     command: ./manage.py runserver 0.0.0.0:80 --noreload
     ports:
       - "80:80"
-    depends_on:
-      - migrations
-      - rabbitmq
-      - storage
     deploy:
       mode: replicated
       restart_policy:
@@ -90,8 +106,6 @@ services:
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     command: ./manage.py bot
-    depends_on:
-      - web
     deploy:
       mode: replicated
       restart_policy:
@@ -108,8 +122,6 @@ services:
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     command: ./manage.py loop
-    depends_on:
-      - web
     deploy:
       mode: replicated
       restart_policy:
@@ -136,11 +148,6 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    depends_on:
-      - web
-      - rabbitmq
-      - migrations
-      - storage
     volumes:
       - /sprint-data/solutions:/usr/src/app/solutions
       - /var/run/docker.sock:/var/run/docker.sock
@@ -161,11 +168,6 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    depends_on:
-      - web
-      - rabbitmq
-      - migrations
-      - storage
     deploy:
       mode: replicated
       replicas: 1
@@ -183,36 +185,6 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    depends_on:
-      - migrations
-      - web
-      - postgres
-    deploy:
-      mode: replicated
-      restart_policy:
-        condition: on-failure
-
-  notify-admin:
-    image: mathwave/sprint-repo:sprint
-    command: ./manage.py success_deploy
-    environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
-      DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
-      DEBUG: $DEBUG
-      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    depends_on:
-      - migrations
-      - web
-      - worker
-      - storage
-      - rabbitmq
-      - bot
-      - postgres
-      - apply-languages
-      - loop
     deploy:
       mode: replicated
       restart_policy:

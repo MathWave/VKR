@@ -134,7 +134,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 EXTRA_FILES_ROOT = os.path.join(BASE_DIR, "extra_files")
 SOLUTIONS_ROOT_EXTERNAL = os.getenv("SOLUTIONS_ROOT_EXTERNAL", os.path.join(DATA_ROOT, "solutions"))
