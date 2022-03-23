@@ -9,9 +9,8 @@ class CheckersView(BaseView):
     set: Set
 
     def pre_handle(self):
-        self.current_set = self.set
         if (
-            self.request.user != self.current_set.creator
-            and self.request.user.username not in self.current_set.editors
+            self.request.user != self.set.creator
+            and self.request.user.username not in self.set.editors
         ):
             raise AccessError()

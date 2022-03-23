@@ -41,6 +41,7 @@ deploy-dev:
     DB_PASSWORD: "$DB_PASSWORD_DEMO"
     DEBUG: "true"
     TELEGRAM_TOKEN: "$TELEGRAM_TOKEN_DEMO"
+    FS_TOKEN: "$FS_TOKEN_DEV"
 
 deploy-prod:
   extends:
@@ -59,3 +60,4 @@ deploy-prod:
     FS_HOST: "77.246.159.65"
     DB_PASSWORD: "$DB_PASSWORD_PROD"
     TELEGRAM_TOKEN: "$TELEGRAM_TOKEN_PROD"
+    FS_TOKEN: "$FS_TOKEN_PROD"

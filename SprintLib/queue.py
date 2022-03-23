@@ -28,7 +28,10 @@ class MessagingSupport(BaseCommand):
         raise NotImplementedError
 
     def consume(self, ch, method, properties, body):
-        self.process(json.loads(body.decode('utf-8')))
+        data = json.loads(body.decode('utf-8'))
+        print(f"Got {data}, processing...")
+        self.process(data)
+        print("Process finished successfully")
 
     def handle(self, *args, **options):
         if self.queue_name is None:

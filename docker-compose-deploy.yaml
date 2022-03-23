@@ -33,6 +33,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       restart_policy:
@@ -48,6 +49,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     volumes:
       - /sprint-data/static:/usr/src/app/static
     command: ./manage.py collectstatic --noinput
@@ -66,6 +68,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     volumes:
       - /sprint-data/static:/usr/src/app/static
     command: ./manage.py runserver 0.0.0.0:80 --noreload --insecure
@@ -90,6 +93,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     ports:
       - "5555:5555"
     volumes:
@@ -112,6 +116,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     command: ./manage.py bot
     deploy:
       mode: replicated
@@ -131,6 +136,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     command: ./manage.py loop
     deploy:
       mode: replicated
@@ -164,6 +170,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     volumes:
       - /sprint-data/solutions:/usr/src/app/solutions
       - /var/run/docker.sock:/var/run/docker.sock
@@ -187,6 +194,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       replicas: 1
@@ -207,6 +215,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       replicas: 1
@@ -227,6 +236,7 @@ services:
       FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       restart_policy:
