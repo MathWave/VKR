@@ -106,6 +106,26 @@ services:
         parallelism: 1
         order: start-first
 
+  health_check:
+    image: mathwave/sprint-repo:sprint
+    command: ./manage.py health_check
+    environment:
+      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
+      DB_HOST: $DB_HOST
+      DB_PASSWORD: $DB_PASSWORD
+      RABBIT_HOST: $RABBIT_HOST
+      FS_HOST: $FS_HOST
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      FS_TOKEN: $FS_TOKEN
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
+
   bot:
     image: mathwave/sprint-repo:sprint
     environment:
