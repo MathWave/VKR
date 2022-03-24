@@ -6,7 +6,7 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: sprint
       POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: sprint
     volumes:
