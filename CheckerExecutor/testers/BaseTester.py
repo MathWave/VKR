@@ -2,7 +2,7 @@ from os import listdir
 from os.path import join, exists
 from subprocess import call, TimeoutExpired
 
-from language import *
+from SprintLib.language import *
 from requests import get
 
 
