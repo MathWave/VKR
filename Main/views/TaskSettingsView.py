@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.utils import timezone
 
 from Main.models import ExtraFile, Dump, Task
 from SprintLib.BaseView import BaseView, AccessError
@@ -22,6 +23,11 @@ class TaskSettingsView(BaseView):
         for key, value in self.request.POST.items():
             setattr(self.task, key, value.strip())
         self.task.public = "public" in self.request.POST
+        self.task.changes.append({
+            'username': self.request.user.username,
+            'action': 'Отредактировал условия',
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+        })
         self.task.save()
         return f"/admin/task?task_id={self.task.id}"
 
@@ -55,6 +61,12 @@ class TaskSettingsView(BaseView):
         except UnicodeDecodeError:
             ef.readable = False
         ef.save()
+        self.task.changes.append({
+            'username': self.request.user.username,
+            'action': f'Загрузил файл {filename}',
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+        })
+        self.task.save()
         return "/admin/task?task_id=" + str(self.task.id)
 
     def post_file_upload(self):
@@ -66,6 +78,12 @@ class TaskSettingsView(BaseView):
     def post_delete_file(self):
         ef = ExtraFile.objects.get(id=self.request.POST["id"])
         ef.delete()
+        self.task.changes.append({
+            'username': self.request.user.username,
+            'action': f'Удалил файл {ef.filename}',
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+        })
+        self.task.save()
         return HttpResponse("ok")
 
     def _create(self, is_test):
@@ -80,6 +98,12 @@ class TaskSettingsView(BaseView):
         ef.is_test = is_test
         ef.readable = True
         ef.save()
+        self.task.changes.append({
+            'username': self.request.user.username,
+            'action': f'Создал файл {ef.filename}',
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+        })
+        self.task.save()
         return f"/admin/task?task_id={self.task.id}"
 
     def post_create_file(self):
@@ -94,6 +118,12 @@ class TaskSettingsView(BaseView):
         ef.write(self.request.POST["text"].encode("utf-8"))
         ef.is_sample = "is_sample" in self.request.POST.keys()
         ef.save()
+        self.task.changes.append({
+            'username': self.request.user.username,
+            'action': f'Отредактировал файл {ef.filename}',
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+        })
+        self.task.save()
         return f"/admin/task?task_id={self.task.id}"
 
     def post_users_edit(self):
@@ -106,5 +136,10 @@ class TaskSettingsView(BaseView):
         to_delete = [i for i in current_users if "user_" + i not in self.request.POST and i != self.request.user.username]
         for t in to_delete:
             self.task.editors.remove(t)
+        self.task.changes.append({
+            'username': self.request.user.username,
+            'action': f'Изменил список редакторов',
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+        })
         self.task.save()
         return "/admin/task?task_id=" + str(self.task.id)

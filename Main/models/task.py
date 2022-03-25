@@ -1,6 +1,8 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import JSONField
+from django.utils import timezone
 
 from Main.models.dump import Dump
 from Main.models.extrafile import ExtraFile
@@ -18,6 +20,7 @@ class Task(models.Model):
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     editors = ArrayField(models.TextField(), default=list)
     allow_sharing = models.BooleanField(default=False)
+    changes = JSONField(default=list)
 
     def __str__(self):
         return self.name
