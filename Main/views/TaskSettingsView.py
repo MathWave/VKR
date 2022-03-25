@@ -26,7 +26,7 @@ class TaskSettingsView(BaseView):
         self.task.changes.append({
             'username': self.request.user.username,
             'action': 'Отредактировал условия',
-            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%S")
         })
         self.task.save()
         return f"/admin/task?task_id={self.task.id}"
@@ -64,7 +64,7 @@ class TaskSettingsView(BaseView):
         self.task.changes.append({
             'username': self.request.user.username,
             'action': f'Загрузил файл {filename}',
-            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%S")
         })
         self.task.save()
         return "/admin/task?task_id=" + str(self.task.id)
@@ -81,7 +81,7 @@ class TaskSettingsView(BaseView):
         self.task.changes.append({
             'username': self.request.user.username,
             'action': f'Удалил файл {ef.filename}',
-            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%S")
         })
         self.task.save()
         return HttpResponse("ok")
@@ -101,7 +101,7 @@ class TaskSettingsView(BaseView):
         self.task.changes.append({
             'username': self.request.user.username,
             'action': f'Создал файл {ef.filename}',
-            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%S")
         })
         self.task.save()
         return f"/admin/task?task_id={self.task.id}"
@@ -121,7 +121,7 @@ class TaskSettingsView(BaseView):
         self.task.changes.append({
             'username': self.request.user.username,
             'action': f'Отредактировал файл {ef.filename}',
-            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%S")
         })
         self.task.save()
         return f"/admin/task?task_id={self.task.id}"
@@ -139,7 +139,7 @@ class TaskSettingsView(BaseView):
         self.task.changes.append({
             'username': self.request.user.username,
             'action': f'Изменил список редакторов',
-            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%s")
+            'time': timezone.now().strftime("%d-%m-%Y %H:%M:%S")
         })
         self.task.save()
         return "/admin/task?task_id=" + str(self.task.id)

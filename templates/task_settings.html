@@ -48,6 +48,8 @@
                     </div>
                   </div>
                 </div>
+    <div class="row">
+        <div class="col-9">
     <form method="POST">
         {% csrf_token %}
         <table style="width: 100%;">
@@ -118,6 +120,18 @@
         </table>
         <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
     </form>
+        </div>
+        <div class="col-3">
+            <h5>История изменений</h5>
+            {% for change in task.changes %}
+                <div>
+                    <hr>
+                    <a href="/account?username={{ change.username }}">{{ change.username }}</a>: {{ change.time }}<br>
+                    {{ change.action }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
     <hr><hr>
     <h3>Редакторы</h3>
     {% for editor in task.editors %}
