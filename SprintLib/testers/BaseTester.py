@@ -163,8 +163,8 @@ class BaseTester:
         self.call(f"docker rm --force solution_{self.solution.id}")
         self.call(f"docker rm --force  solution_{self.solution.id}_checker")
         for file in dockerfiles:
-            self.call(f"docker rm --force solution_container_{self.solution.id}_{file.filename}")
-            self.call(f"docker image rm solution_image_{self.solution.id}_{file.filename}")
+            self.call(f"docker rm --force solution_container_{self.solution.id}_{file.filename}".lower())
+            self.call(f"docker image rm solution_image_{self.solution.id}_{file.filename}".lower())
         self.solution.user.userinfo.refresh_from_db()
         notify(
             self.solution.user,
