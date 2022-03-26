@@ -67,6 +67,9 @@ class BaseTester:
     def build_command(self):
         return ""
 
+    def call(self, command):
+        return call(f'cd {self.path} && {command}', shell=True)
+
     @property
     def path(self):
         return join("solutions", str(self.solution.id))
@@ -94,9 +97,16 @@ class BaseTester:
                 join(self.path, file.path), "wb"
             ) as fs:
                 fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
+        dockerfiles = sorted(list(ExtraFile.objects.filter(filename__startswith="Dockerfile", readable=True, task=self.solution.task)), key=lambda x: x.filename)
+        self.call(f"docker network create solution_network_{self.solution.id}")
+        for file in dockerfiles:
+            with open(join(self.path, 'Dockerfile'), 'w') as fs:
+                fs.write(file.text)
+            self.call(f"docker build -t solution_image_{self.solution.id}_{file.filename} .".lower())
+            self.call(f"docker run --network solution_network_{self.solution.id} --name solution_container_{self.solution.id}_{file.filename} -t -d solution_image_{self.solution.id}_{file.filename}".lower())
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
-        docker_command = f"docker run --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
+        docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
         call(docker_command, shell=True)
         checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()

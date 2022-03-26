@@ -19,6 +19,7 @@ class SendCodeView(BaseView):
                 "message": "Пользователя с таким именем не существует",
             }
         code = randrange(10000, 100000)
+        print(code)
         user.userinfo.code = code
         user.userinfo.save()
         notify(user, "any", "Код для входа в сервис: " + str(code))

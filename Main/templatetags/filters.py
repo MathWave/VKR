@@ -18,3 +18,8 @@ def solved(user, task):
 @register.filter('settask')
 def settask(set, task):
     return SetTask.objects.get(set=set, task=task)
+
+
+@register.filter('startswith')
+def startswith(s, prefix):
+    return s.startswith(prefix)

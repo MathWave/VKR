@@ -2,6 +2,8 @@
 
 {% block title %}{{ task.name }}{% endblock %}
 
+{% load filters %}
+
 {% block scripts %}
     function deleteFile(file_id) {
         $.ajax({
@@ -255,7 +257,7 @@
                 <td valign="top">
                     {% for test in task.files %}
                         <div id="file_{{ test.id }}">
-                       <i class="fa {% if test.filename == "checker.py" %}fa-cogs{% else %}fa-file{% endif %}"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                       <i class="fa {% if test.filename == "checker.py" or test.filename|startswith:'Dockerfile' %}fa-cogs{% else %}fa-file{% endif %}"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
                     {% if test.readable %}
 <form method="POST">{% csrf_token %}
                         <!-- Modal -->
