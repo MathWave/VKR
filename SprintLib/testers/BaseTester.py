@@ -160,8 +160,11 @@ class BaseTester:
             self.solution.result = "TE"
             raise e
         self.solution.save()
-        call(f"docker rm --force solution_{self.solution.id}", shell=True)
-        call(f"docker rm --force  solution_{self.solution.id}_checker", shell=True)
+        self.call(f"docker rm --force solution_{self.solution.id}")
+        self.call(f"docker rm --force  solution_{self.solution.id}_checker")
+        for file in dockerfiles:
+            self.call(f"docker rm --force solution_container_{self.solution.id}_{file.filename}")
+            self.call(f"docker image rm solution_image_{self.solution.id}_{file.filename}")
         self.solution.user.userinfo.refresh_from_db()
         notify(
             self.solution.user,
