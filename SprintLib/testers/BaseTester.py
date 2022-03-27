@@ -178,6 +178,7 @@ class BaseTester:
             add_name = file.filename[11:]
             self.call(f"docker rm --force solution_container_{self.solution.id}_{add_name}")
             self.call(f"docker image rm solution_image_{self.solution.id}_{add_name}")
+        self.call(f"docker network rm solution_network_{self.solution.id}")
         self.solution.user.userinfo.refresh_from_db()
         notify(
             self.solution.user,
