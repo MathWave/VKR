@@ -92,7 +92,7 @@ class BaseTester:
                 fs.write(file.text)
             self.call(f"docker build -t solution_image_{self.solution.id}_{add_name} .")
             self.call(f"docker run "
-                      f"--host {add_name} "
+                      f"--hostname {add_name} "
                       f"--network solution_network_{self.solution.id} "
                       f"--name solution_container_{self.solution.id}_{add_name} "
                       f"-t -d solution_image_{self.solution.id}_{add_name}")
