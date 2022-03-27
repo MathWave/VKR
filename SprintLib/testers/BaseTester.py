@@ -117,6 +117,13 @@ class BaseTester:
                 join(self.path, file.path), "wb"
             ) as fs:
                 fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
+        for file in ExtraFile.objects.filter(task=self.solution.task):
+            with open(
+                join(self.path, file.filename), 'wb'
+            ) as fs:
+                bts = get_bytes(file.fs_id)
+                fs.write(bts)
+        print("Files copied")
         self._setup_networking()
         docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
@@ -126,13 +133,6 @@ class BaseTester:
             self.checker_code = checker.text
             call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
         print("Container created")
-        for file in ExtraFile.objects.filter(task=self.solution.task):
-            with open(
-                join(self.path, file.filename), 'wb'
-            ) as fs:
-                bts = get_bytes(file.fs_id)
-                fs.write(bts)
-        print("Files copied")
         try:
             self.before_test()
             print("before test finished")
