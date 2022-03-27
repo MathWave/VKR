@@ -91,11 +91,13 @@ class BaseTester:
             with open(join(self.path, 'Dockerfile'), 'w') as fs:
                 fs.write(file.text)
             self.call(f"docker build -t solution_image_{self.solution.id}_{add_name} .")
-            self.call(f"docker run "
-                      f"--hostname {add_name} "
-                      f"--network solution_network_{self.solution.id} "
-                      f"--name solution_container_{self.solution.id}_{add_name} "
-                      f"-t -d solution_image_{self.solution.id}_{add_name}")
+            run_command = f"docker run "\
+                          f"--hostname {add_name} "\
+                          f"--network solution_network_{self.solution.id} "\
+                          f"--name solution_container_{self.solution.id}_{add_name} "\
+                          f"-t -d solution_image_{self.solution.id}_{add_name}"
+            print('run command', run_command)
+            self.call(run_command)
 
     def execute(self):
         self.solution.result = CONSTS["testing_status"]
