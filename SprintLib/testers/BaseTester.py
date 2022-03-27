@@ -131,7 +131,7 @@ class BaseTester:
         checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()
         if checker is not None:
             self.checker_code = checker.text
-            call(f"docker run --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
+            call(f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
         print("Container created")
         try:
             self.before_test()
