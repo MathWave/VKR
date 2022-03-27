@@ -81,7 +81,25 @@ class BaseTester:
         self.solution.result = CONSTS["testing_status"] + f"({num})"
         self.solution.save()
 
+    def _setup_networking(self):
+        self.dockerfiles = sorted(
+            list(ExtraFile.objects.filter(filename__startswith="Dockerfile_", readable=True, task=self.solution.task)),
+            key=lambda x: x.filename)
+        self.call(f"docker network create solution_network_{self.solution.id}")
+        for file in self.dockerfiles:
+            add_name = file.filename[11:]
+            with open(join(self.path, 'Dockerfile'), 'w') as fs:
+                fs.write(file.text)
+            self.call(f"docker build -t solution_image_{self.solution.id}_{add_name} .")
+            self.call(f"docker run "
+                      f"--host {add_name} "
+                      f"--network solution_network_{self.solution.id} "
+                      f"--name solution_container_{self.solution.id}_{add_name} "
+                      f"-t -d solution_image_{self.solution.id}_{add_name}")
+
     def execute(self):
+        self.solution.result = CONSTS["testing_status"]
+        self.solution.save()
         if not exists("solutions"):
             mkdir("solutions")
         mkdir(self.path)
@@ -97,15 +115,7 @@ class BaseTester:
                 join(self.path, file.path), "wb"
             ) as fs:
                 fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
-        dockerfiles = sorted(list(ExtraFile.objects.filter(filename__startswith="Dockerfile", readable=True, task=self.solution.task)), key=lambda x: x.filename)
-        self.call(f"docker network create solution_network_{self.solution.id}")
-        for file in dockerfiles:
-            with open(join(self.path, 'Dockerfile'), 'w') as fs:
-                fs.write(file.text)
-            self.call(f"docker build -t solution_image_{self.solution.id}_{file.filename} .".lower())
-            self.call(f"docker run --network solution_network_{self.solution.id} --name solution_container_{self.solution.id}_{file.filename} -t -d solution_image_{self.solution.id}_{file.filename}".lower())
-        self.solution.result = CONSTS["testing_status"]
-        self.solution.save()
+        self._setup_networking()
         docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
         print(docker_command)
         call(docker_command, shell=True)
@@ -162,9 +172,10 @@ class BaseTester:
         self.solution.save()
         self.call(f"docker rm --force solution_{self.solution.id}")
         self.call(f"docker rm --force  solution_{self.solution.id}_checker")
-        for file in dockerfiles:
-            self.call(f"docker rm --force solution_container_{self.solution.id}_{file.filename}".lower())
-            self.call(f"docker image rm solution_image_{self.solution.id}_{file.filename}".lower())
+        for file in self.dockerfiles:
+            add_name = file.filename[11:]
+            self.call(f"docker rm --force solution_container_{self.solution.id}_{add_name}")
+            self.call(f"docker image rm solution_image_{self.solution.id}_{add_name}")
         self.solution.user.userinfo.refresh_from_db()
         notify(
             self.solution.user,
