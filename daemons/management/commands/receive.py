@@ -22,5 +22,5 @@ class Command(MessagingSupport):
             solution.save()
         finally:
             path = join("solutions", str(id))
-            if exists(path):
-                rmtree(path)
+            # if exists(path):
+            #     rmtree(path)
