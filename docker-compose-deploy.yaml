@@ -12,8 +12,8 @@ services:
     volumes:
       - /sprint-data/postgres-data:/var/lib/postgresql/data
 #      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-    ports:
-      - "5432:5432"
+    networks:
+      - net
     deploy:
       mode: replicated
       restart_policy:
@@ -25,15 +25,13 @@ services:
   migrations:
     image: mathwave/sprint-repo:sprint
     command: ./manage.py migrate
+    networks:
+      - net
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       restart_policy:
@@ -41,15 +39,13 @@ services:
 
   collect_static:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     volumes:
       - /sprint-data/static:/usr/src/app/static
     command: ./manage.py collectstatic --noinput
@@ -60,15 +56,13 @@ services:
 
   web:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     volumes:
       - /sprint-data/static:/usr/src/app/static
     command: ./manage.py runserver 0.0.0.0:80 --noreload --insecure
@@ -84,18 +78,14 @@ services:
 
   storage:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     command: ./manage.py storage
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
-    ports:
-      - "5555:5555"
     volumes:
       - /sprint-data/data:/usr/src/app/data
     deploy:
@@ -108,16 +98,14 @@ services:
 
   health_check:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     command: ./manage.py health_check
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       restart_policy:
@@ -128,15 +116,13 @@ services:
 
   bot:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     command: ./manage.py bot
     deploy:
       mode: replicated
@@ -148,15 +134,13 @@ services:
 
   loop:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     command: ./manage.py loop
     deploy:
       mode: replicated
@@ -171,6 +155,8 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    networks:
+      - net
     deploy:
       mode: replicated
       restart_policy:
@@ -181,16 +167,14 @@ services:
 
   worker:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     command: ./manage.py receive
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     volumes:
       - /sprint-data/solutions:/usr/src/app/solutions
       - /var/run/docker.sock:/var/run/docker.sock
@@ -205,16 +189,14 @@ services:
 
   file_generator:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     command: ./manage.py file_generator
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       replicas: 1
@@ -226,16 +208,14 @@ services:
 
   notification_manager:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     command: ./manage.py notification_manager
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       replicas: 1
@@ -247,17 +227,19 @@ services:
 
   apply-languages:
     image: mathwave/sprint-repo:sprint
+    networks:
+      - net
     command: ./manage.py apply_languages
     environment:
       SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_HOST: $DB_HOST
       DB_PASSWORD: $DB_PASSWORD
-      RABBIT_HOST: $RABBIT_HOST
-      FS_HOST: $FS_HOST
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-      FS_TOKEN: $FS_TOKEN
     deploy:
       mode: replicated
       restart_policy:
         condition: on-failure
+
+networks:
+  net:
+    driver: overlay

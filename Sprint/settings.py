@@ -88,7 +88,7 @@ DATABASES = {
         "NAME": "sprint",
         "USER": "postgres",
         "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
+        "HOST": os.getenv("DB_HOST", "postgres"),
         "PORT": 5432,
     }
 }
@@ -144,10 +144,10 @@ for root in DATA_ROOT, EXTRA_FILES_ROOT:
 
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
-RABBIT_HOST = os.getenv("RABBIT_HOST")
+RABBIT_HOST = os.getenv("RABBIT_HOST", "rabbitmq")
 RABBIT_PORT = 5672
 
-FS_HOST = "http://" + os.getenv("FS_HOST")
+FS_HOST = "http://" + os.getenv("FS_HOST", "storage")
 FS_PORT = 5555
 
 # Authentication backends
