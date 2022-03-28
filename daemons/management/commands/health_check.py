@@ -23,7 +23,7 @@ class Command(BaseCommand):
             return
         web_working = True
         try:
-            code = get("http://dev.sprinthub.ru/").status_code
+            code = get("http://web:80").status_code
             if code != 200:
                 web_working = False
         except:
@@ -32,7 +32,7 @@ class Command(BaseCommand):
             bot.send_message(84367486, "Сайт сдох")
             return
         try:
-            get("http://dev.sprinthub.ru:5555")
+            get("http://storage:5555")
         except:
             bot.send_message(84367486, "Файловое хранилище сдохло")
 
