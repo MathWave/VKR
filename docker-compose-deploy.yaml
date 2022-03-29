@@ -17,6 +17,21 @@ services:
     deploy:
       mode: replicated
       restart_policy:
+        condition: always
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  rabbitmq:
+    image: rabbitmq:3.7.9-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      restart_policy:
         condition: on-failure
       update_config:
         parallelism: 1
@@ -149,21 +164,6 @@ services:
       update_config:
         parallelism: 1
         order: stop-first
-
-  rabbitmq:
-    image: rabbitmq:3.7.9-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    networks:
-      - net
-    deploy:
-      mode: replicated
-      restart_policy:
-        condition: on-failure
-      update_config:
-        parallelism: 1
-        order: start-first
 
   worker:
     image: mathwave/sprint-repo:sprint
