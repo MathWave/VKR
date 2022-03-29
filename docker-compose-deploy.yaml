@@ -96,7 +96,7 @@ services:
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     volumes:
       - /sprint-data/static:/usr/src/app/static
-    command: ./manage.py runserver 0.0.0.0:80 --noreload --insecure
+    command: ./manage.py runserver 0.0.0.0:8000 --noreload --insecure
     deploy:
       mode: replicated
       restart_policy:
