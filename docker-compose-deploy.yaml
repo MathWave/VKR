@@ -125,24 +125,6 @@ services:
         parallelism: 1
         order: start-first
 
-  health_check:
-    image: mathwave/sprint-repo:sprint
-    networks:
-      - net
-    command: ./manage.py health_check
-    environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-      DB_PASSWORD: $DB_PASSWORD
-      DEBUG: $DEBUG
-      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    deploy:
-      mode: replicated
-      restart_policy:
-        condition: on-failure
-      update_config:
-        parallelism: 1
-        order: start-first
-
   bot:
     image: mathwave/sprint-repo:sprint
     networks:
