@@ -3,6 +3,22 @@ version: "3.4"
 
 services:
 
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx
+    networks:
+      - net
+    ports:
+      - "80:80"
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
   postgres:
     image: postgres
     environment:
@@ -80,9 +96,7 @@ services:
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     volumes:
       - /sprint-data/static:/usr/src/app/static
-    command: ./manage.py runserver 0.0.0.0:80 --noreload --insecure
-    ports:
-      - "80:80"
+    command: ./manage.py runserver 0.0.0.0:8000 --noreload --insecure
     deploy:
       mode: replicated
       restart_policy:
