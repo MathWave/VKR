@@ -17,7 +17,7 @@ services:
     deploy:
       mode: replicated
       restart_policy:
-        condition: always
+        condition: any
       update_config:
         parallelism: 1
         order: start-first
