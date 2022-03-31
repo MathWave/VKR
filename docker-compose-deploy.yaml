@@ -102,6 +102,23 @@ services:
         parallelism: 1
         order: start-first
 
+  checker:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    command: ./manage.py runserver 0.0.0.0:7999 --noreload
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        order: start-first
+
   storage:
     image: mathwave/sprint-repo:sprint
     networks:
