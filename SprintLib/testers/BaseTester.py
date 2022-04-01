@@ -178,7 +178,7 @@ class BaseTester:
             add_name = file.filename[11:]
             send_to_queue("cleaner", {"type": "container", "name": f"solution_container_{self.solution.id}_{add_name}"})
             send_to_queue("cleaner", {"type": "image", "name": f"solution_image_{self.solution.id}_{add_name}"})
-        send_to_queue("cleaner", {"type": "network", "name": f"docker network rm solution_network_{self.solution.id}"})
+        send_to_queue("cleaner", {"type": "network", "name": f"solution_network_{self.solution.id}"})
         self.solution.user.userinfo.refresh_from_db()
         notify(
             self.solution.user,

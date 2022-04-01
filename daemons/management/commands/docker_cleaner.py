@@ -8,5 +8,19 @@ class Command(MessagingSupport):
     queue_name = "cleaner"
 
     def process(self, payload: dict):
-        call(f'docker {payload["type"]} rm --force {payload["name"]}', shell=True)
-        print(f"Removed {payload['type']} {payload['name']}")
+        name = payload['name']
+        type = payload['type']
+        if type == 'network':
+            command = f'docker network rm {name}'
+        elif type == 'container':
+            command = f'docker rm --force {name}'
+        elif type == 'image':
+            command = f'docker image rm --force {name}'
+        else:
+            raise NotImplementedError(f"Unknown type {type}")
+        print(f"Executing command {command}")
+        code = call(command, shell=True)
+        if code == 0:
+            print(f"Removed {type} {name}")
+        else:
+            print("Something went wrong")
