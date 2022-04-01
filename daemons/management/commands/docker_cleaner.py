@@ -9,3 +9,4 @@ class Command(MessagingSupport):
 
     def process(self, payload: dict):
         call(f'docker {payload["type"]} rm --force {payload["name"]}', shell=True)
+        print(f"Removed {payload['type']} {payload['name']}")
