@@ -7,6 +7,11 @@ class Command(MessagingSupport):
     help = "starts docker cleaner"
     queue_name = "cleaner"
 
+    def handle(self, *args, **options):
+        call('docker image rm $(docker images -q mathwave/sprint-repo)', shell=True)
+        print("Old images removed")
+        super().handle(*args, **options)
+
     def process(self, payload: dict):
         name = payload['name']
         type = payload['type']
