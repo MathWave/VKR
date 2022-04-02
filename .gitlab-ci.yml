@@ -20,7 +20,7 @@ build:
   before_script:
     - docker login -u mathwave -p $DOCKERHUB_PASSWORD
   script:
-    - docker 2>/dev/null rmi docker images -q mathwave/sprint-repo | true
+    - docker 2>/dev/null rmi docker images -q mathwave/sprint-repo || true
     - docker stack deploy -c ./docker-compose-deploy.yaml sprint
 
 deploy-dev:
