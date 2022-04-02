@@ -19,3 +19,4 @@ from Main.views.GroupView import GroupView
 from Main.views.CheckersView import CheckersView
 from Main.views.ChatsView import ChatsView
 from Main.views.DownloadFileView import DownloadFileView
+from Main.views.social import *

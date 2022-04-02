@@ -85,6 +85,17 @@
                         <p style="padding-top: 8px; font-size: 24px;">{{ account.date_joined.date }}</p>
                     </td>
                 </tr>
+                {% if account == user %}
+                    <tr>
+                        <td>
+                            <h2><i class="fa fa-users"></i></h2>
+                        </td>
+                        <td><div style="width: 20px;"></div></td>
+                        <td>
+                            <a href="https://oauth.vk.com/authorize?client_id=8123759&redirect_uri=http://demo.dev.sprinthub.ru/vk_add&display=page&response_type=token&v=5.59"><img style="width: 40px; height: 40px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/VK_Compact_Logo_%282021-present%29.svg/1200px-VK_Compact_Logo_%282021-present%29.svg.png"></a>
+                        </td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td>
                         <h2><i class="fa fa-desktop"></i></h2>
