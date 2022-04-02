@@ -22,7 +22,7 @@ class VKAddView(BaseView):
         resp = get(f'https://api.vk.com/method/secure.checkToken?token={access_token}&access_token={token}&v=5.131').json()
         print("Got response while adding user", resp)
         if 'response' in resp and 'success' in resp['response'] and resp['response']['success'] == 1:
-            user_id = resp['user_id']
+            user_id = resp['response']['user_id']
             self.request.user.userinfo.vk_user_id = user_id
             self.request.user.userinfo.save()
         return '/account'

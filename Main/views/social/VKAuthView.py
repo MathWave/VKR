@@ -21,7 +21,7 @@ class VKAuthView(BaseView):
         token = os.getenv("VK_SERVICE_TOKEN")
         resp = get(f'https://api.vk.com/method/secure.checkToken?token={access_token}&access_token={token}&v=5.131').json()
         if 'response' in resp and 'success' in resp['response'] and resp['response']['success'] == 1:
-            user_id = resp['user_id']
+            user_id = resp['response']['user_id']
             try:
                 user = User.objects.get(userinfo__vk_user_id=user_id)
             except ObjectDoesNotExist:
