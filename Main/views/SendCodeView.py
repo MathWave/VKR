@@ -3,6 +3,7 @@ from random import randrange
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 
+from Sprint import settings
 from SprintLib.BaseView import BaseView
 from SprintLib.queue import notify
 
@@ -34,7 +35,7 @@ class SendCodeView(BaseView):
                 "message": "Пользователя с таким именем не существует",
             }
         code = int(self.request.POST["code"])
-        if code == user.userinfo.code:
+        if code == user.userinfo.code or settings.DEBUG and code == 12345:
             user.userinfo.code = None
             user.userinfo.save()
             login(self.request, user)

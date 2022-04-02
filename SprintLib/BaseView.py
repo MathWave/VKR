@@ -16,6 +16,7 @@ class BaseView:
     required_login: Optional[bool] = None
     view_file: Optional[str] = None
     endpoint: Optional[str] = None
+    fields_except: tuple[str] = ()
 
     def __init__(self, request):
         self.context = {}
@@ -38,7 +39,7 @@ class BaseView:
             exec("from Main.models import *")
             context = {}
             for key in request.GET.keys():
-                if key.endswith("_id"):
+                if key.endswith("_id") and key not in cls.fields_except:
                     model_name = key.rstrip("_id")
                     setattr(
                         c,
