@@ -20,7 +20,7 @@
                                 {% else %}{% if result == ok_status %}
                                      <span class="badge badge-success">{{ result }}</span>
                                 {% else %}{% if result|startswith:testing_status %}
-                                    <span class="badge badge-secondary">{{ result }}</span>
+                                    <span class="badge badge-info">{{ result }}</span>
                                 {% else %}{% if result %}
                                     <span class="badge badge-danger">{{ result }}</span>
                                 {% else %}
