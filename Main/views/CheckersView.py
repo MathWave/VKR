@@ -5,7 +5,7 @@ from SprintLib.BaseView import BaseView, AccessError
 class CheckersView(BaseView):
     required_login = True
     view_file = "checkers.html"
-    endpoint = "admin/checkers"
+    endpoint = "polling/admin/checkers"
     set: Set
 
     def pre_handle(self):

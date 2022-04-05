@@ -9,7 +9,7 @@
         elem.hidden = !elem.hidden;
     }
     function doPoll() {
-        jQuery.get('/admin/checkers?set_id={{ set.id }}', function(data) {
+        jQuery.get('/polling/admin/checkers?set_id={{ set.id }}', function(data) {
             var e = document.getElementById('checkers');
             if (saved_data.length != data.length) {
                 saved_data = data;

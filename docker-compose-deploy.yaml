@@ -120,6 +120,23 @@ services:
         parallelism: 1
         order: start-first
 
+  polling:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    command: ./manage.py runserver 0.0.0.0:7998 --noreload
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
   storage:
     image: mathwave/sprint-repo:sprint
     networks:

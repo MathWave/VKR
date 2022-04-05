@@ -6,7 +6,7 @@
         page = number;
     }
     function doPoll() {
-        jQuery.get('/solutions_table?{{ query }}&teacher=true&page=' + page.toString(), function(data) {
+        jQuery.get('/polling/solutions_table?{{ query }}&teacher=true&page=' + page.toString(), function(data) {
             var e = document.getElementById('solutions');
             if (e.innerHTML !== data)
                 e.innerHTML = data;

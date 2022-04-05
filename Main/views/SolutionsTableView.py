@@ -7,7 +7,7 @@ from SprintLib.BaseView import BaseView, AccessError
 class SolutionsTableView(BaseView):
     view_file = "solutions_table.html"
     required_login = True
-    endpoint = "solutions_table"
+    endpoint = "polling/solutions_table"
     page_size = 20
     page = None
     set: Optional[Set] = None
