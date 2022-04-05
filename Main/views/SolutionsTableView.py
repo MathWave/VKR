@@ -24,7 +24,7 @@ class SolutionsTableView(BaseView):
     def pre_handle(self):
         if 'page' not in self.request.GET:
             raise AccessError()
-        self.look = int(self.request.GET['look'] or 0)
+        self.look = int(self.request.GET.get('look') or 0)
         self.page = int(self.request.GET['page'])
         if self.setTask is not None:
             self.set = self.setTask.set
