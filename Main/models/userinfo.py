@@ -29,6 +29,9 @@ class UserInfo(models.Model):
     verified = models.BooleanField(default=False)
     teacher = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.surname + ' ' + self.name
+
     @property
     def tasks_solved(self):
         fltr = Task.objects.filter(solution__result=CONSTS["ok_status"], solution__user=self.user).distinct()

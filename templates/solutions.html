@@ -1,12 +1,25 @@
 {% extends 'base_main.html' %}
 
 {% block scripts %}
+    var look = 0;
     var page = 1;
+    function setLook(number) {
+        look = number;
+        var n = number.toString();
+        var butid = 'button' + n;
+        document.getElementById(butid).classList.add('btn-dark');
+        document.getElementById(butid).classList.remove('btn-light');
+        document.getElementById(butid).focused = false;
+        butid = 'button' + (1 - number).toString();
+        document.getElementById(butid).classList.remove('btn-dark');
+        document.getElementById(butid).classList.add('btn-light');
+        document.getElementById(butid).focused = false;
+    }
     function setPage(number) {
         page = number;
     }
     function doPoll() {
-        jQuery.get('/polling/solutions_table?{{ query }}&teacher=true&page=' + page.toString(), function(data) {
+        jQuery.get('/polling/solutions_table?{{ query }}&teacher=true&page=' + page.toString() + '&look=' + look.toString(), function(data) {
             var e = document.getElementById('solutions');
             if (e.innerHTML !== data)
                 e.innerHTML = data;
@@ -24,7 +37,13 @@
 
 {% block main %}
     <h2>Решения <a href="{% if in_set %}/set?set_id={{ set.id }}{% else %}/task?task_id={{ task.id }}{% endif %}">{% if in_set %}{{ set.name }}{% else %}{{ task.name }}{% endif %}</a></h2>
-    <h4>Фильтр</h4>
+    <table style="margin-bottom: 10px;">
+        <tr>
+            <td><button class="btn btn-dark" id="button0" onclick="setLook(0)">Список</button></td>
+            <td><button class="btn btn-light" id="button1" onclick="setLook(1)">Таблица</button></td>
+        </tr>
+    </table>
+    <!--h4>Фильтр</h4>
     <div>
         <select name="set_id" style="width: 33%">
             <option value="0">Все сеты</option>
@@ -44,6 +63,6 @@
                 <option value="{{ user.username }}" {% if user.username == username %}selected{% endif %}>{{ user.userinfo }}</option>
             {% endfor %}
         </select>
-    </div>
+    </div-->
     <div id="solutions"></div>
 {% endblock %}

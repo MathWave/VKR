@@ -13,10 +13,18 @@ class SolutionsTableView(BaseView):
     set: Optional[Set] = None
     task: Optional[Task] = None
     setTask: Optional[SetTask] = None
+    look: int
+
+    @property
+    def view_file(self):
+        if self.look == 0:
+            return "solutions_table.html"
+        return "solutions_table_1.html"
 
     def pre_handle(self):
         if 'page' not in self.request.GET:
             raise AccessError()
+        self.look = int(self.request.GET['look'] or 0)
         self.page = int(self.request.GET['page'])
         if self.setTask is not None:
             self.set = self.setTask.set
@@ -37,6 +45,16 @@ class SolutionsTableView(BaseView):
                 raise AccessError()
         else:
             queryset = queryset.filter(user=self.request.user, task=self.task, set=self.set)
+        if self.look == 1:
+            data = dict()
+            users = set()
+            for solution in queryset.order_by('id'):  # type: Solution
+                if (solution.user_id, solution.settask) not in data or data[(solution.user_id, solution.settask)] != 'OK':
+                    data[(solution.user_id, solution.settask.id)] = solution.result
+                users.add(solution.user)
+            self.context['data'] = data
+            self.context['users'] = sorted(users, key=lambda u: str(u.userinfo))
+            return
         offset = self.page_size * (self.page - 1)
         limit = self.page_size
         self.context["solutions"] = queryset.order_by("-id")[offset:offset + limit]

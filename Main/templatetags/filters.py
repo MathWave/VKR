@@ -22,4 +22,14 @@ def settask(set, task):
 
 @register.filter('startswith')
 def startswith(s, prefix):
-    return s.startswith(prefix)
+    return s is not None and s.startswith(prefix)
+
+
+@register.filter('make_pair')
+def make_pair(user, task):
+    return user, task
+
+
+@register.filter('get_info')
+def get_info(data, pair):
+    return data.get(pair)
