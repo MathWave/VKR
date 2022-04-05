@@ -49,7 +49,7 @@ class SolutionsTableView(BaseView):
             data = dict()
             users = set()
             for solution in queryset.order_by('id'):  # type: Solution
-                if (solution.user_id, solution.settask) not in data or data[(solution.user_id, solution.settask)] != 'OK':
+                if (solution.user_id, solution.settask.id) not in data or data[(solution.user_id, solution.settask.id)] != 'OK':
                     data[(solution.user_id, solution.settask.id)] = solution.result
                 users.add(solution.user)
             self.context['data'] = data
