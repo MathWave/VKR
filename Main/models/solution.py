@@ -8,7 +8,7 @@ from django.db.models import JSONField
 from django.db import models
 from django.utils import timezone
 
-from Main.models import Set
+from Main.models import Set, SetTask
 from Main.models.solution_file import SolutionFile
 from Main.models.task import Task
 from Sprint.settings import CONSTS
@@ -31,6 +31,10 @@ class Solution(models.Model):
             models.Index(fields=['task', '-time_sent']),
             models.Index(fields=['set', '-time_sent']),
         ]
+
+    @cached_property
+    def settask(self):
+        return SetTask.objects.filter(set=self.set, task=self.task).first()
 
     @property
     def percentage_done(self):
