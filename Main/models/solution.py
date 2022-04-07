@@ -21,8 +21,8 @@ class Solution(models.Model):
     language_id = models.IntegerField(default=0)
     time_sent = models.DateTimeField(default=timezone.now)
     result = models.TextField(default=CONSTS["in_queue_status"])
-    test = models.IntegerField(default=None, null=True)
-    set = models.ForeignKey(Set, null=True, on_delete=models.SET_NULL)
+    test = models.IntegerField(default=None, null=True, blank=True)
+    set = models.ForeignKey(Set, null=True, blank=True, on_delete=models.SET_NULL)
     extras = JSONField(default=dict)
 
     class Meta:

@@ -13,10 +13,10 @@ from SprintLib.language import languages
 class Set(models.Model):
     name = models.TextField()
     public = models.BooleanField(default=False)
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     opened = models.BooleanField(default=False)
-    start_time = models.DateTimeField(default=None, null=True)
-    end_time = models.DateTimeField(default=None, null=True)
+    start_time = models.DateTimeField(default=None, null=True, blank=True)
+    end_time = models.DateTimeField(default=None, null=True, blank=True)
     editors = ArrayField(models.TextField(), default=list)
     languages = ArrayField(models.IntegerField(), default=list)
     auto_add_new_languages = models.BooleanField(default=True)

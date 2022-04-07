@@ -13,19 +13,19 @@ from SprintLib.language import languages
 
 
 class UserInfo(models.Model):
-    surname = models.TextField(null=True)
-    name = models.TextField(null=True)
+    surname = models.TextField(null=True, blank=True)
+    name = models.TextField(null=True, blank=True)
     last_request = models.DateTimeField(default=timezone.now)
-    profile_picture_fs_id = models.IntegerField(null=True)
-    favourite_language_id = models.IntegerField(null=True)
+    profile_picture_fs_id = models.IntegerField(null=True, blank=True)
+    favourite_language_id = models.IntegerField(null=True, blank=True)
     rating = models.IntegerField(default=0)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     telegram_chat_id = models.TextField(default="")
-    vk_user_id = models.IntegerField(null=True)
+    vk_user_id = models.IntegerField(null=True, blank=True)
     notification_solution_result = models.BooleanField(default=False)
     notification_friends = models.BooleanField(default=False)
     notification_messages = models.BooleanField(default=False)
-    code = models.IntegerField(null=True)
+    code = models.IntegerField(null=True, blank=True)
     verified = models.BooleanField(default=False)
     teacher = models.BooleanField(default=False)
 

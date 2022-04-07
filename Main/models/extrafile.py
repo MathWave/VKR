@@ -7,11 +7,11 @@ from .mixins import FileStorageMixin
 class ExtraFile(FileStorageMixin, models.Model):
     task = models.ForeignKey("Task", on_delete=models.CASCADE)
     filename = models.TextField()
-    is_test = models.BooleanField(null=True)
-    is_sample = models.BooleanField(null=True)
-    readable = models.BooleanField(null=True)
-    test_number = models.IntegerField(null=True)
-    fs_id = models.IntegerField(null=True)
+    is_test = models.BooleanField(null=True, blank=True)
+    is_sample = models.BooleanField(null=True, blank=True)
+    readable = models.BooleanField(null=True, blank=True)
+    test_number = models.IntegerField(null=True, blank=True)
+    fs_id = models.IntegerField(null=True, blank=True)
 
     class Meta:
         indexes = [

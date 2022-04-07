@@ -10,10 +10,10 @@ from Main.models.set import Set
 class Group(models.Model):
     name = models.TextField()
     sets = models.ManyToManyField(Set)
-    creator = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    creator = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     users = models.ManyToManyField(User, related_name="user_groups")
     editors = ArrayField(models.TextField(), default=list)
-    access_token = models.CharField(max_length=30, null=True)
+    access_token = models.CharField(max_length=30, null=True, blank=True)
 
     @property
     def available_sets(self):

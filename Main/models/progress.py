@@ -11,7 +11,7 @@ class Progress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     start_time = models.DateTimeField(default=timezone.now)
-    finished_time = models.DateTimeField(null=True)
+    finished_time = models.DateTimeField(null=True, blank=True)
     score = models.IntegerField(default=0)
     finished = models.BooleanField(default=False)
 

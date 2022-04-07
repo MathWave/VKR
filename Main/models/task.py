@@ -17,7 +17,7 @@ class Task(models.Model):
     specifications = models.TextField(default="")
     time_limit = models.IntegerField(default=10000)
     time_estimation = models.IntegerField(default=5)
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     editors = ArrayField(models.TextField(), default=list)
     allow_sharing = models.BooleanField(default=False)
     changes = JSONField(default=list)

@@ -7,9 +7,9 @@ from .mixins import FileStorageMixin
 
 class Dump(FileStorageMixin, models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
-    fs_id = models.IntegerField(null=True)
+    fs_id = models.IntegerField(null=True, blank=True)
     executor = models.ForeignKey(User, on_delete=models.CASCADE)
-    task = models.ForeignKey("Task", on_delete=models.CASCADE, null=True)
+    task = models.ForeignKey("Task", on_delete=models.CASCADE, null=True, blank=True)
 
     @property
     def ready(self):
