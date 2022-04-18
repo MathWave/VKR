@@ -9,6 +9,7 @@ class Command(MessagingSupport):
 
     def handle(self, *args, **options):
         call('docker image rm $(docker images -q mathwave/sprint-repo)', shell=True)
+        call('docker rm $(docker ps -qa)', shell=True)
         print("Old images removed")
         super().handle(*args, **options)
 

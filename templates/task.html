@@ -1,153 +1,195 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% load filters %}
 
 {% block title %}{{ task.name }}{% endblock %}
 
-{% block scripts %}
-    function change(num) {
-        inp = document.getElementById('soltype');
-        if (inp.value == num) return;
-        document.getElementById('button' + inp.value).classList.remove('btn-dark');
-        document.getElementById('button' + inp.value).classList.add('btn-light');
-        document.getElementById('button' + inp.value).focused = false;
-        document.getElementById('input' + inp.value).hidden = true;
-        inp.value = 1 - inp.value;
-        document.getElementById('button' + inp.value).classList.remove('btn-light');
-        document.getElementById('button' + inp.value).classList.add('btn-dark');
-        document.getElementById('button' + inp.value).focused = false;
-        document.getElementById('input' + inp.value).hidden = false;
-        document.getElementById('chosen').hidden = true;
-        document.getElementById('file-upload').value = null;
-        document.getElementById('input0').value = "";
-    }
-    var page = 1;
-    function setPage(number) {
-        page = number;
-    }
-    function doPoll() {
-        jQuery.get('/polling/solutions_table?{% if in_set %}setTask_id={{ setTask.id }}{% else %}task_id={{ task.id }}{% endif %}&page=' + page.toString(), function(data) {
-            var e = document.getElementById('solutions');
-            if (e.innerHTML !== data)
-                e.innerHTML = data;
-            const name = "page_num_" + page.toString();
-            elem = document.getElementById(name);
-            if (elem) {
-                elem.className = "btn btn-dark";
-            }
-            jQuery.get('/task_runtime?task_id={{ task.id }}', function(data1) {
-                document.getElementById('runtime').innerHTML = data1;
-                setTimeout(function() {doPoll()}, 2000);
+{% block javascripts %}
+    <script type="text/javascript" id="MathJax-script"
+            async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+        function change(num) {
+            inp = document.getElementById('soltype');
+            if (inp.value == num) return;
+            document.getElementById('button' + inp.value).classList.remove('btn-primary');
+            document.getElementById('button' + inp.value).classList.add('btn-gray-100');
+            document.getElementById('button' + inp.value).focused = false;
+            document.getElementById('input' + inp.value).hidden = true;
+            inp.value = 1 - inp.value;
+            document.getElementById('button' + inp.value).classList.remove('btn-gray-100');
+            document.getElementById('button' + inp.value).classList.add('btn-primary');
+            document.getElementById('button' + inp.value).focused = false;
+            document.getElementById('input' + inp.value).hidden = false;
+            document.getElementById('chosen').hidden = true;
+            document.getElementById('file-upload').value = null;
+            document.getElementById('input0').value = "";
+        }
+        var page = 1;
+        function setPage(number) {
+            page = number;
+        }
+        function setNext() {
+            page += 1;
+        }
+        function setPrev() {
+            page -= 1;
+        }
+        function doPoll() {
+            jQuery.get('/polling/solutions_table?{% if in_set %}setTask_id={{ setTask.id }}{% else %}task_id={{ task.id }}{% endif %}&page=' + page.toString(), function(data) {
+                var e = document.getElementById('solutions');
+                if (e.innerHTML !== data)
+                    e.innerHTML = data;
+                const pagesCount = parseInt(document.getElementById('page_count').value);
+                if (pagesCount !== 1) {
+                    const name = "page_num_" + page.toString();
+                    const elem = document.getElementById(name);
+                    if (elem) {
+                        elem.className = "page-item active";
+                    }
+                    if (page === 1) {
+                        document.getElementById("page_prev").style = "display: none;";
+                    }
+                    if (page === pagesCount) {
+                        document.getElementById("page_next").style = "display: none;";
+                    }
+                }
+                jQuery.get('/task_runtime?task_id={{ task.id }}', function(data1) {
+                    document.getElementById('runtime').innerHTML = data1;
+                    setTimeout(function() {doPoll()}, 2000);
+                })
             })
-        })
-    }
+        }
+    </script>
 {% endblock %}
 
 {% block onload %}doPoll(){% endblock %}
 
-{% block main %}
+{% block content %}
     <div id="runtime"></div>
-<div class="row">
-<div class="col">
-{% if task.legend %}
-<h4>Легенда</h4>
-{% autoescape off %}
-{{ task.legend }}
-{% endautoescape %}
-<hr>
-{% endif %}
-{% if task.input_format %}
-<h4>Формат входных данных</h4>
-{% autoescape off %}
-{{ task.input_format }}
-{% endautoescape %}
-<hr>
-{% endif %}
-{% if task.output_format %}
-<h4>Формат выходных данных</h4>
-{% autoescape off %}
-{{ task.output_format }}
-{% endautoescape %}
-<hr>
-{% endif %}
-{% if task.specifications %}
-<h4>Примечания</h4>
-{% autoescape off %}
-{{ task.specifications }}
-{% endautoescape %}
-<hr>
-{% endif %}
-{% if task.samples %}
-<h4 style="">Примеры</h4>
-{% for sample in task.samples %}
-                <h5>Пример {{ sample.num }}</h5>
-                <b>
-                    <table style="width: 100%">
-                        <tr>
-                            <td>
-                                Входные данные
-                            </td>
-                            <td>
-                                Выходные данные
-                            </td>
-                        </tr>
-                    </table>
-                </b>
-                <hr>
-                <table style="width: 100%;">
-                    <tr>
-                        <td style="width: 50%; vertical-align: top;">
-<pre>
-{{ sample.input }}
-</pre>
-                        </td>
-                        <td style="width: 50%; vertical-align: top;">
-<pre>
-{{ sample.output }}
-</pre>
-                        </td>
-                    </tr>
-                </table>
-                <hr>
-            {% endfor %}
-{% endif %}
-</div>
-{% if in_set %}
-    <div class="col-2">
-        <h5><a href="/set?set_id={{ set.id }}">{{ set.name }}</a></h5>
-        {% for settask in setTask.set.settasks_ordered %}
-            {% with result=user|solved:settask.task %}
-                <a href="/task?setTask_id={{ settask.id }}" style="color: {% if result %}green{% else %}{% if result == False %}red{% else %}#307df6{% endif %}{% endif %};">{% if task == settask.task %}<b>{% endif %}{{ settask.name }}. {{ settask.task.name }}{% if task == settask.task %}</b>{% endif %}</a><br>
-            {% endwith %}
-        {% endfor %}
+    <div class="row">
+        <div class="col">
+            {% if task.legend %}
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body">
+                        <h1 class="h4">Легенда</h1>
+                        {% autoescape off %}
+                            {{ task.legend }}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if task.input_format %}
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body">
+                        <h1 class="h4">Формат входных данных</h1>
+                        {% autoescape off %}
+                            {{ task.input_format }}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if task.output_format %}
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body">
+                        <h1 class="h4">Формат выходных данных</h1>
+                        {% autoescape off %}
+                            {{ task.output_format }}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if task.specifications %}
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body">
+                        <h1 class="h4">Примечания</h1>
+                        {% autoescape off %}
+                            {{ task.specifications }}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if task.samples %}
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body">
+                        <h1 class="h4">Примеры</h1>
+                        {% for sample in task.samples %}
+                            <h1 class="h6">Пример {{ sample.num }}</h1>
+                            <b>
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td>
+                                            Входные данные
+                                        </td>
+                                        <td>
+                                            Выходные данные
+                                        </td>
+                                    </tr>
+                                </table>
+                            </b>
+                            <hr>
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <pre>{{ sample.input }}</pre>
+                                    </td>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <pre>{{ sample.output }}</pre>
+                                    </td>
+                                </tr>
+                            </table>
+                            <hr>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% if in_set %}
+            <div class="col-2">
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body">
+                        <h5><a href="/set?set_id={{ set.id }}">{{ set.name }}</a></h5>
+                        {% for settask in setTask.set.settasks_ordered %}
+                            {% with result=user|solved:settask.task %}
+                                <table><tr><td>{% if result %}<div class="bg-success dot rounded-circle"></div>{% else %}{% if result == False %}<div class="bg-danger dot rounded-circle"></div>{% else %}{% endif %}{% endif %} </td><td><a href="/task?setTask_id={{ settask.id }}">{% if task == settask.task %}<b>{% endif %}{{ settask.name }}. {{ settask.task.name }}{% if task == settask.task %}</b>{% endif %}</a></td></tr></table>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
-{% endif %}
-</div>
-    <h2>Отправить решение</h2>
-    <table style="margin-bottom: 10px;">
-        <tr>
-            <input type="hidden" form="solform" name="action" id="soltype" value="0">
-            <td><button class="btn btn-dark" id="button0" onclick="change('0')">Текст</button></td>
-            <td><button class="btn btn-light" id="button1" onclick="change('1')">Файл</button></td>
-        </tr>
-    </table>
-    <form method="POST" enctype="multipart/form-data" id="solform">
-        {% csrf_token %}
-        <select name="language" style="margin-bottom: 30px; width: 10%;">
-            <option disabled>Выберите язык</option>
-            {% for lang in languages %}
-                <option value="{{ lang.id }}"{% if user.userinfo.favourite_language_id == lang.id %} selected{% endif %}>{{ lang }}</option>
-            {% endfor %}
-        </select><br>
-        <textarea id="input0" style="width: 1000px; height: 400px; resize: none;" name="code" placeholder="Вставьте сюда свой код"></textarea>
-        <label for="file-upload" class="btn btn-outline-dark" id="input1" hidden>
-            <i class="fa fa-upload"></i> Загрузить файл
-        </label>
-        <p id="chosen" hidden>Файл выбран</p>
-        <input type="file" style="display: none;" onchange="document.getElementById('chosen').hidden = false;" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
-        <br><button type="submit" style="margin-top: 30px; margin-bottom: 30px;" class="btn btn-dark">Отправить</button>
-    </form>
-    <hr>
-    <h2>Решения</h2>
-    <div id="solutions"></div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Отправить решение</h1>
+            <table style="margin-bottom: 10px;">
+                <tr>
+                    <input type="hidden" form="solform" name="action" id="soltype" value="0">
+                    <td><button class="btn btn-primary" id="button0" onclick="change('0')">Текст</button></td>
+                    <td><button class="btn btn-gray-100" id="button1" onclick="change('1')">Файл</button></td>
+                </tr>
+            </table>
+            <form method="POST" enctype="multipart/form-data" id="solform">
+                {% csrf_token %}
+                <select name="language" style="margin-bottom: 30px; width: 25%;">
+                    <option disabled>Выберите язык</option>
+                    {% for lang in languages %}
+                        <option value="{{ lang.id }}"{% if user.userinfo.favourite_language_id == lang.id %} selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select><br>
+                <textarea id="input0" style="width: 100%; height: 400px; resize: none;" name="code" placeholder="Вставьте сюда свой код"></textarea>
+                <label for="file-upload" class="btn btn-outline-dark" id="input1" hidden>
+                    <i class="fa fa-upload"></i> Загрузить файл
+                </label>
+                <p id="chosen" hidden>Файл выбран</p>
+                <input type="file" style="display: none;" onchange="document.getElementById('chosen').hidden = false;" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
+                <br><button type="submit" style="margin-top: 30px; margin-bottom: 30px;" class="btn btn-gray-100">Отправить</button>
+            </form>
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Решения</h1>
+            <div id="solutions" class="table-responsive"></div>
+        </div>
+    </div>
 {% endblock %}

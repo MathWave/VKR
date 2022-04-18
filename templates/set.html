@@ -1,25 +1,35 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% load filters %}
 
 {% block title %}{{ set.name }}{% endblock %}
 
-{% block main %}
-    <h3>{{ set.name }}</h3>
+{% block content %}
+    <h1 class="h4">{{ set.name }}</h1>
     <p>{{ set.description }}</p>
-    <h4>Таски</h4>
-    {% for settask in set.settasks_ordered %}
-        {% with result=user|solved:settask.task %}
-            <a href="/task?setTask_id={{ settask.id }}" style="color: {% if result %}green{% else %}{% if result == False %}red{% else %}#307df6{% endif %}{% endif %};">{{ settask.name }}. {{ settask.task.name }}</a><br>
-        {% endwith %}
-    {% endfor %}
-    <hr><hr>
-    Время начала: <b>{% if not set.start_time %}без ограничений{% else %}{{ set.start_time_moscow }}{% endif %}</b><br>
-    Время окончания: <b>{% if not set.end_time %}без ограничений{% else %}{{ set.end_time_moscow }}{% endif %}</b><br>
-    Публичность: <b>{% if set.public %}публично{% else %}приватно{% endif %}</b><br>
-    Открытость: <b>{% if set.opened %}открыто{% else %}закрыто{% endif %} для просмотра и решения</b><br>
-    <hr><hr>
-    {% for language in set.language_models %}
-        <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
-    {% endfor %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Таски</h1>
+            {% for settask in set.settasks_ordered %}
+                {% with result=user|solved:settask.task %}
+                    <table><tr><td>{% if result %}<div class="bg-success dot rounded-circle"></div>{% else %}{% if result == False %}<div class="bg-danger dot rounded-circle"></div>{% else %}{% endif %}{% endif %}</td><td><a href="/task?setTask_id={{ settask.id }}">{{ settask.name }}. {{ settask.task.name }}</a></td></tr></table>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            Время начала: <b>{% if not set.start_time %}без ограничений{% else %}{{ set.start_time_moscow }}{% endif %}</b><br>
+            Время окончания: <b>{% if not set.end_time %}без ограничений{% else %}{{ set.end_time_moscow }}{% endif %}</b><br>
+            Публичность: <b>{% if set.public %}публично{% else %}приватно{% endif %}</b><br>
+            Открытость: <b>{% if set.opened %}открыто{% else %}закрыто{% endif %} для просмотра и решения</b><br>
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            {% for language in set.language_models %}
+                <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

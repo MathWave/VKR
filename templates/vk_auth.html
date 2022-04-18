@@ -1,9 +1,11 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
-{% block scripts %}
-    function onLoad() {
-        window.location.href = window.location.href.replace('#', '?');
-    }
+{% block javascripts %}
+    <script>
+        function onLoad() {
+            window.location.href = window.location.href.replace('#', '?');
+        }
+    </script>
 {% endblock %}
 
 {% block onload %}onLoad(){% endblock %}

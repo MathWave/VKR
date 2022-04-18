@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "Main.apps.MainConfig",
     "Checker.apps.CheckerConfig",
-    "Messaging.apps.MessagingConfig",
     "daemons.apps.DaemonsConfig",
 ]
 

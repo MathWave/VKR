@@ -5,7 +5,7 @@ from SprintLib.BaseView import BaseView
 
 class ExitView(BaseView):
     required_login = True
-    endpoint = "exit"
+    endpoint = "logout"
 
     def get(self):
         logout(self.request)

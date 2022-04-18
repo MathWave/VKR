@@ -1,209 +1,206 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block title %}{{ set.name }}{% endblock %}
 
-{% block scripts %}
-    var saved_data = "";
-    function handle(value) {
-        const elem = document.getElementById(value);
-        elem.hidden = !elem.hidden;
-    }
-    function doPoll() {
-        jQuery.get('/polling/admin/checkers?set_id={{ set.id }}', function(data) {
-            var e = document.getElementById('checkers');
-            if (saved_data.length != data.length) {
-                saved_data = data;
-                e.innerHTML = data;
-            }
-            setTimeout(function() {doPoll()}, 2000);
-        })
-    }
+{% block javascripts %}
+    <script>
+        var saved_data = "";
+        function handle(value) {
+            const elem = document.getElementById(value);
+            elem.hidden = !elem.hidden;
+        }
+        function doPoll() {
+            jQuery.get('/polling/admin/checkers?set_id={{ set.id }}', function(data) {
+                var e = document.getElementById('checkers');
+                if (saved_data.length !== data.length) {
+                    saved_data = data;
+                    e.innerHTML = data;
+                }
+                setTimeout(function() {doPoll()}, 2000);
+            })
+        }
+    </script>
 {% endblock %}
 
 {% block onload %}doPoll(){% endblock %}
 
-{% block main %}
-    <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save">
-        <h3><input name="name" placeholder="Название" value="{{ set.name }}"></h3>
-        <textarea id="input0" style="width: 1000px; height: 400px; resize: none;" name="description" placeholder="Описание">{{ set.description }}</textarea>
-        <h4>Таски</h4>
-        {% for settask in set.settasks_ordered %}
-            <input name="settask_{{ settask.id }}" style="width: 30px;" value="{{ settask.name }}"> {% if settask.task.creator == user or user.username in settask.task.editors %}<a href="/admin/task?task_id={{ settask.task.id }}">{{ settask.task.name }}</a>{% else %}{{ settask.task.name }}{% endif %}<br>
-        {% endfor %}
-        <button class="btn btn-light" type="submit" style="margin-top: 20px;"><i class="fa fa-save"></i> Установить</button>&emsp;<button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#example"><i class="fa fa-pencil"></i> Редактировать</button>
-    </form>
-    <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+{% block scripts %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
             <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Редактировать набор задач</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="edit">
-                                    {% for task in user.userinfo.available_tasks %}
-                                        <input type="checkbox" {% if task in set.tasks %}checked{% endif %} name="task_{{ task.id }}"> <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
-                    </div>
-                </div>
+                {% csrf_token %}
+                <h4><input name="name" style="width: 1000px;" placeholder="Название" value="{{ set.name }}"></h4>
+                <textarea id="input0" style="width: 1000px; height: 400px; resize: none;" name="description" placeholder="Описание">{{ set.description }}</textarea><br>
+                <button class="btn btn-block btn-info mt-3" type="submit">Сохранить</button>
             </form>
         </div>
     </div>
-    <hr><hr>
-    <h3>Настройки доступа</h3>
-    <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="time">
-        Набор открыт для решения&emsp;<input type="checkbox" name="opened" {% if set.opened %}checked{% endif %}><br>
-        Набор доступен всем пользователям&emsp;<input type="checkbox" name="public" {% if set.public %}checked{% endif %}>
-        <div class="row">
-            <div class="col-2">
-                <p>
-                    Время начала<br>
-                </p>
-                <p>
-                    Без ограничений&emsp;<input type="checkbox" name="start_time_check" onclick="handle('start_time');" {% if not set.start_time %}checked{% endif %}>
-                </p>
-                <p id="start_time" {% if not set.start_time %}hidden{% endif %}>
-                    <input type="datetime-local" name="start_time" value="{{ start_time }}">
-                </p>
-            </div>
-            <div class="col-2">
-                <p>
-                    Время окончания<br>
-                </p>
-                <p>
-                    Без ограничений&emsp;<input type="checkbox" name="end_time_check" onclick="handle('end_time')" {% if not set.end_time %}checked{% endif %}>
-                </p>
-                <p id="end_time" {% if not set.end_time %}hidden{% endif %}>
-                    <input type="datetime-local" name="end_time" value="{{ end_time }}">
-                </p>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <form>
+                {% csrf_token %}
+                <h4>Таски</h4>
+                {% for settask in set.settasks_ordered %}
+                    <input name="settask_{{ settask.id }}" style="width: 30px;" value="{{ settask.name }}"> {% if settask.task.creator == user or user.username in settask.task.editors %}<a href="/admin/task?task_id={{ settask.task.id }}">{{ settask.task.name }}</a>{% else %}{{ settask.task.name }}{% endif %}<br>
+                {% endfor %}
+                <button class="btn btn-block btn-info mt-3" type="submit">Установить</button>&emsp;<button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#edit-tasks">Редактировать</button>
+            </form>
+            <div class="modal fade" id="edit-tasks" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h2 class="h6 modal-title">Редактировать набор задач</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="action" value="edit">
+                                {% for task in user.userinfo.available_tasks %}
+                                    <input type="checkbox" {% if task in set.tasks %}checked{% endif %} name="task_{{ task.id }}"> <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-secondary">Установить</button>
+                                <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-        <button class="btn btn-light"><i class="fa fa-save"></i> Сохранить</button>
-    </form>
-    <hr><hr>
-    <h3>Редакторы</h3>
-    {% for editor in set.editors %}
-        <i class="fa fa-user"></i> <a href="/account?username={{ editor }}">{{ editor }}</a><br>
-    {% endfor %}
-        <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#exampleU"><i class="fa fa-pencil"></i> Редактировать</button>
-        <div class="modal fade" id="exampleU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleU" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Настройки доступа</h1>
             <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitleU">Редактировать редакторов таска</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="time">
+                Набор открыт для решения&emsp;<input type="checkbox" name="opened" {% if set.opened %}checked{% endif %}><br>
+                Набор доступен всем пользователям&emsp;<input type="checkbox" name="public" {% if set.public %}checked{% endif %}>
+                <div class="row">
+                    <div class="col-2">
+                        <p>
+                            Время начала<br>
+                        </p>
+                        <p>
+                            Без ограничений&emsp;<input type="checkbox" name="start_time_check" onclick="handle('start_time');" {% if not set.start_time %}checked{% endif %}>
+                        </p>
+                        <p id="start_time" {% if not set.start_time %}hidden{% endif %}>
+                            <input type="datetime-local" name="start_time" value="{{ start_time }}">
+                        </p>
                     </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="users_edit">
-                                    {% for u in user.userinfo.verified_friends %}
-                                        <input type="checkbox" {% if u.username in set.editors %}checked{% endif %} name="user_{{ u.username }}"> <a href="/account?username={{ u.username }}">{{ u.username }}</a><br>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
+                    <div class="col-2">
+                        <p>
+                            Время окончания<br>
+                        </p>
+                        <p>
+                            Без ограничений&emsp;<input type="checkbox" name="end_time_check" onclick="handle('end_time')" {% if not set.end_time %}checked{% endif %}>
+                        </p>
+                        <p id="end_time" {% if not set.end_time %}hidden{% endif %}>
+                            <input type="datetime-local" name="end_time" value="{{ end_time }}">
+                        </p>
                     </div>
                 </div>
+                <button class="btn btn-block btn-info mt-3" type="submit">Сохранить</button>
             </form>
         </div>
     </div>
-    <hr><hr>
-    <h3>Языки программирования</h3>
-    {% for language in set.language_models %}
-        <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
-    {% endfor %}
-        <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#exampleL"><i class="fa fa-pencil"></i> Редактировать</button>
-        <div class="modal fade" id="exampleL" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleL" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitleL">Редактировать языки программирования</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="languages_edit">
-                                    <input type="checkbox" name="auto_add" {% if set.auto_add_new_languages %}checked{% endif %}> Обновлять список при добавлении нового языка<br>
-                                    {% for language in languages %}
-                                        <input type="checkbox" {% if language.id in set.languages %}checked{% endif %} name="language_{{ language.id }}"> <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
-                                    {% endfor %}
-                                </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Редакторы</h1>
+            {% for editor in set.editors %}
+                <i class="fa fa-user"></i> <a href="/account?username={{ editor }}">{{ editor }}</a><br>
+            {% endfor %}
+            <button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#edit-users">Редактировать</button>
+            <div class="modal fade" id="edit-users" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h2 class="h6 modal-title">Редактировать редакторов сета</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
+                            <div class="modal-body">
+                                <input type="hidden" name="action" value="users_edit">
+                                {% for u in user.userinfo.verified_friends %}
+                                    <input type="checkbox" {% if u.username in set.editors %}checked{% endif %} name="user_{{ u.username }}"> <a href="/account?username={{ u.username }}">{{ u.username }}</a><br>
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-secondary">Установить</button>
+                                <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-    <hr><hr>
-    <h3>Чекеры</h3>
-    <div id="checkers"></div>
-    <button class="btn btn-light" data-toggle="modal" data-target="#exampleCheckers"><i class="fa fa-plus"></i> Добавить чекер</button>
-    <div class="modal fade" id="exampleCheckers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleCheckers" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitleCheckers">Создать новый чекер</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="new_checker">
-                                    <input type="text" name="name" placeholder="Имя чекера">
-                                </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Языки программирования</h1>
+            {% for language in set.language_models %}
+                <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
+            {% endfor %}
+            <button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#edit-languages">Редактировать</button>
+            <div class="modal fade" id="edit-languages" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h2 class="h6 modal-title">Редактировать языки программирования</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Создать</button>
+                            <div class="modal-body">
+                                <input type="hidden" name="action" value="languages_edit">
+                                <input type="checkbox" name="auto_add" {% if set.auto_add_new_languages %}checked{% endif %}> Обновлять список при добавлении нового языка<br>
+                                {% for language in languages %}
+                                    <input type="checkbox" {% if language.id in set.languages %}checked{% endif %} name="language_{{ language.id }}"> <img src="{{ language.logo_url }}" height="24px" width="24px"> {{ language.name }}<br>
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-secondary">Установить</button>
+                                <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+            </div>
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Чекеры</h1>
+            <div id="checkers"></div>
+            <button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#edit-checkers">Добавить чекер</button>
+            <div class="modal fade" id="edit-checkers" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h2 class="h6 modal-title">Создать новый чекер</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="action" value="new_checker">
+                                <input type="text" name="name" style="width: 100%;" placeholder="Имя чекера">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-secondary">Создать</button>
+                                <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

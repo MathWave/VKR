@@ -59,4 +59,5 @@ class SolutionsTableView(BaseView):
         limit = self.page_size
         self.context["solutions"] = queryset.order_by("-id")[offset:offset + limit]
         self.context["count_pages"] = range(1, (len(queryset) - 1) // self.page_size + 2)
-        self.context["need_pagination"] = len(self.context["count_pages"]) > 1
+        self.context['pages'] = len(self.context['count_pages'])
+        self.context["need_pagination"] = self.context['pages'] > 1

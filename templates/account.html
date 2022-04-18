@@ -1,174 +1,183 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block title %}Аккаунт{% endblock %}
 
-{% block main %}
-    <h2 style="margin-bottom: 40px;">Информация об аккаунте</h2>
-    <div class="row">
-        <div class="col-3">
-            <div style="height: 100%; width: 100%;">
-                <img src="{{ account.userinfo.profile_pic_url }}" height="100%" width="100%" alt="Фото профиля">
-            </div>
-            {% if owner %}
-                <label for="file-upload" class="btn btn-light" style="margin-top: -100px; margin-left: 10%; width: 80%;">
-                    <i class="fa fa-upload"></i> Загрузить фото
-                </label>
-                <input type="file" form="photoform" style="display: none;" accept="image/png, image/jpg" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file" onchange="document.getElementById('photoform').submit();">
-                <form method="POST" enctype="multipart/form-data" id="photoform">
-                    <input type="hidden" name="action" value="upload_photo">
-                    {% csrf_token %}
-                </form>
-            {% endif %}
-        </div>
-        <div class="col-9">
-            <h3>
-                {{ account.userinfo.surname }} {{ account.userinfo.name }}
-                <span style="margin-left: 15px; margin-bottom: 20px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
-                {% if not owner %}
-                    <form method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="friendship">
-                            {% if friendship_status == 0 %}
-                                <button type="submit" class="btn btn-primary" name="to_do" value="add">Добавить в друзья</button>
-                            {% else %}{% if friendship_status == 1 %}
-                                <button class="btn btn-success"><i class="fa fa-check"></i> Друзья</button> <button class="btn btn-danger" type="submit" name="to_do" value="delete"><i class="fa fa-times"></i> Удалить</button>
-                            {% else %}{% if friendship_status == 2 %}
-                                <button class="btn btn-info">Приглашение отправлено</button> <button class="btn btn-danger" type="submit" name="to_do" value="delete">Отменить</button>
-                            {% else %}
-                                <button class="btn btn-info" type="submit" name="to_do" value="yes">Принять</button> <button class="btn btn-danger" type="submit" name="to_do" value="no">Отклонить</button>
-                            {% endif %}{% endif %}{% endif %}
-                    </form>
-                {% endif %}
-                {% if user.is_superuser and owner %}
-                    <br>
-                    <a style="background-color: purple;" target="_blank" href="https://sentry.io/organizations/sprint-cu/issues/?project=6235928" class="badge badge-secondary"><i class="fa fa-bug"></i> Sentry</a>
-                    <a style="margin-left: 15px;" href="http://dev.sprinthub.ru:888" target="_blank" class="badge badge-primary"><i class="fa fa-server"></i> Кластер</a>
-                    <a style="margin-left: 15px; background-color: orange;" href="http://dev.sprinthub.ru:15672" target="_blank" class="badge badge-primary"><i class="fa fa-align-left"></i> Очереди</a>
-                    <a style="margin-left: 15px;" href="https://gitlab.com/mathwave/sprint/-/pipelines" target="_blank" class="badge badge-dark"><i class="fa fa-gitlab"></i> Gitlab</a>
-                    <a style="margin-left: 15px;" href="/admin/" target="_blank" class="badge badge-danger"><i class="fa fa-user"></i> Админка</a>
-                {% endif %}
-            </h3>
-            <table>
-                <tr>
-                    <td>
-                        <h2><i class="fa fa-user"></i></h2>
-                    </td>
-                    <td><div style="width: 20px;"></div></td>
-                    <td>
-                        <p style="padding-top: 8px; font-size: 24px;">{{ account.username }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h2><i class="fa fa-star"></i></h2>
-                    </td>
-                    <td><div style="width: 20px;"></div></td>
-                    <td>
-                        <p style="padding-top: 8px; font-size: 24px;">{{ account.userinfo.rating }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h2><i class="fa fa-arrow-up"></i></h2>
-                    </td>
-                    <td><div style="width: 20px;"></div></td>
-                    <td>
-                        <p style="padding-top: 8px; font-size: 24px;">{{ account.userinfo.place }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h2><i class="fa fa-calendar"></i></h2>
-                    </td>
-                    <td><div style="width: 20px;"></div></td>
-                    <td>
-                        <p style="padding-top: 8px; font-size: 24px;">{{ account.date_joined.date }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h2><i class="fa fa-desktop"></i></h2>
-                    </td>
-                    <td><div style="width: 20px;"></div></td>
-                    <td><p style="padding-top: 8px; font-size: 24px;">
-                        {% if owner %}
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4" style="margin-bottom: 40px;">Информация об аккаунте</h1>
+            <div class="row">
+                <div class="col-3">
+                    <div style="height: 100%; width: 100%;">
+                        <img src="{{ account.userinfo.profile_pic_url }}" height="100%" width="100%" alt="Фото профиля">
+                    </div>
+                    {% if owner %}
+                        <label for="file-upload" class="btn btn-gray-50" style="margin-top: -120px; margin-left: 20%; width: 60%;">
+                            <i class="fa fa-upload"></i> Загрузить фото
+                        </label>
+                        <input type="file" form="photoform" style="display: none;" accept="image/png, image/jpg" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file" onchange="document.getElementById('photoform').submit();">
+                        <form method="POST" enctype="multipart/form-data" id="photoform">
+                            <input type="hidden" name="action" value="upload_photo">
+                            {% csrf_token %}
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="col-9">
+                    <h3>
+                        {{ account.userinfo.surname }} {{ account.userinfo.name }}
+                        <span style="margin-left: 15px; margin-bottom: 20px;" class="badge badge-{% if account.userinfo.activity_status == online_status %}success{% else %}secondary{% endif %}">{{ account.userinfo.activity_status }}</span>
+                        {% if not owner %}
                             <form method="POST">
                                 {% csrf_token %}
-                                <input type="hidden" name="action" value="set_language">
-                                <select name="language" onchange="this.form.submit();">
-                                    <option value="-1">Предпочитаемый язык отсутствует</option>
-                                    {% for lang in languages %}
-                                        <option value="{{ lang.id }}"{% if account.userinfo.favourite_language_id == lang.id %} selected{% endif %}>{{ lang }}</option>
-                                    {% endfor %}
-                                </select>
+                                <input type="hidden" name="action" value="friendship">
+                                    {% if friendship_status == 0 %}
+                                        <button type="submit" class="btn btn-primary" name="to_do" value="add">Добавить в друзья</button>
+                                    {% else %}{% if friendship_status == 1 %}
+                                        <button class="btn btn-success"><i class="fa fa-check"></i> Друзья</button> <button class="btn btn-danger" type="submit" name="to_do" value="delete"><i class="fa fa-times"></i> Удалить</button>
+                                    {% else %}{% if friendship_status == 2 %}
+                                        <button class="btn btn-info">Приглашение отправлено</button> <button class="btn btn-danger" type="submit" name="to_do" value="delete">Отменить</button>
+                                    {% else %}
+                                        <button class="btn btn-info" type="submit" name="to_do" value="yes">Принять</button> <button class="btn btn-danger" type="submit" name="to_do" value="no">Отклонить</button>
+                                    {% endif %}{% endif %}{% endif %}
                             </form>
-                        {% else %}
-                            {% if account.userinfo.has_favourite_language %}
-                                <img src="{{ account.userinfo.favourite_language.logo_url }}" height="24px" width="24px"> {{ account.userinfo.favourite_language.name }}
-                            {% else %}
-                                Предпочитаемый язык отсутствует
-                            {% endif %}
                         {% endif %}
-                    </p></td>
-                </tr>
-                {% if owner %}
-                    <tr>
-                        <td>
-                            <h2><i class="fa fa-users"></i></h2>
-                        </td>
-                        <td><div style="width: 20px;"></div></td>
-                        <td>
-                            <a href="https://oauth.vk.com/authorize?client_id=8123759&redirect_uri=http://dev.sprinthub.ru/vk_add&display=page&response_type=token&v=5.59"><img style="width: 40px; height: 40px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/VK_Compact_Logo_%282021-present%29.svg/1200px-VK_Compact_Logo_%282021-present%29.svg.png"></a>
-                            {% if user.userinfo.vk_user_id %}
-                               <div style="margin-top: -15px; margin-left: 30px;"><i style="color: green;" class="fa fa-check-circle"></i></div>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endif %}
-            </table>
+                        {% if user.is_superuser and owner %}
+                            <br>
+                            <a style="background-color: purple;" target="_blank" href="https://sentry.io/organizations/sprint-cu/issues/?project=6235928" class="badge bg-primary"><i class="fa fa-bug"></i> Sentry</a>
+                            <a style="margin-left: 15px;" href="http://dev.sprinthub.ru:888" target="_blank" class="badge bg-info"><i class="fa fa-server"></i> Кластер</a>
+                            <a style="margin-left: 15px; background-color: orange;" href="http://dev.sprinthub.ru:15672" target="_blank" class="badge bg-success"><i class="fa fa-align-left"></i> Очереди</a>
+                            <a style="margin-left: 15px;" href="http://gitlab.sprinthub.ru/root/sprint/-/pipelines" target="_blank" class="badge bg-warning"><i class="fa fa-gitlab"></i> Gitlab</a>
+                            <a style="margin-left: 15px;" href="/admin/" target="_blank" class="badge bg-danger"><i class="fa fa-user"></i> Админка</a>
+                        {% endif %}
+                    </h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <h2><i class="fa fa-user"></i></h2>
+                            </td>
+                            <td><div style="width: 20px;"></div></td>
+                            <td>
+                                <p style="padding-top: 8px; font-size: 24px;">{{ account.username }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h2><i class="fa fa-star"></i></h2>
+                            </td>
+                            <td><div style="width: 20px;"></div></td>
+                            <td>
+                                <p style="padding-top: 8px; font-size: 24px;">{{ account.userinfo.rating }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h2><i class="fa fa-arrow-up"></i></h2>
+                            </td>
+                            <td><div style="width: 20px;"></div></td>
+                            <td>
+                                <p style="padding-top: 8px; font-size: 24px;">{{ account.userinfo.place }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h2><i class="fa fa-calendar"></i></h2>
+                            </td>
+                            <td><div style="width: 20px;"></div></td>
+                            <td>
+                                <p style="padding-top: 8px; font-size: 24px;">{{ account.date_joined.date }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h2><i class="fa fa-desktop"></i></h2>
+                            </td>
+                            <td><div style="width: 20px;"></div></td>
+                            <td><p style="padding-top: 8px; font-size: 24px;">
+                                {% if owner %}
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="set_language">
+                                        <select name="language" onchange="this.form.submit();">
+                                            <option value="-1">Предпочитаемый язык отсутствует</option>
+                                            {% for lang in languages %}
+                                                <option value="{{ lang.id }}"{% if account.userinfo.favourite_language_id == lang.id %} selected{% endif %}>{{ lang }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                {% else %}
+                                    {% if account.userinfo.has_favourite_language %}
+                                        <img src="{{ account.userinfo.favourite_language.logo_url }}" height="24px" width="24px"> {{ account.userinfo.favourite_language.name }}
+                                    {% else %}
+                                        Предпочитаемый язык отсутствует
+                                    {% endif %}
+                                {% endif %}
+                            </p></td>
+                        </tr>
+                        {% if owner %}
+                            <tr>
+                                <td>
+                                    <h2><i class="fa fa-users"></i></h2>
+                                </td>
+                                <td><div style="width: 20px;"></div></td>
+                                <td>
+                                    <a href="https://oauth.vk.com/authorize?client_id=8123759&redirect_uri=http://dev.sprinthub.ru/vk_add&display=page&response_type=token&v=5.59"><img style="width: 40px; height: 40px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/VK_Compact_Logo_%282021-present%29.svg/1200px-VK_Compact_Logo_%282021-present%29.svg.png"></a>
+                                    {% if user.userinfo.vk_user_id %}
+                                       <div style="margin-top: -15px; margin-left: 30px;"><i style="color: green;" class="fa fa-check-circle"></i></div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     {% if owner %}
-    <hr><hr>
-    <h2>Уведомления</h2>
-        <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="notifications">
-    <table>
-        <tr>
-            <td style="width: 200px;">
-                Результаты решений
-            </td>
-            <td>
-                <input type="checkbox" name="notification_solution_result" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 200px;">
-                Заявки в друзья
-            </td>
-            <td>
-                <input type="checkbox" name="notification_friends" {% if user.userinfo.notification_friends %}checked{% endif %}>
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 200px;">
-                Сообщения в оффлайн
-            </td>
-            <td>
-                <input type="checkbox" name="notification_messages" {% if user.userinfo.notification_messages %}checked{% endif %}>
-            </td>
-        </tr>
-    </table>
-                <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
-
+        <div class="card border-0 shadow mb-4">
+            <div class="card-body">
+                <h1 class="h4">Уведомления</h1>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="notifications">
+                    <table>
+                        <tr>
+                            <td style="width: 200px;">
+                                Результаты решений
+                            </td>
+                            <td>
+                                <input type="checkbox" name="notification_solution_result" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 200px;">
+                                Заявки в друзья
+                            </td>
+                            <td>
+                                <input type="checkbox" name="notification_friends" {% if user.userinfo.notification_friends %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 200px;">
+                                Сообщения в оффлайн
+                            </td>
+                            <td>
+                                <input type="checkbox" name="notification_messages" {% if user.userinfo.notification_messages %}checked{% endif %}>
+                            </td>
+                        </tr>
+                    </table>
+                    <button type="submit" class="btn btn-info mt-3">Сохранить</button>
                 </form>
-        <hr><hr>
-        <h2 style="margin-bottom: 20px;">Друзья</h2>
-        <h5>
-        {% for friendship in user.userinfo.friends %}
-            <i class="fa fa-user"></i> <a href="/account?username={% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}">{% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}</a>{% if not friendship.verified %}   <i class="fa fa-circle" style="color: blue;"></i> {% endif %}<br>
-        {% endfor %}
-        </h5>
+            </div>
+        </div>
+        <div class="card border-0 shadow mb-4">
+            <div class="card-body">
+                <h1 class="h4">Друзья</h1>
+                <h5>
+                {% for friendship in user.userinfo.friends %}
+                    <i class="fa fa-user"></i> <a href="/account?username={% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}">{% if friendship.to_user == user %}{{ friendship.from_user.username }}{% else %}{{ friendship.to_user.username }}{% endif %}</a>{% if not friendship.verified %}   <i class="fa fa-circle" style="color: blue;"></i> {% endif %}<br>
+                {% endfor %}
+                </h5>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

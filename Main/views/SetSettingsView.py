@@ -38,15 +38,18 @@ class SetSettingsView(BaseView):
         )
         self.context['languages'] = languages
 
+    def post(self):
+        self.set.name = self.request.POST["name"]
+        self.set.description = self.request.POST['description']
+        self.set.save()
+        return "/admin/set?set_id=" + str(self.set.id)
+
     def post_save(self):
         for key, value in self.request.POST.items():
             if key.startswith("settask_"):
                 st = SetTask.objects.get(id=key.split("_")[1])
                 st.name = value
                 st.save()
-        self.set.name = self.request.POST["name"]
-        self.set.description = self.request.POST['description']
-        self.set.save()
         return "/admin/set?set_id=" + str(self.set.id)
 
     def post_edit(self):
