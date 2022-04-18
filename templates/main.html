@@ -1,105 +1,113 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block title %}Главная{% endblock %}
 
-{% block main %}
-    <table>
-        <tr>
-            <td>
-                <h2>Мои группы</h2>
-            </td>
-            <td>
-                <button style="margin-left: 20px;" class="btn btn-primary" data-toggle="modal" data-target="#exampletoken"><i class="fa fa-sign-in"></i></button>
-                <div class="modal fade" id="exampletoken" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitletoken" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-              <form method="POST">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitletoken">Войти в группу по токену</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-12">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="token">
-                            <input type="text" name="token" placeholder="Токен">
-                            </div>
+{% block stylesheets %}
+    <style>
+        td > * {
+            vertical-align : middle;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <table>
+                <tr>
+                    <td>
+                        <h1 class="h4">Мои группы</h1>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-block btn-info mb-3" data-bs-toggle="modal" data-bs-target="#modal-enter" style="margin-left: 10px;"><img height="15" width="15" src="/static/assets/img/icons/enter-group.svg" /></button>
+                        <div class="modal fade" id="modal-enter" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                  <div class="modal-content">
+                                      <form method="POST">
+                                          {% csrf_token %}
+                                          <div class="modal-header">
+                                              <h2 class="h6 modal-title">Присоединиться к группе</h2>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                              <input type="text" style="width: 100%;" name="token" placeholder="Токен">
+                                              <input type="hidden" name="action" value="token">
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="submit" class="btn btn-secondary">Войти</button>
+                                              <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                          </div>
+                                      </form>
+                                  </div>
+                              </div>
                         </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                    <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Войти</button>
-                  </div>
-                </div>
-              </form>
-              </div>
-            </div>
-            </td>
-            {% if user.userinfo.can_create %}
-                <td>
-                    <button style="margin-left: 20px;" class="btn btn-success" data-toggle="modal" data-target="#example"><i class="fa fa-plus"></i></button>
-                <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-              <form method="POST">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Создать новую группу</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-12">
-                            {% csrf_token %}
-                            <input type="text" name="name" placeholder="Имя группы">
+                    </td>
+                    {% if user.userinfo.can_create %}
+                        <td>
+                            <button type="button" class="btn btn-block btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modal-create" style="margin-left: 10px;"><img height="15" width="15" src="/static/assets/img/icons/plus.svg" /></button>
+                            <div class="modal fade" id="modal-create" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <div class="modal-header">
+                                                <h2 class="h6 modal-title">Создать группу</h2>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" style="width: 100%;" name="name" placeholder="Имя группы">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-secondary">Создать</button>
+                                                <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                    <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Создать</button>
-                  </div>
-                </div>
-              </form>
-              </div>
-            </div>
-                </td>
-            {% endif %}
-        </tr>
-    </table>
-    {% for group in groups %}
-        <a href="/group?group_id={{ group.id }}">{{ group.name }}</a><br>
-    {% endfor %}
-    <hr><hr>
-    <h2>Топ задач сегодня</h2>
-    {% for task in top_tasks_today %}
-        <a href="/task?task_id={{ task.id }}">{{ task.name }} ({{ task.count }})</a>&emsp;<span class="badge badge-{{ task.solution.badge_style }}">{{ task.solution.number_result }}</span><br>
-    {% endfor %}
-    <hr><hr>
+                        </td>
+                    {% endif %}
+                </tr>
+            </table>
+            {% for group in groups %}
+                <a href="/group?group_id={{ group.id }}">{{ group.name }}</a><br>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Топ задач сегодня</h1>
+            {% for task in top_tasks_today %}
+                <a href="/task?task_id={{ task.id }}">{{ task.name }} ({{ task.count }})</a> <span class="badge bg-{{ task.solution.badge_style }}">{{ task.solution.number_result }}</span><br>
+            {% endfor %}
+        </div>
+    </div>
     {% if undone_tasks %}
-    <h2>У тебя были попытки, попробуй решить задачи еще раз</h2>
-    {% for task in undone_tasks %}
-        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a>&emsp;<span class="badge badge-{{ task.solution.badge_style }}">{{ task.solution.number_result }}</span><br>
-    {% endfor %}
-    <hr><hr>
+        <div class="card border-0 shadow mb-4">
+            <div class="card-body">
+                <h1 class="h4">У тебя были попытки, попробуй решить задачи еще раз</h1>
+                {% for task in undone_tasks %}
+                    <a href="/task?task_id={{ task.id }}">{{ task.name }}</a>&emsp;<span class="badge bg-{{ task.solution.badge_style }}">{{ task.solution.number_result }}</span><br>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
     {% if new_tasks %}
-    <h2>Новые задачи</h2>
-    {% for task in new_tasks %}
-        <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
-    {% endfor %}
-    <hr><hr>
+        <div class="card border-0 shadow mb-4">
+            <div class="card-body">
+                <h1 class="h4">Новые задачи</h1>
+                {% for task in new_tasks %}
+                    <a href="/task?task_id={{ task.id }}">{{ task.name }}</a><br>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
-    <h2>Топ пользователей</h2>
-    {% for u in top_users %}
-        <a href="/account?username={{ u.user.username }}">{{ u.place }}. <img src="{{ u.profile_pic_url }}" width="50px" height="50px" style="border-radius: 50%; margin-right: 10px;">{{ u.user.username }} ({{ u.rating }})</a><br><br>
-    {% endfor %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Топ пользователей</h1>
+            {% for u in top_users %}
+                <a href="/account?username={{ u.user.username }}">{{ u.place }}. <img src="{{ u.profile_pic_url }}" width="50px" height="50px" style="border-radius: 50%; margin-right: 10px;">{{ u.user.username }} ({{ u.rating }})</a><br><br>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

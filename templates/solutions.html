@@ -1,70 +1,72 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
-{% block scripts %}
-    var look = 0;
-    var page = 1;
-    function setLook(number) {
-        look = number;
-        var n = number.toString();
-        var butid = 'button' + n;
-        document.getElementById(butid).classList.add('btn-dark');
-        document.getElementById(butid).classList.remove('btn-light');
-        document.getElementById(butid).focused = false;
-        butid = 'button' + (1 - number).toString();
-        document.getElementById(butid).classList.remove('btn-dark');
-        document.getElementById(butid).classList.add('btn-light');
-        document.getElementById(butid).focused = false;
-    }
-    function setPage(number) {
-        page = number;
-    }
-    function doPoll() {
-        jQuery.get('/polling/solutions_table?{{ query }}&teacher=true&page=' + page.toString() + '&look=' + look.toString(), function(data) {
-            var e = document.getElementById('solutions');
-            if (e.innerHTML !== data)
-                e.innerHTML = data;
-            const name = "page_num_" + page.toString();
-            elem = document.getElementById(name);
-            if (elem) {
-                elem.className = "btn btn-dark";
-            }
-            setTimeout(function() {doPoll()}, 2000);
-        })
-    }
+{% block javascripts %}
+    <script>
+        var look = 0;
+        var page = 1;
+        function setLook(number) {
+            look = number;
+            var n = number.toString();
+            var butid = 'button' + n;
+            document.getElementById(butid).classList.add('btn-primary');
+            document.getElementById(butid).classList.remove('btn-gray');
+            document.getElementById(butid).focused = false;
+            butid = 'button' + (1 - number).toString();
+            document.getElementById(butid).classList.remove('btn-primary');
+            document.getElementById(butid).classList.add('btn-gray');
+            document.getElementById(butid).focused = false;
+        }
+        function setPage(number) {
+            page = number;
+        }
+        function setNext() {
+            page += 1;
+        }
+        function setPrev() {
+            page -= 1;
+        }
+        function doPoll() {
+            jQuery.get('/polling/solutions_table?{{ query }}&teacher=true&page=' + page.toString() + '&look=' + look.toString(), function(data) {
+                var e = document.getElementById('solutions');
+                if (e.innerHTML !== data)
+                    e.innerHTML = data;
+                if (look === 0) {
+                    const pagesCount = parseInt(document.getElementById('page_count').value);
+                    if (pagesCount !== 1) {
+                        const name = "page_num_" + page.toString();
+                        const elem = document.getElementById(name);
+                        if (elem) {
+                            elem.className = "page-item active";
+                        }
+                        if (page === 1) {
+                            document.getElementById("page_prev").style = "display: none;";
+                        }
+                        if (page === pagesCount) {
+                            document.getElementById("page_next").style = "display: none;";
+                        }
+                    }
+                }
+                setTimeout(function() {doPoll()}, 2000);
+            })
+        }
+    </script>
 {% endblock %}
 
 {% block onload %}doPoll(){% endblock %}
 
-{% block main %}
-    <h2>Решения <a href="{% if in_set %}/set?set_id={{ set.id }}{% else %}/task?task_id={{ task.id }}{% endif %}">{% if in_set %}{{ set.name }}{% else %}{{ task.name }}{% endif %}</a></h2>
-    {% if in_set %}
-        <table style="margin-bottom: 10px;">
-            <tr>
-                <td><button class="btn btn-dark" id="button0" onclick="setLook(0)">Список</button></td>
-                <td><button class="btn btn-light" id="button1" onclick="setLook(1)">Таблица</button></td>
-            </tr>
-        </table>
-    {% endif %}
-    <!--h4>Фильтр</h4>
-    <div>
-        <select name="set_id" style="width: 33%">
-            <option value="0">Все сеты</option>
-            {% for set in user.userinfo.available_sets %}
-                <option value="{{ set.id }}" {% if set.id == set_id %}selected{% endif %}>{{ set.name }}</option>
-            {% endfor %}
-        </select>
-        <select name="set_id" style="width: 33%">
-            <option value="0">Все таски</option>
-            {% for task in user.userinfo.available_tasks %}
-                <option value="{{ task.id }}" {% if task.id == task_id %}selected{% endif %}>{{ task.name }}</option>
-            {% endfor %}
-        </select>
-        <select name="set_id" style="width: 33%">
-            <option value="0">Все пользователи</option>
-            {% for u in users %}
-                <option value="{{ user.username }}" {% if user.username == username %}selected{% endif %}>{{ user.userinfo }}</option>
-            {% endfor %}
-        </select>
-    </div-->
-    <div id="solutions"></div>
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Решения <a href="{% if in_set %}/set?set_id={{ set.id }}{% else %}/task?task_id={{ task.id }}{% endif %}">{% if in_set %}{{ set.name }}{% else %}{{ task.name }}{% endif %}</a></h1>
+                {% if in_set %}
+                    <table style="margin-bottom: 10px;">
+                        <tr>
+                            <td><button class="btn btn-primary" id="button0" onclick="setLook(0)">Список</button></td>
+                            <td><button class="btn btn-gray" id="button1" onclick="setLook(1)">Таблица</button></td>
+                        </tr>
+                    </table>
+                {% endif %}
+            <div class="table-responsive" id="solutions"></div>
+        </div>
+    </div>
 {% endblock %}

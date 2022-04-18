@@ -1,41 +1,40 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
-{% block main %}
-    <h4>Рейтинг</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col" style="text-align: center; vertical-align: middle; width: 70px;">#</th>
-                <th scope="col" style="vertical-align: middle;">Пользователь</th>
-                <th scope="col" style="vertical-align: middle;">Дата регистрации</th>
-                <th scope="col" style="vertical-align: middle; text-align: center;">Решено задач</th>
-                <th scope="col" style="text-align: center; vertical-align: middle;">Рейтинг</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for u in users %}
-                <tr {% if user == u %}style="background-color: #0000FF1E;"{% endif %}>
-                    <td style="text-align: center; vertical-align: middle; width: 70px;">
-                        {{ u.userinfo.place }}
-                    </td>
-                    <td style="vertical-align: middle; width: 800px;">
-                        <img src="{{ u.userinfo.profile_pic_url }}" width="50px" height="50px" style="border-radius: 50%; margin-right: 10px;">
-                        {% if u.userinfo.has_favourite_language %}
-                            <img src="{{ u.userinfo.favourite_language.logo_url }}" width="18px" height="18px" style="margin-top: 40px; margin-left: -30px;">
-                        {% endif %}
-                        <a href="/account?username={{ u.username }}">{{ u.username }}</a>
-                    </td>
-                    <td style="vertical-align: middle;">
-                        {{ u.date_joined.date }}
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        {{ u.userinfo.tasks_solved }}
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        {{ u.userinfo.rating }}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="border-0 rounded-start">#</th>
+                            <th class="border-0">Пользователь</th>
+                            <th class="border-0">Дата регистрации</th>
+                            <th class="border-0">Решено задач</th>
+                            <th class="border-0">Рейтинг</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                            <!-- Item -->
+                            <tr>
+                                <td>{{ u.userinfo.place }}</td>
+                                <td class="fw-bold d-flex align-items-center">
+                                    <img src="{{ u.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;">
+{#                                    {% if u.userinfo.has_favourite_language %}#}
+{#                                        <img src="{{ u.userinfo.favourite_language.logo_url }}" width="18px" height="18px" style="margin-top: 40px; margin-left: -30px;">#}
+{#                                    {% endif %}#}
+                                    <a href="/account?username={{ u.username }}">{{ u.username }}</a>
+                                </td>
+                                <td>{{ u.date_joined.date }}</td>
+                                <td>{{ u.userinfo.tasks_solved }}</td>
+                                <td>{{ u.userinfo.rating }}</td>
+                            </tr>
+                            <!-- End of Item -->
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

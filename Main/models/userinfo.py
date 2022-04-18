@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
+from Main.models.group import Group
 from Main.models.friendship import Friendship
 from Main.models.set import Set
 from Main.models.task import Task
@@ -33,6 +34,10 @@ class UserInfo(models.Model):
         return self.surname + ' ' + self.name
 
     @property
+    def groups(self):
+        return Group.objects.filter(Q(creator=self.user) | Q(editors__in=self.user.username))
+
+    @property
     def tasks_solved(self):
         fltr = Task.objects.filter(solution__result=CONSTS["ok_status"], solution__user=self.user).distinct()
         return len(fltr)
@@ -57,7 +62,7 @@ class UserInfo(models.Model):
 
     @cached_property
     def available_tasks(self):
-        return Task.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__contains=[self.user.username])).order_by('name')
+        return Task.objects.filter(Q(public=True) | Q(creator=self.user) | Q(editors__contains=[self.user.username]))
 
     @property
     def available_sets(self):
@@ -88,4 +93,4 @@ class UserInfo(models.Model):
     def profile_pic_url(self):
         if self.has_profile_pic:
             return "/image?id=" + str(self.profile_picture_fs_id)
-        return "https://i2.wp.com/electrolabservice.com/wp-content/uploads/2021/01/blank-profile-picture-mystery-man-avatar-973460.jpg"
+        return "/static/img/user.png"

@@ -1,354 +1,307 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block title %}{{ task.name }}{% endblock %}
 
 {% load filters %}
 
-{% block scripts %}
-    function deleteFile(file_id) {
-        $.ajax({
-            type: "POST",
-            url: "/admin/task?task_id={{ task.id }}",
-            data: {"id": file_id, "csrfmiddlewaretoken": document.getElementsByName("csrfmiddlewaretoken")[0].value, "action": "delete_file"},
-            success: function(data) {
-                if (data == "ok") {
-                    var elem = document.getElementById("file_" + file_id);
-                    elem.parentNode.removeChild(elem);
+{% block javascripts %}
+    <script>
+        function deleteFile(file_id) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/task?task_id={{ task.id }}",
+                data: {"id": file_id, "csrfmiddlewaretoken": document.getElementsByName("csrfmiddlewaretoken")[0].value, "action": "delete_file"},
+                success: function(data) {
+                    if (data === "ok") {
+                        const elem = document.getElementById("file_" + file_id);
+                        elem.parentNode.removeChild(elem);
+                    }
                 }
-            }
-        });
-    }
-    function setActionCreate(action) {
-        document.getElementById('action_create').value = action;
-    }
+            });
+        }
+    </script>
 {% endblock %}
 
-{% block main %}
+{% block content %}
     <h3 style="margin-bottom: 40px;">Настройки задачи <a data-toggle="modal" data-target="#exampleModalLongcheck"><i class="fa fa-eye"></i></a></h3>
-    <div class="modal fade bd-example-modal-lg" id="exampleModalLongcheck" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlecheck" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitlecheck">Предпросмотр</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    <iframe src="/task?task_id={{ task.id }}" style="width: 100%; height: 1000px;" embedded=true></iframe>
-                                </div>
-                            </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
-                        <input id="action_create" type="hidden" name="action" value="">
-                      </div>
-                    </div>
-                  </div>
-                </div>
     <div class="row">
         <div class="col-9">
-    <form method="POST">
-        {% csrf_token %}
-        <table style="width: 100%;">
-            <tr>
-                <td style="width: 250px;">
-                    Название задачи
-                </td>
-                <td>
-                    <h4><input type="text" value="{{ task.name }}" name="name" class="task-settings-input" placeholder="Новая задача"></h4>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Легенда
-                </td>
-                <td>
-                    <textarea class="task-settings-input task-settings-textarea" name="legend">{{ task.legend }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Формат входных данных
-                </td>
-                <td>
-                    <textarea class="task-settings-input task-settings-textarea" name="input_format">{{ task.input_format }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Формат выходных данных
-                </td>
-                <td>
-                    <textarea class="task-settings-input task-settings-textarea" name="output_format">{{ task.output_format }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Примечания
-                </td>
-                <td>
-                    <textarea class="task-settings-input task-settings-textarea" name="specifications">{{ task.specifications }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Ограничение по времени (мс)
-                </td>
-                <td>
-                    <input type="text" name="time_limit" value="{{ task.time_limit }}" class="task-settings-input">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Оценка времени решения (мин)
-                </td>
-                <td>
-                    <input type="text" name="time_estimation" value="{{ task.time_estimation }}" class="task-settings-input">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Публичная задача
-                </td>
-                <td>
-                    <input type="checkbox" name="public" {% if task.public %}checked {% endif %}class="task-settings-input">
-                </td>
-            </tr>
-        </table>
-        <button type="submit" class="btn btn-light" style="margin-top: 15px;"><i class="fa fa-save"></i> Сохранить</button>
-    </form>
+            <div class="card border-0 shadow mb-4">
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 250px;">
+                                    Название задачи
+                                </td>
+                                <td>
+                                    <h4><input type="text" value="{{ task.name }}" name="name" style="width: 100%;" placeholder="Новая задача"></h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Легенда
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%; height: 200px;" name="legend">{{ task.legend }}</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Формат входных данных
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%; height: 200px;" name="input_format">{{ task.input_format }}</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Формат выходных данных
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%; height: 200px;" name="output_format">{{ task.output_format }}</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Примечания
+                                </td>
+                                <td>
+                                    <textarea style="width: 100%; height: 200px;" name="specifications">{{ task.specifications }}</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ограничение по времени (мс)
+                                </td>
+                                <td>
+                                    <input type="text" name="time_limit" value="{{ task.time_limit }}" style="width: 100%;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Оценка времени решения (мин)
+                                </td>
+                                <td>
+                                    <input type="text" name="time_estimation" value="{{ task.time_estimation }}" style="width: 100%;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Публичная задача
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="public" {% if task.public %}checked {% endif %}>
+                                </td>
+                            </tr>
+                        </table>
+                        <button type="submit" class="btn btn-info" style="margin-top: 15px;">Сохранить</button>
+                    </form>
+                </div>
+            </div>
         </div>
         <div class="col-3">
-            <h5>История изменений</h5>
-            {% for change in task.changes %}
-                <div>
-                    <hr>
-                    <a href="/account?username={{ change.username }}">{{ change.username }}</a>: {{ change.time }}<br>
-                    {{ change.action }}
+            <div class="card border-0 shadow mb-4">
+                <div class="card-body">
+                    <h5>История изменений</h5>
+                    {% for change in task.changes %}
+                        <div>
+                            <hr>
+                            <a href="/account?username={{ change.username }}">{{ change.username }}</a>: {{ change.time }}<br>
+                            {{ change.action }}
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
         </div>
     </div>
-    <hr><hr>
-    <h3>Редакторы</h3>
-    {% for editor in task.editors %}
-        <i class="fa fa-user"></i> <a href="/account?username={{ editor }}">{{ editor }}</a><br>
-    {% endfor %}
-        <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#exampleU"><i class="fa fa-pencil"></i> Редактировать</button>
-        <div class="modal fade" id="exampleU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleU" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitleU">Редактировать редакторов таска</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Редакторы</h1>
+            {% for editor in task.editors %}
+                <i class="fa fa-user"></i> <a href="/account?username={{ editor }}">{{ editor }}</a><br>
+            {% endfor %}
+            <button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#edit-users">Редактировать</button>
+            <div class="modal fade" id="edit-users" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h2 class="h6 modal-title">Редактировать редакторов задачи</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="action" value="users_edit">
+                                {% for u in user.userinfo.verified_friends %}
+                                    <input type="checkbox" {% if u.username in task.editors %}checked{% endif %} name="user_{{ u.username }}"> <a href="/account?username={{ u.username }}">{{ u.username }}</a><br>
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-secondary">Установить</button>
+                                <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="users_edit">
-                                    {% for u in user.userinfo.verified_friends %}
-                                        <input type="checkbox" {% if u.username in task.editors %}checked{% endif %} name="user_{{ u.username }}"> <a href="/account?username={{ u.username }}">{{ u.username }}</a><br>
-                                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Загрузка тестов и файлов</h1>
+            <p style="color: red">{{ error_message }}</p>
+            <table style="width: 80%;">
+                <tr>
+                    <td>
+                        <h1 class="h6">Тесты</h1>
+                    </td>
+                    <td>
+                        <h1 class="h6">Файлы</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        {% for test in task.tests %}
+                            <div id="file_{{ test.id }}">
+                                <i class="fa fa-file"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-bs-toggle="modal" data-bs-target="#edit-test-{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                                {% if test.readable %}
+                                    <div class="modal fade" id="edit-test-{{ test.id }}" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="modal-header">
+                                                        <h2 class="h6 modal-title">Редактировать тест {{ test.filename }}</h2>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input name="action" value="save_test" type="hidden">
+                                                        <input name="test_id" value="{{ test.id }}" type="hidden">
+                                                        <textarea style="width: 100%; height: 800px;" name="text">{{ test.text }}</textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-secondary">Сохранить</button>
+                                                        {% if test.can_be_sample %} Использовать как пример <input type="checkbox" name="is_sample" {% if test.is_sample %}checked{% endif %}>{% endif %}
+                                                        <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <input type="file" style="display: none;" form="form_test_upload" onchange="this.form.submit();" class="btn form-control-file" id="test-upload" value="Выбрать файл" name="file">
+                        <label for="test-upload" class="btn btn-info">Загрузить тесты</label><button style="margin-left: 10px; margin-top: -8px; color: white;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#create-test"><i class="fa fa-plus"></i></button>
+                        <div class="modal fade" id="create-test" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h2 class="h6 modal-title">Создать тест</h2>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="action" value="create_test">
+                                            <input style="width: 100%;" type="text" placeholder="Имя теста" name="newfile_name">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-secondary">Создать</button>
+                                            <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
-                    </div>
-                </div>
+                    </td>
+                    <td valign="top">
+                        {% for test in task.files %}
+                            <div id="file_{{ test.id }}">
+                                <i class="fa {% if test.filename == "checker.py" or test.filename|startswith:'Dockerfile' %}fa-cogs{% else %}fa-file{% endif %}"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-bs-toggle="modal" data-bs-target="#edit-file-{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
+                                {% if test.readable %}
+                                    <div class="modal fade" id="edit-file-{{ test.id }}" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="modal-header">
+                                                        <h2 class="h6 modal-title">Редактировать файл {{ test.filename }}</h2>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input name="action" value="save_test" type="hidden">
+                                                        <input name="test_id" value="{{ test.id }}" type="hidden">
+                                                        <textarea style="width: 100%; height: 800px;" name="text">{{ test.text }}</textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-secondary">Сохранить</button>
+                                                        <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <input type="file" style="display: none;" form="form_file_upload" onchange="this.form.submit();" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
+                        <label for="file-upload" class="btn btn-info">Загрузить файлы</label><button style="margin-left: 10px; margin-top: -8px; color: white;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#create-file"><i class="fa fa-plus"></i></button>
+                        <div class="modal fade" id="create-file" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h2 class="h6 modal-title">Создать файл</h2>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="action" value="create_file">
+                                            <input style="width: 100%;" type="text" placeholder="Имя файла" name="newfile_name">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-secondary">Создать</button>
+                                            <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Дампы</h1>
+            <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0 rounded">
+                <thead class="thead-light">
+                    <th class="border-0 rounded-start">Id дампа</th>
+                    <th class="border-0">Время запроса</th>
+                    <th class="border-0">Инициатор</th>
+                    <th class="border-0 rounded-end">Готовность</th>
+                </thead>
+                <tbody>
+                    {% for dump in task.dumps %}
+                        <tr>
+                            <td>{{ dump.id }}</td>
+                            <td>{{ dump.timestamp }}</td>
+                            <td>{{ dump.executor.username }}</td>
+                            <td>{% if dump.ready %}<a href="/download_file?dump_id={{ dump.id }}">Скачать</a>{% else %}<badge class="badge bg-info"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle-notch" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 20px;" class="svg-inline--fa fa-circle-notch fa-w-16 fa-spin fa-lg"><path fill="currentColor" d="M288 39.056v16.659c0 10.804 7.281 20.159 17.686 23.066C383.204 100.434 440 171.518 440 256c0 101.689-82.295 184-184 184-101.689 0-184-82.295-184-184 0-84.47 56.786-155.564 134.312-177.219C216.719 75.874 224 66.517 224 55.712V39.064c0-15.709-14.834-27.153-30.046-23.234C86.603 43.482 7.394 141.206 8.003 257.332c.72 137.052 111.477 246.956 248.531 246.667C393.255 503.711 504 392.788 504 256c0-115.633-79.14-212.779-186.211-240.236C302.678 11.889 288 23.456 288 39.056z" class=""></path></svg> В процессе</badge>{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" name="action" value="dump" class="btn btn-primary mt-3"><i class="fa fa-arrow-right"></i> Создать дамп</button>
             </form>
         </div>
     </div>
-    <hr><hr>
-    <h3 style="margin-bottom: 40px;">Загрузка тестов и файлов</h3>
-        <p style="color: red">{{ error_message }}</p>
-        <table style="width: 80%;">
-            <tr>
-                <td>
-                    <h4>Тесты</h4>
-                </td>
-                <td>
-                    <h4>Файлы</h4>
-                </td>
-            </tr>
-            <tr>
-                <td valign="top">
-                    {% for test in task.tests %}
-                        <div id="file_{{ test.id }}">
-                        <i class="fa fa-file"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
-                    {% if test.readable %}
-<form method="POST">{% csrf_token %}
-                        <!-- Modal -->
-                        <div class="modal fade bd-example-modal-lg" id="filesModalLong{{ test.id }}" tabindex="-1" role="dialog" aria-labelledby="filesModalLongTitle{{ test.id }}" aria-hidden="true">
-                          <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="filesModalLongTitle{{ test.id }}">{{ test.filename }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-12">
-<textarea cols="82" rows="30" name="text">{{ test.text }}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                {% if test.can_be_sample %}Использовать как пример <input type="checkbox" name="is_sample" {% if test.is_sample %}checked{% endif %}>{% endif %}
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                                  <input name="action" value="save_test" type="hidden">
-                                  <input name="test_id" value="{{ test.id }}" type="hidden">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        </form>
-                        {% endif %}
-                    {% endfor %}
-                    <input type="file" style="display: none;" form="form_test_upload" onchange="this.form.submit();" class="btn form-control-file" id="test-upload" value="Выбрать файл" name="file">
-                    <label for="test-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить тесты</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewtest" onclick="setActionCreate('create_test');"><i class="fa fa-plus"></i></button>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="modal fade" id="exampleModalLongnewtest" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewtest" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitlenewtest">Создать новый тест</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <input type="text" placeholder="Имя теста" name="newfile_name">
-                                            </div>
-                                        </div>
-                                    </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
-                                    <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
-                                    <input id="action_create" type="hidden" name="action" value="create_test">
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                    </form>
-                </td>
-                <td valign="top">
-                    {% for test in task.files %}
-                        <div id="file_{{ test.id }}">
-                       <i class="fa {% if test.filename == "checker.py" or test.filename|startswith:'Dockerfile' %}fa-cogs{% else %}fa-file{% endif %}"></i> <button class="btn btn-link" {% if not test.readable %}style="color: red;" {% else %}data-toggle="modal" data-target="#filesModalLong{{ test.id }}"{% endif %}>{{ test.filename }}</button><button class="btn btn-link" style="color: black;" onclick="deleteFile({{ test.id }});"><i class="fa fa-times"></i> </button><br>
-                    {% if test.readable %}
-<form method="POST">{% csrf_token %}
-                        <!-- Modal -->
-                        <div class="modal fade bd-example-modal-lg" id="filesModalLong{{ test.id }}" tabindex="-1" role="dialog" aria-labelledby="filesModalLongTitle{{ test.id }}" aria-hidden="true">
-                          <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="filesModalLongTitle{{ test.id }}">{{ test.filename }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-12">
-<textarea cols="82" rows="30" name="text">{{ test.text }}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                {% if test.can_be_sample %}Использовать как пример <input type="checkbox" name="is_sample" {% if test.is_sample %}checked{% endif %}>{% endif %}
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                                  <input name="action" value="save_test" type="hidden">
-                                  <input name="test_id" value="{{ test.id }}" type="hidden">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        </form>
-                        {% endif %}
-                        </div>
-                    {% endfor %}
-                    <input type="file" style="display: none;" form="form_file_upload" onchange="this.form.submit();" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file">
-                    <label for="file-upload" class="btn btn-primary"><i class="fa fa-upload"></i> Загрузить файлы</label><button style="margin-left: 10px; margin-top: -8px;" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLongnewfile" onclick="setActionCreate('create_file');"><i class="fa fa-plus"></i></button>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="modal fade" id="exampleModalLongnewfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitlenewfile" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitlenewfile">Создать новый файл</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <input type="text" placeholder="Имя файла" name="newfile_name">
-                                            </div>
-                                        </div>
-                                    </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
-                                    <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Создать</button>
-                                    <input id="action_create" type="hidden" name="action" value="create_file">
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                    </form>
-                </td>
-            </tr>
-        </table>
-    <hr><hr>
-    <h3>Дампы</h3>
-    <table class="table">
-        <thead>
-            <th scope="col">Id дампа</th>
-            <th scope="col">Время запроса</th>
-            <th scope="col">Инициатор</th>
-            <th scope="col">Готовность</th>
-        </thead>
-        <tbody>
-            {% for dump in task.dumps %}
-                <tr>
-                    <td>{{ dump.id }}</td>
-                    <td>{{ dump.timestamp }}</td>
-                    <td>{{ dump.executor.username }}</td>
-                    <td>{% if dump.ready %}<a href="/download_file?dump_id={{ dump.id }}">Скачать</a>{% else %}<badge class="badge badge-info"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle-notch" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 20px;" class="svg-inline--fa fa-circle-notch fa-w-16 fa-spin fa-lg"><path fill="currentColor" d="M288 39.056v16.659c0 10.804 7.281 20.159 17.686 23.066C383.204 100.434 440 171.518 440 256c0 101.689-82.295 184-184 184-101.689 0-184-82.295-184-184 0-84.47 56.786-155.564 134.312-177.219C216.719 75.874 224 66.517 224 55.712V39.064c0-15.709-14.834-27.153-30.046-23.234C86.603 43.482 7.394 141.206 8.003 257.332c.72 137.052 111.477 246.956 248.531 246.667C393.255 503.711 504 392.788 504 256c0-115.633-79.14-212.779-186.211-240.236C302.678 11.889 288 23.456 288 39.056z" class=""></path></svg> В процессе</badge>{% endif %}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit" name="action" value="dump" class="btn btn-primary"><i class="fa fa-arrow-right"></i> Создать дамп</button>
-    </form>
 {% endblock %}

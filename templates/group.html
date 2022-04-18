@@ -1,104 +1,97 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
-{% block main %}
-    <h2>{{ group.name }}</h2>
-    {% if group.creator %}Владелец группы: <img src="{{ group.creator.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ group.creator.username }}">{{ group.creator.username }}</a> {% endif %}
-    <hr><hr>
-    <h2>Сеты</h2>
-    {% if group.creator == user or user.username in group.editors %}
-    {% for set in group.sets.all %}
-        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a> {% if set.creator == user or user.username in set.editors %}<a href="/admin/set?set_id={{ set.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?set_id={{ set.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
-    {% endfor %}
-    {% else %}
-        {% for set in group.available_sets %}
-        <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
-    {% endfor %}
-    {% endif %}
-    {% if group.creator == user or user.username in group.editors %}
-        <button type="button" class="btn btn-primary" style="margin-top: 20px;" data-toggle="modal" data-target="#example"><i class="fa fa-pencil"></i> Редактировать</button>
-        <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Редактировать набор сетов</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">{{ group.name }}</h1>
+            Владелец группы: <img src="{{ group.creator.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ group.creator.username }}">{{ group.creator.username }}</a>
+        </div>
+    </div>
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Сеты</h1>
+            {% if group.creator == user or user.username in group.editors %}
+                {% for set in group.sets.all %}
+                    <a href="/set?set_id={{ set.id }}">{{ set.name }}</a> {% if set.creator == user or user.username in set.editors %}<a href="/admin/set?set_id={{ set.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?set_id={{ set.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
+                {% endfor %}
+            {% else %}
+                {% for set in group.available_sets %}
+                    <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
+                {% endfor %}
+            {% endif %}
+            {% if group.creator == user or user.username in group.editors %}
+                <button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#modal-edit-sets">Редактировать</button>
+                <div class="modal fade" id="modal-edit-sets" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h2 class="h6 modal-title">Редактировать сеты</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
                                     <input type="hidden" name="action" value="sets_edit">
                                     {% for set in user.userinfo.available_sets %}
                                         <input type="checkbox" {% if set in group.sets.all %}checked{% endif %} name="set_{{ set.id }}"> <a href="/set?set_id={{ set.id }}">{{ set.name }}</a><br>
                                     {% endfor %}
                                 </div>
-                            </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-secondary">Сохранить</button>
+                                    <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
-                    </div>
                 </div>
-            </form>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-    <hr><hr>
-    <h2>Пользователи</h2>
-    {% for u in group.users.all %}
-        <img src="{{ u.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ u.username }}">{{ u.username }}</a><br><br>
-    {% endfor %}
-    {% if group.creator == user or user.username in group.editors %}
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleU"><i class="fa fa-pencil"></i> Редактировать</button>
-        {% if group.access_token %}
-            <button type="submit" form="close_link" class="btn btn-danger"><i class="fa fa-lock"></i> Закрыть доступ по токену</button><input style="width: 300px; margin-left: 10px;" value="{{ group.access_token }}">
-            <form method="POST" id="close_link">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="close_link">
-            </form>
-        {% else %}
-            <button type="submit" form="open_link" class="btn btn-success"><i class="fa fa-unlock"></i> Открыть доступ по токену</button>
-            <form method="POST" id="open_link">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="open_link">
-            </form>
-        {% endif %}
-        <div class="modal fade" id="exampleU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitleU" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitleU">Редактировать участников группы</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {% csrf_token %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <h1 class="h4">Пользователи</h1>
+            {% for u in group.users.all %}
+                <img src="{{ u.userinfo.profile_pic_url }}" width="30px" height="30px" style="border-radius: 50%; margin-right: 10px;"><a href="/account?username={{ u.username }}">{{ u.username }}</a><br><br>
+            {% endfor %}
+            {% if group.creator == user or user.username in group.editors %}
+                <button type="button" class="btn btn-block btn-info mb-3" data-bs-toggle="modal" data-bs-target="#modal-edit-users">Редактировать</button>
+                {% if group.access_token %}
+                    <button type="submit" form="close_link" class="btn btn-block btn-danger mb-3">Закрыть доступ по токену</button><input style="width: 300px; margin-left: 10px;" value="{{ group.access_token }}">
+                    <form method="POST" id="close_link">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="close_link">
+                    </form>
+                {% else %}
+                    <button type="submit" form="open_link" class="btn btn-block btn-success mb-3" style="color: white;"> Открыть доступ по токену</button>
+                    <form method="POST" id="open_link">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="open_link">
+                    </form>
+                {% endif %}
+                <div class="modal fade" id="modal-edit-users" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h2 class="h6 modal-title">Редактировать участников</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
                                     <input type="hidden" name="action" value="users_edit">
                                     {% for u in possible_users %}
                                         <input type="checkbox" {% if u in group.users.all %}checked{% endif %} name="user_{{ u.id }}"> <a href="/account?username={{ u.username }}">{{ u.username }}</a><br>
                                     {% endfor %}
                                 </div>
-                            </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-secondary">Сохранить</button>
+                                    <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Установить</button>
-                    </div>
                 </div>
-            </form>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-    <hr><hr>
 {% endblock %}

@@ -3,6 +3,7 @@ import json
 from zipfile import ZipFile
 
 from django.db import transaction
+from django.db.models import Q, Count
 
 from Main.models import Task, ExtraFile
 from SprintLib.BaseView import BaseView
@@ -13,6 +14,18 @@ class TasksView(BaseView):
     view_file = "tasks.html"
     required_login = True
     endpoint = "tasks"
+
+    def get(self):
+        fltr = self.request.GET.get('filter')
+        self.context['tasks'] = self.request.user.userinfo.available_tasks
+        if fltr == 'my':
+            self.context['tasks'] = self.context['tasks'].filter(
+                Q(editors__contains=[self.request.user.username]) | Q(creator=self.request.user))
+        if fltr == 'new':
+            self.context['tasks'] = self.context['tasks'].annotate(sol_count=Count('solution', filter=Q(solution__user=self.request.user))).filter(sol_count=0)
+        if fltr == 'unsolved':
+            self.context['tasks'] = self.context['tasks'].annotate(ok_count=Count('solution', filter=Q(solution__user=self.request.user, solution__result='OK'))).annotate(sol_count=Count('solution', filter=Q(solution__user=self.request.user))).filter(ok_count=0, sol_count__gt=0)
+        self.context['tasks'] = self.context['tasks'].order_by('name')
 
     def post(self):
         task_name = self.request.POST["name"]

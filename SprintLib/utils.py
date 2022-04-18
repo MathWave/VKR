@@ -9,19 +9,28 @@ from Sprint import settings
 def write_bytes(data: bytes):
     url = settings.FS_HOST + ":" + str(settings.FS_PORT) + "/upload_file"
     print(url)
-    return post(url, data=data).json()["id"]
+    try:
+        return post(url, data=data).json()["id"]
+    except Exception:
+        return 0
 
 
 def get_bytes(num: int) -> bytes:
     url = settings.FS_HOST + ":" + str(settings.FS_PORT) + "/get_file?id=" + str(num)
     print(url)
-    return get(url).content
+    try:
+        return get(url).content
+    except Exception:
+        return b''
 
 
 def delete_file(num: int):
     url = settings.FS_HOST + ":" + str(settings.FS_PORT) + "/delete_file?id=" + str(num)
     print(url)
-    post(url)
+    try:
+        post(url)
+    except Exception:
+        ...
 
 
 def generate_token():

@@ -7,6 +7,7 @@ services:
     image: nginx
     volumes:
       - ./nginx:/etc/nginx
+      - /sprint-data/static:/var/www/html/static
     networks:
       - net
     ports:
@@ -78,7 +79,7 @@ services:
       - /sprint-data/static:/usr/src/app/static
     command: ./manage.py collectstatic --noinput
     deploy:
-      mode: replicated
+      mode: global
       restart_policy:
         condition: on-failure
 

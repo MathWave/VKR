@@ -1,10 +1,10 @@
 {% load filters %}
 
-<table class="table-bordered" style="margin-top: 30px; table-layout: fixed; width: 100%;">
-    <thead>
-        <th scope="col"></th>
+<table class="table table-flush" style="margin-top: 30px; table-layout: fixed; width: 100%;">
+    <thead class="thead-light">
+        <th></th>
         {% for task in set.settasks_ordered %}
-            <th style="text-align: center;" scope="col">{{ task.name }}</th>
+            <th style="text-align: center;">{{ task.name }}</th>
         {% endfor %}
     </thead>
     <tbody>
@@ -16,15 +16,15 @@
                         {% with pair=user.id|make_pair:task.id %}
                             {% with result=data|get_info:pair %}
                                 {% if result == in_queue_status %}
-                                     <span class="badge badge-secondary">{{ result }}</span>
+                                     <span class="badge bg-secondary">{{ result }}</span>
                                 {% else %}{% if result == ok_status %}
-                                     <span class="badge badge-success">{{ result }}</span>
+                                     <span class="badge bg-success">{{ result }}</span>
                                 {% else %}{% if result|startswith:testing_status %}
-                                    <span class="badge badge-info">{{ result }}</span>
+                                    <span class="badge bg-info">{{ result }}</span>
                                 {% else %}{% if result %}
-                                    <span class="badge badge-danger">{{ result }}</span>
+                                    <span class="badge bg-danger">{{ result }}</span>
                                 {% else %}
-                                    <span class="badge badge-warning">-</span>
+                                    <span class="badge bg-warning">-</span>
                                 {% endif %}{% endif %}{% endif %}{% endif %}
                             {% endwith %}
                         {% endwith %}

@@ -1,61 +1,56 @@
-{% extends 'base_main.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block title %}Задачи{% endblock %}
 
 {% load filters %}
 
-{% block main %}
+{% block content %}
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
     <table>
         <tr>
             <td>
-                <h2>Задачи</h2>
+                <h1 class="h4">Задачи</h1>
             </td>
             {% if user.userinfo.can_create %}
                 <td>
-                    <button style="margin-left: 20px;" class="btn btn-success" data-toggle="modal" data-target="#example"><i class="fa fa-plus"></i></button>
-                <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-              <form method="POST">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Создать новую задачу</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-12">
-                            {% csrf_token %}
-                            <input type="text" name="name" placeholder="Название задачи">
+                    <button type="button" class="btn btn-block btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modal-create" style="margin-left: 10px;"><img height="15" width="15" src="/static/assets/img/icons/plus.svg" /></button>
+                    <div class="modal fade" id="modal-create" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h2 class="h6 modal-title">Создать задачу</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="text" style="width: 100%;" name="name" placeholder="Имя задачи">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-secondary">Создать</button>
+                                        <label for="file-upload" class="btn btn-info">
+                                            Загрузить архив
+                                        </label>
+                                        <input type="file" form="fileform" style="display: none;" accept=".zip" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file" onchange="this.form.submit();">
+                                        <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Закрыть</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-                  </div>
-                  <div class="modal-footer">
-                    <label for="file-upload" class="btn btn-primary">
-                        <i class="fa fa-arrow-up"></i> Загрузить архив
-                    </label>
-                    <input type="file" form="fileform" style="display: none;" accept=".zip" class="btn form-control-file" id="file-upload" value="Выбрать файл" name="file" onchange="this.form.submit();">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> Закрыть</button>
-                    <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Создать</button>
-                  </div>
-                </div>
-              </form>
-              </div>
-            </div>
                 </td>
                 <form method="POST" enctype="multipart/form-data" id="fileform">
-                        <input type="hidden" name="action" value="upload_file">
-                        {% csrf_token %}
-                    </form>
+                    <input type="hidden" name="action" value="upload_file">
+                    {% csrf_token %}
+                </form>
             {% endif %}
         </tr>
     </table>
-    {% for task in user.userinfo.available_tasks %}
+    {% for task in tasks %}
         {% with result=user|solved:task %}
-            <a href="/task?task_id={{ task.id }}" style="color: {% if result %}green{% else %}{% if result == False %}red{% else %}#307df6{% endif %}{% endif %};">{{ task.name }}</a> {% if task.creator == user or user.username in task.editors %}<a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?task_id={{ task.id }}"><i class="fa fa-stack-overflow"></i> </a>{% endif %}<br>
+            <table><tr><td>{% if result %}<div class="bg-success dot rounded-circle"></div>{% else %}{% if result == False %}<div class="bg-danger dot rounded-circle"></div>{% else %}{% endif %}{% endif %}</td><td><a href="/task?task_id={{ task.id }}">{{ task.name }}</a></td>{% if task.creator == user or user.username in task.editors %}<td><a href="/admin/task?task_id={{ task.id }}"><i class="fa fa-pencil"></i> </a><a href="/solutions?task_id={{ task.id }}"><i class="fa fa-stack-overflow"></i> </a></td>{% endif %}</tr></table>
         {% endwith %}
     {% endfor %}
+        </div></div>
 {% endblock %}
