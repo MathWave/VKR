@@ -33,8 +33,8 @@
         <div class="card-body">
             <form method="POST">
                 {% csrf_token %}
-                <h4><input name="name" style="width: 1000px;" placeholder="Название" value="{{ set.name }}"></h4>
-                <textarea id="input0" style="width: 1000px; height: 400px; resize: none;" name="description" placeholder="Описание">{{ set.description }}</textarea><br>
+                <h4><input name="name" style="width: 100%;" placeholder="Название" value="{{ set.name }}"></h4>
+                <textarea id="input0" style="width: 100%; height: 400px; resize: none;" name="description" placeholder="Описание">{{ set.description }}</textarea><br>
                 <button class="btn btn-block btn-info mt-3" type="submit">Сохранить</button>
             </form>
         </div>
