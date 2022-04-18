@@ -6,7 +6,9 @@
 
 {% block content %}
     <h1 class="h4">{{ set.name }}</h1>
-    <p>{{ set.description }}</p>
+    {% autoescape off %}
+        {{ set.description }}
+    {% endautoescape %}
     <div class="card border-0 shadow mb-4">
         <div class="card-body">
             <h1 class="h4">Таски</h1>
