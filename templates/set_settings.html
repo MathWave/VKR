@@ -47,6 +47,7 @@
                 {% for settask in set.settasks_ordered %}
                     <input name="settask_{{ settask.id }}" style="width: 30px;" value="{{ settask.name }}"> {% if settask.task.creator == user or user.username in settask.task.editors %}<a href="/admin/task?task_id={{ settask.task.id }}">{{ settask.task.name }}</a>{% else %}{{ settask.task.name }}{% endif %}<br>
                 {% endfor %}
+                <input type="hidden" name="action" value="save">
                 <button class="btn btn-block btn-info mt-3" type="submit">Установить</button>&emsp;<button type="button" class="btn btn-block btn-info mt-3" data-bs-toggle="modal" data-bs-target="#edit-tasks">Редактировать</button>
             </form>
             <div class="modal fade" id="edit-tasks" tabindex="-1" aria-labelledby="modal-default" style="display: none;" aria-hidden="true">
