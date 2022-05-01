@@ -3,9 +3,6 @@ stages:
   - deploy-dev
   - deploy-prod
 
-variables:
-  SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
-
 build:
   stage: build
   tags:
@@ -34,7 +31,6 @@ deploy-dev:
     - when: manual
   variables:
     PORT: 80
-    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     DB_PASSWORD: "$DB_PASSWORD_DEMO"
     DEBUG: "true"
     TELEGRAM_TOKEN: "$TELEGRAM_TOKEN_DEMO"
@@ -50,6 +46,5 @@ deploy-prod:
   when: manual
   variables:
     PORT: 80
-    SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
     DB_PASSWORD: "$DB_PASSWORD_PROD"
     TELEGRAM_TOKEN: "$TELEGRAM_TOKEN_PROD"

@@ -1,6 +1,7 @@
 from os import listdir, mkdir
 from os.path import join, exists
 from subprocess import call, TimeoutExpired
+from tempfile import TemporaryDirectory
 
 from SprintLib.queue import notify, send_to_queue
 from Main.models import ExtraFile, SolutionFile
@@ -16,6 +17,7 @@ class TestException(Exception):
 class BaseTester:
     working_directory = "app"
     checker_code = None
+    path = ""
 
     def before_test(self):
         files = [
@@ -70,10 +72,6 @@ class BaseTester:
     def call(self, command):
         return call(f'cd {self.path} && {command}', shell=True)
 
-    @property
-    def path(self):
-        return join("solutions", str(self.solution.id))
-
     def __init__(self, solution):
         self.solution = solution
 
@@ -102,75 +100,73 @@ class BaseTester:
     def execute(self):
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
-        if not exists("solutions"):
-            mkdir("solutions")
-        mkdir(self.path)
-        for file in SolutionFile.objects.filter(solution=self.solution):
-            dirs = file.path.split("/")
-            for i in range(len(dirs) - 1):
-                name = join(
-                    self.path, "/".join(dirs[: i + 1])
+        with TemporaryDirectory() as self.path:
+            for file in SolutionFile.objects.filter(solution=self.solution):
+                dirs = file.path.split("/")
+                for i in range(len(dirs) - 1):
+                    name = join(
+                        self.path, "/".join(dirs[: i + 1])
+                    )
+                    if not exists(name):
+                        mkdir(name)
+                with open(
+                    join(self.path, file.path), "wb"
+                ) as fs:
+                    fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
+            for file in ExtraFile.objects.filter(task=self.solution.task):
+                with open(
+                    join(self.path, file.filename), 'wb'
+                ) as fs:
+                    bts = get_bytes(file.fs_id)
+                    fs.write(bts)
+            print("Files copied")
+            self._setup_networking()
+            docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
+            print(docker_command)
+            call(docker_command, shell=True)
+            checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()
+            if checker is not None:
+                self.checker_code = checker.text
+                call(f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
+            print("Container created")
+            try:
+                self.before_test()
+                print("before test finished")
+                for test in self.solution.task.tests:
+                    if not test.filename.endswith(".a"):
+                        self.predicted = ExtraFile.objects.get(
+                            task=self.solution.task, filename=test.filename + ".a"
+                        ).text.strip().replace('\r\n', '\n')
+                        print('predicted:', self.predicted)
+                        self.solution.test = int(test.filename)
+                        self.solution.extras[test.filename] = {'predicted': self.predicted, 'output': ''}
+                        self.solution.save()
+                        try:
+                            self.test(test.filename)
+                        finally:
+                            if exists(join(self.path, "output.txt")):
+                                try:
+                                    self.solution.extras[test.filename]['output'] = open(join(self.path, 'output.txt'), 'r').read()
+                                except UnicodeDecodeError:
+                                    self.solution.extras[test.filename]['output'] = ''
+                self.after_test()
+                self.solution.result = CONSTS["ok_status"]
+                self.solution.test = None
+                progress = Progress.objects.get(
+                    user=self.solution.user, task=self.solution.task
                 )
-                if not exists(name):
-                    mkdir(name)
-            with open(
-                join(self.path, file.path), "wb"
-            ) as fs:
-                fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
-        for file in ExtraFile.objects.filter(task=self.solution.task):
-            with open(
-                join(self.path, file.filename), 'wb'
-            ) as fs:
-                bts = get_bytes(file.fs_id)
-                fs.write(bts)
-        print("Files copied")
-        self._setup_networking()
-        docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
-        print(docker_command)
-        call(docker_command, shell=True)
-        checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()
-        if checker is not None:
-            self.checker_code = checker.text
-            call(f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
-        print("Container created")
-        try:
-            self.before_test()
-            print("before test finished")
-            for test in self.solution.task.tests:
-                if not test.filename.endswith(".a"):
-                    self.predicted = ExtraFile.objects.get(
-                        task=self.solution.task, filename=test.filename + ".a"
-                    ).text.strip().replace('\r\n', '\n')
-                    print('predicted:', self.predicted)
-                    self.solution.test = int(test.filename)
-                    self.solution.extras[test.filename] = {'predicted': self.predicted, 'output': ''}
-                    self.solution.save()
-                    try:
-                        self.test(test.filename)
-                    finally:
-                        if exists(join(self.path, "output.txt")):
-                            try:
-                                self.solution.extras[test.filename]['output'] = open(join(self.path, 'output.txt'), 'r').read()
-                            except UnicodeDecodeError:
-                                self.solution.extras[test.filename]['output'] = ''
-            self.after_test()
-            self.solution.result = CONSTS["ok_status"]
-            self.solution.test = None
-            progress = Progress.objects.get(
-                user=self.solution.user, task=self.solution.task
-            )
-            if progress.finished_time is None:
-                progress.finished_time = self.solution.time_sent
-                progress.finished = True
-                progress.save()
-                progress.increment_rating()
-        except TestException as e:
-            self.solution.result = str(e)
-        except TimeoutExpired:
-            self.solution.result = "TL"
-        except Exception as e:
-            self.solution.result = "TE"
-            raise e
+                if progress.finished_time is None:
+                    progress.finished_time = self.solution.time_sent
+                    progress.finished = True
+                    progress.save()
+                    progress.increment_rating()
+            except TestException as e:
+                self.solution.result = str(e)
+            except TimeoutExpired:
+                self.solution.result = "TL"
+            except Exception as e:
+                self.solution.result = "TE"
+                print(e)
         self.solution.save()
         send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}"})
         send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}_checker"})

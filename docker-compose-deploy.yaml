@@ -57,7 +57,6 @@ services:
     networks:
       - net
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -74,7 +73,6 @@ services:
     networks:
       - net
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -94,7 +92,6 @@ services:
     networks:
       - net
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -159,7 +156,6 @@ services:
       - net
     command: ./manage.py storage
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -181,7 +177,6 @@ services:
     networks:
       - net
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -202,7 +197,6 @@ services:
     networks:
       - net
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -224,7 +218,6 @@ services:
       - net
     command: ./manage.py receive
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -232,7 +225,7 @@ services:
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     volumes:
-      - /sprint-data/solutions:/usr/src/app/solutions
+      - /var/folders:/var/folders
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       mode: replicated
@@ -272,7 +265,6 @@ services:
       - net
     command: ./manage.py file_generator
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -294,7 +286,6 @@ services:
       - net
     command: ./manage.py notification_manager
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
@@ -316,7 +307,6 @@ services:
       - net
     command: ./manage.py apply_languages
     environment:
-      SOLUTIONS_ROOT_EXTERNAL: "/sprint-data/data/solutions"
       DB_HOST: "postgres"
       FS_HOST: "storage"
       RABBIT_HOST: "rabbitmq"
