@@ -86,8 +86,8 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "sprint",
         "USER": "postgres",
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "password"),
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
         "PORT": 5432,
     }
 }
@@ -143,10 +143,10 @@ for root in DATA_ROOT, EXTRA_FILES_ROOT:
 
 SOLUTIONS_ROOT = os.path.join(DATA_ROOT, "solutions")
 
-RABBIT_HOST = os.getenv("RABBIT_HOST", "rabbitmq")
+RABBIT_HOST = os.getenv("RABBIT_HOST", "127.0.0.1")
 RABBIT_PORT = 5672
 
-FS_HOST = "http://" + os.getenv("FS_HOST", "storage")
+FS_HOST = "http://" + os.getenv("FS_HOST", "127.0.0.1")
 FS_PORT = 5555
 
 # Authentication backends

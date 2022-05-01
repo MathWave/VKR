@@ -39,13 +39,13 @@ class MessagingSupport(BaseCommand):
         print("start listening " + self.queue_name)
         while True:
             try:
-                connection = pika.BlockingConnection(
+                with pika.BlockingConnection(
                     pika.ConnectionParameters(host=settings.RABBIT_HOST)
-                )
-                channel = connection.channel()
-                channel.queue_declare(queue=self.queue_name)
-                channel.basic_consume(queue=self.queue_name, on_message_callback=self.consume, auto_ack=True)
-                channel.start_consuming()
+                ) as connection:
+                    channel = connection.channel()
+                    channel.queue_declare(queue=self.queue_name)
+                    channel.basic_consume(queue=self.queue_name, on_message_callback=self.consume, auto_ack=True)
+                    channel.start_consuming()
             except AMQPConnectorException:
                 print("connection to rabbit failed: reconnecting")
 
