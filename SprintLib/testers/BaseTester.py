@@ -121,13 +121,13 @@ class BaseTester:
                     fs.write(bts)
             print("Files copied")
             self._setup_networking()
-            docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume=/sprint-data/solutions/{self.solution.id}:/{self.working_directory} -t -d {self.solution.language.image}"
+            docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume={self.path}:/{self.working_directory} -t -d {self.solution.language.image}"
             print(docker_command)
             call(docker_command, shell=True)
             checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()
             if checker is not None:
                 self.checker_code = checker.text
-                call(f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume=/sprint-data/solutions/{self.solution.id}:/app -t -d python:3.6", shell=True)
+                call(f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume={self.path}:/app -t -d python:3.6", shell=True)
             print("Container created")
             try:
                 self.before_test()
