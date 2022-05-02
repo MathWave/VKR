@@ -37,6 +37,7 @@ class MessagingSupport(BaseCommand):
         except OperationalError:
             print("Failed to connect to database, restarting...")
             send_to_queue(self.queue_name, data)
+            raise
 
     def handle(self, *args, **options):
         if self.queue_name is None:
