@@ -22,7 +22,7 @@ class BaseTester:
     def before_test(self):
         files = [
             file
-            for file in listdir(self.solution.testing_directory)
+            for file in listdir(self.path)
             if file.endswith("." + self.solution.language.file_type)
         ]
         code = self.solution.exec_command(
@@ -40,7 +40,7 @@ class BaseTester:
             )
         if code != 0:
             raise TestException("RE")
-        result = open(join(self.solution.testing_directory, "output.txt"), "r").read().strip().replace('\r\n', '\n')
+        result = open(join(self.path, "output.txt"), "r").read().strip().replace('\r\n', '\n')
         print("got result", result)
         if self.checker_code is not None:
             print('using checker')

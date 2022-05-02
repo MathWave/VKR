@@ -20,7 +20,3 @@ class Command(MessagingSupport):
             print(e)
             solution.result = "TE"
             solution.save()
-        finally:
-            path = join("solutions", str(id))
-            if exists(path):
-                rmtree(path)

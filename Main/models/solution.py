@@ -1,10 +1,7 @@
 from functools import cached_property
-from os.path import exists
-from shutil import rmtree
 from subprocess import call
 
 from django.contrib.auth.models import User
-from django.db.models import JSONField
 from django.db import models
 from django.utils import timezone
 
@@ -23,7 +20,7 @@ class Solution(models.Model):
     result = models.TextField(default=CONSTS["in_queue_status"])
     test = models.IntegerField(default=None, null=True, blank=True)
     set = models.ForeignKey(Set, null=True, blank=True, on_delete=models.SET_NULL)
-    extras = JSONField(default=dict)
+    extras = models.JSONField(default=dict)
 
     class Meta:
         indexes = [
@@ -45,11 +42,6 @@ class Solution(models.Model):
     @property
     def language(self):
         return languages[self.language_id]
-
-    def delete(self, using=None, keep_parents=False):
-        if exists(self.directory):
-            rmtree(self.directory)
-        super().delete(using=using, keep_parents=keep_parents)
 
     @cached_property
     def files(self):
@@ -76,10 +68,6 @@ class Solution(models.Model):
         return data
 
     @property
-    def directory(self):
-        return "solutions/" + str(self.id)
-
-    @property
     def number_result(self):
         if self.test is None:
             return self.result
@@ -94,10 +82,6 @@ class Solution(models.Model):
         if self.result == CONSTS["testing_status"]:
             return "info"
         return "danger"
-
-    @property
-    def testing_directory(self):
-        return self.directory
 
     @property
     def volume_directory(self):
