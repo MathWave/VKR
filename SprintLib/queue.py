@@ -3,6 +3,7 @@ import json
 import pika
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
+from django.db import OperationalError
 from pika.adapters.utils.connection_workflow import AMQPConnectorException
 
 from Sprint import settings
@@ -30,8 +31,12 @@ class MessagingSupport(BaseCommand):
     def consume(self, ch, method, properties, body):
         data = json.loads(body.decode('utf-8'))
         print(f"Got {data}, processing...")
-        self.process(data)
-        print("Process finished successfully")
+        try:
+            self.process(data)
+            print("Process finished successfully")
+        except OperationalError:
+            print("Failed to connect to database, restarting...")
+            send_to_queue(self.queue_name, data)
 
     def handle(self, *args, **options):
         if self.queue_name is None:
