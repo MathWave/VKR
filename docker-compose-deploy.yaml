@@ -28,7 +28,6 @@ services:
       POSTGRES_DB: sprint
     volumes:
       - /sprint-data/postgres-data:/var/lib/postgresql/data
-#      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     networks:
       - net
     deploy:
@@ -225,7 +224,7 @@ services:
       DEBUG: $DEBUG
       TELEGRAM_TOKEN: $TELEGRAM_TOKEN
     volumes:
-      - /var/folders:/var/folders
+      - /tmp:/tmp
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       mode: replicated

@@ -100,7 +100,7 @@ class BaseTester:
     def execute(self):
         self.solution.result = CONSTS["testing_status"]
         self.solution.save()
-        with TemporaryDirectory() as self.path:
+        with TemporaryDirectory(dir='/tmp') as self.path:
             for file in SolutionFile.objects.filter(solution=self.solution):
                 dirs = file.path.split("/")
                 for i in range(len(dirs) - 1):
