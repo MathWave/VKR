@@ -9,13 +9,13 @@ class JavaTester(BaseTester):
     def before_test(self):
         files = [
             file
-            for file in listdir(self.solution.testing_directory)
+            for file in listdir(self.path)
             if file.endswith(".java")
         ]
         code = self.solution.exec_command(f"javac {' '.join(files)}")
         if code != 0:
             raise TestException("CE")
-        for file in listdir(self.solution.testing_directory):
+        for file in listdir(self.path):
             if file.endswith(".class"):
                 self._executable = file.rstrip(".class")
                 break

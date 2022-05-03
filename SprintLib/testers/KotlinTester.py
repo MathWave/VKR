@@ -7,7 +7,7 @@ class KotlinTester(BaseTester):
     def before_test(self):
         files = [
             file
-            for file in listdir(self.solution.testing_directory)
+            for file in listdir(self.path)
             if file.endswith(".kt")
         ]
         code = self.solution.exec_command(
