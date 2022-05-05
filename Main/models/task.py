@@ -66,7 +66,7 @@ class Task(models.Model):
 
     @property
     def tests_count(self):
-        return len(self.tests) // 2
+        return len(list(self.tests)) // 2
 
     @property
     def samples(self):
