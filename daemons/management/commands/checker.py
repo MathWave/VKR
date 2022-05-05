@@ -9,11 +9,10 @@ from django.core.management import BaseCommand
 from requests import get
 
 from Main.models import Solution, Task, ExtraFile, SolutionFile
-from SprintLib.language import languages
 from SprintLib.testers import *
 
 
-host = 'http://192.168.0.146:8000/'
+host = 'http://dev.sprinthub.ru/'
 
 
 class Command(BaseCommand):
