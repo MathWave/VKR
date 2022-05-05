@@ -9,8 +9,9 @@ from django.utils import timezone
 
 from Checker.models import Checker
 from FileStorage.sync import synchronized_method
-from Main.models import Solution, SolutionFile, ExtraFile
+from Main.models import Solution, SolutionFile, ExtraFile, Progress
 from SprintLib.utils import generate_token
+from SprintLib.queue import notify as notification
 
 
 def get_dynamic(request):
@@ -50,7 +51,7 @@ def available(request):
         with TemporaryDirectory() as tempdir:
             with ZipFile(join(tempdir, "package.zip"), 'w') as zip_file:
                 for sf in SolutionFile.objects.filter(solution=solution):
-                    zip_file.writestr(sf.path, sf.bytes)
+                    zip_file.writestr(join('solution', sf.path), sf.bytes)
                 for ef in ExtraFile.objects.filter(task=solution.task):
                     zip_file.writestr(ef.filename, ef.bytes)
             response = HttpResponse(open(join(tempdir, 'package.zip'), 'rb').read(), content_type='application/octet-stream', status=201)
@@ -62,33 +63,61 @@ def available(request):
         return JsonResponse({"status": "incorrect token"}, status=403)
 
 
-def set_result(request):
+def save_solution(request):
     try:
         checker = Checker.objects.get(dynamic_token=request.GET['token'])
         solution = Solution.objects.get(id=request.GET['solution_id'])
         result = request.GET['result']
+        test = request.GET.get("test")
+        extras = request.GET.get('extras')
         if checker.set != solution.set:
             return JsonResponse({"status": "incorrect solution"}, status=403)
         solution.result = result
+        solution.test = test
+        solution.extras = extras
         if result == 'OK':
             solution.test = None
         solution.save()
-        checker.testing_solution = None
-        checker.save()
+        if not result.startswith('Testing'):
+            checker.testing_solution = None
+            checker.save()
         return JsonResponse({"status": True})
     except ObjectDoesNotExist:
         return JsonResponse({"status": "incorrect token"}, status=403)
 
 
-def current_test(request):
+def notify(request):
     try:
         checker = Checker.objects.get(dynamic_token=request.GET['token'])
         solution = Solution.objects.get(id=request.GET['solution_id'])
         if checker.set != solution.set:
             return JsonResponse({"status": "incorrect solution"}, status=403)
-        test = int(request.GET['test'])
-        solution.test = test
-        solution.save()
+        notification(
+            solution.user,
+            "solution_result",
+            f"Задача: {solution.task.name}\n"
+            f"Результат: {solution.result}\n"
+            f"Очки решения: {Progress.by_solution(solution).score}\n"
+            f"Текущий рейтинг: {solution.user.userinfo.rating}")
+        return JsonResponse({"status": True})
+    except ObjectDoesNotExist:
+        return JsonResponse({"status": "incorrect token"}, status=403)
+
+
+def save_progress(request):
+    try:
+        checker = Checker.objects.get(dynamic_token=request.GET['token'])
+        solution = Solution.objects.get(id=request.GET['solution_id'])
+        if checker.set != solution.set:
+            return JsonResponse({"status": "incorrect solution"}, status=403)
+        progress = Progress.objects.get(
+            user=solution.user, task=solution.task
+        )
+        if progress.finished_time is None:
+            progress.finished_time = solution.time_sent
+            progress.finished = True
+            progress.save()
+            progress.increment_rating()
         return JsonResponse({"status": True})
     except ObjectDoesNotExist:
         return JsonResponse({"status": "incorrect token"}, status=403)

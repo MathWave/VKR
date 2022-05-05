@@ -3,11 +3,10 @@ from os.path import join, exists
 from subprocess import call, TimeoutExpired
 from tempfile import TemporaryDirectory
 
-from SprintLib.queue import notify, send_to_queue
-from Main.models import ExtraFile, SolutionFile
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
-from SprintLib.utils import get_bytes, Timer
+from SprintLib.queue import notify, send_to_queue
+from SprintLib.utils import Timer
 
 
 class TestException(Exception):
@@ -70,21 +69,21 @@ class BaseTester:
         return ""
 
     def call(self, command):
-        return call(f'cd {self.path} && {command}', shell=True)
+        print(f"Executing command: {command}")
+        if exists(self.path):
+            return call(f'cd {self.path} && {command}', shell=True)
+        else:
+            return call(command, shell=True)
 
     def __init__(self, solution):
         self.solution = solution
 
-    def set_test(self, num):
-        self.solution.result = CONSTS["testing_status"] + f"({num})"
+    def save_solution(self):
         self.solution.save()
 
     def _setup_networking(self):
-        self.dockerfiles = sorted(
-            list(ExtraFile.objects.filter(filename__startswith="Dockerfile_", readable=True, task=self.solution.task)),
-            key=lambda x: x.filename)
         self.call(f"docker network create solution_network_{self.solution.id}")
-        for file in self.dockerfiles:
+        for file in self.solution.task.dockerfiles:
             add_name = file.filename[11:]
             with open(join(self.path, 'Dockerfile'), 'w') as fs:
                 fs.write(file.text)
@@ -97,11 +96,41 @@ class BaseTester:
             print('run command', run_command)
             self.call(run_command)
 
+    def notify(self):
+        self.solution.user.userinfo.refresh_from_db()
+        notify(
+            self.solution.user,
+            "solution_result",
+            f"Задача: {self.solution.task.name}\n"
+            f"Результат: {self.solution.result}\n"
+            f"Очки решения: {Progress.by_solution(self.solution).score}\n"
+            f"Текущий рейтинг: {self.solution.user.userinfo.rating}")
+
+    def cleanup(self):
+        self.solution.save()
+        send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}"})
+        send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}_checker"})
+        for file in self.solution.task.dockerfiles:
+            add_name = file.filename[11:]
+            send_to_queue("cleaner", {"type": "container", "name": f"solution_container_{self.solution.id}_{add_name}"})
+            send_to_queue("cleaner", {"type": "image", "name": f"solution_image_{self.solution.id}_{add_name}"})
+        send_to_queue("cleaner", {"type": "network", "name": f"solution_network_{self.solution.id}"})
+
+    def save_progress(self):
+        progress = Progress.objects.get(
+            user=self.solution.user, task=self.solution.task
+        )
+        if progress.finished_time is None:
+            progress.finished_time = self.solution.time_sent
+            progress.finished = True
+            progress.save()
+            progress.increment_rating()
+
     def execute(self):
         self.solution.result = CONSTS["testing_status"]
-        self.solution.save()
+        self.save_solution()
         with TemporaryDirectory(dir='/tmp') as self.path:
-            for file in SolutionFile.objects.filter(solution=self.solution):
+            for file in self.solution.solutionfiles:
                 dirs = file.path.split("/")
                 for i in range(len(dirs) - 1):
                     name = join(
@@ -112,19 +141,19 @@ class BaseTester:
                 with open(
                     join(self.path, file.path), "wb"
                 ) as fs:
-                    fs.write(get_bytes(file.fs_id).replace(b"\r\n", b"\n"))
-            for file in ExtraFile.objects.filter(task=self.solution.task):
+                    fs.write(file.bytes.replace(b"\r\n", b"\n"))
+            for file in self.solution.task.extrafiles:
                 with open(
                     join(self.path, file.filename), 'wb'
                 ) as fs:
-                    bts = get_bytes(file.fs_id)
+                    bts = file.bytes
                     fs.write(bts)
             print("Files copied")
             self._setup_networking()
             docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume={self.path}:/{self.working_directory} -t -d {self.solution.language.image}"
             print(docker_command)
             call(docker_command, shell=True)
-            checker = ExtraFile.objects.filter(task=self.solution.task, filename='checker.py').first()
+            checker = self.solution.task.checkerfile
             if checker is not None:
                 self.checker_code = checker.text
                 call(f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume={self.path}:/app -t -d python:3.6", shell=True)
@@ -134,13 +163,11 @@ class BaseTester:
                 print("before test finished")
                 for test in self.solution.task.tests:
                     if not test.filename.endswith(".a"):
-                        self.predicted = ExtraFile.objects.get(
-                            task=self.solution.task, filename=test.filename + ".a"
-                        ).text.strip().replace('\r\n', '\n')
+                        self.predicted = open(join(self.path, test.filename + '.a'), 'r').read().strip().replace('\r\n', '\n')
                         print('predicted:', self.predicted)
                         self.solution.test = int(test.filename)
                         self.solution.extras[test.filename] = {'predicted': self.predicted, 'output': ''}
-                        self.solution.save()
+                        self.save_solution()
                         try:
                             self.test(test.filename)
                         finally:
@@ -149,17 +176,12 @@ class BaseTester:
                                     self.solution.extras[test.filename]['output'] = open(join(self.path, 'output.txt'), 'r').read()
                                 except UnicodeDecodeError:
                                     self.solution.extras[test.filename]['output'] = ''
+                            self.save_solution()
                 self.after_test()
                 self.solution.result = CONSTS["ok_status"]
                 self.solution.test = None
-                progress = Progress.objects.get(
-                    user=self.solution.user, task=self.solution.task
-                )
-                if progress.finished_time is None:
-                    progress.finished_time = self.solution.time_sent
-                    progress.finished = True
-                    progress.save()
-                    progress.increment_rating()
+                self.save_solution()
+                self.save_progress()
             except TestException as e:
                 self.solution.result = str(e)
             except TimeoutExpired:
@@ -167,19 +189,6 @@ class BaseTester:
             except Exception as e:
                 self.solution.result = "TE"
                 print(e)
-        self.solution.save()
-        send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}"})
-        send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}_checker"})
-        for file in self.dockerfiles:
-            add_name = file.filename[11:]
-            send_to_queue("cleaner", {"type": "container", "name": f"solution_container_{self.solution.id}_{add_name}"})
-            send_to_queue("cleaner", {"type": "image", "name": f"solution_image_{self.solution.id}_{add_name}"})
-        send_to_queue("cleaner", {"type": "network", "name": f"solution_network_{self.solution.id}"})
-        self.solution.user.userinfo.refresh_from_db()
-        notify(
-            self.solution.user,
-            "solution_result",
-            f"Задача: {self.solution.task.name}\n"
-            f"Результат: {self.solution.result}\n"
-            f"Очки решения: {Progress.by_solution(self.solution).score}\n"
-            f"Текущий рейтинг: {self.solution.user.userinfo.rating}")
+        self.save_solution()
+        self.cleanup()
+        self.notify()

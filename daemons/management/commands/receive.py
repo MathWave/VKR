@@ -1,6 +1,3 @@
-from os.path import join, exists
-from shutil import rmtree
-
 from Main.models import Solution
 from SprintLib.queue import MessagingSupport
 from SprintLib.testers import *
@@ -14,8 +11,9 @@ class Command(MessagingSupport):
         id = payload['id']
         print(f"Received id {id}")
         solution = Solution.objects.get(id=id)
+        tester = eval(solution.language.work_name + "Tester")(solution)
         try:
-            eval(solution.language.work_name + "Tester")(solution).execute()
+            tester.execute()
         except Exception as e:
             print(e)
             solution.result = "TE"

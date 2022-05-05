@@ -1,8 +1,8 @@
+from cached_property import cached_property
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import JSONField
-from django.utils import timezone
 
 from Main.models.dump import Dump
 from Main.models.extrafile import ExtraFile
@@ -22,6 +22,8 @@ class Task(models.Model):
     allow_sharing = models.BooleanField(default=False)
     changes = JSONField(default=list)
 
+    _extrafiles = None
+
     def __str__(self):
         return self.name
 
@@ -35,7 +37,32 @@ class Task(models.Model):
 
     @property
     def tests(self):
-        return ExtraFile.objects.filter(task=self, is_test=True).order_by('filename')
+        for file in sorted(self.extrafiles, key=lambda x: x.filename):
+            if file.filename.isnumeric() or file.filename.endswith('.a') and file.filename[:-2].isnumeric():
+                yield file
+
+    @property
+    def extrafiles(self):
+        if self._extrafiles is not None:
+            return self._extrafiles
+        return ExtraFile.objects.filter(task=self)
+
+    @extrafiles.setter
+    def extrafiles(self, value):
+        self._extrafiles = value
+
+    @property
+    def dockerfiles(self):
+        for file in self.extrafiles:
+            if file.filename.startswith('Dockerfile_'):
+                yield file
+
+    @cached_property
+    def checkerfile(self):
+        for file in self.extrafiles:
+            if file.filename == 'extrafile.py':
+                return file
+        return None
 
     @property
     def tests_count(self):
@@ -44,7 +71,7 @@ class Task(models.Model):
     @property
     def samples(self):
         data = []
-        for test in self.tests.order_by("test_number"):
+        for test in self.tests:
             if test.is_sample and test.readable:
                 data.append({"input": test.text, "output": test.answer.text})
         count = 1

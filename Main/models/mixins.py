@@ -5,9 +5,17 @@ from SprintLib.utils import get_bytes, write_bytes, delete_file
 
 class FileStorageMixin:
 
-    @cached_property
+    _bytes = None
+
+    @property
     def bytes(self):
+        if self._bytes is not None:
+            return self._bytes
         return get_bytes(self.fs_id)
+
+    @bytes.setter
+    def bytes(self, value):
+        self._bytes = value
 
     @cached_property
     def text(self):

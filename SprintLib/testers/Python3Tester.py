@@ -7,9 +7,8 @@ class Python3Tester(BaseTester):
     file = None
 
     def before_test(self):
-        no_files = [file.filename for file in self.solution.task.files]
         for file in listdir(self.path):
-            if file.endswith(".py") and file not in no_files:
+            if file == 'solution.py':
                 self.file = file
                 break
         if self.file is None:

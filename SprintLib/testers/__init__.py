@@ -6,3 +6,4 @@ from .JavaTester import JavaTester
 from .CSharpTester import CSharpTester
 from .KotlinTester import KotlinTester
 from .SwiftTester import SwiftTester
+from .DistantTester import DistantTester

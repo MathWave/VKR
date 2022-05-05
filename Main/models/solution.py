@@ -22,12 +22,24 @@ class Solution(models.Model):
     set = models.ForeignKey(Set, null=True, blank=True, on_delete=models.SET_NULL)
     extras = models.JSONField(default=dict)
 
+    _solutionfiles = None
+
     class Meta:
         indexes = [
             models.Index(fields=['task', 'user', '-time_sent']),
             models.Index(fields=['task', '-time_sent']),
             models.Index(fields=['set', '-time_sent']),
         ]
+
+    @property
+    def solutionfiles(self):
+        if self._solutionfiles is not None:
+            return self._solutionfiles
+        return SolutionFile.objects.filter(solution=self)
+
+    @solutionfiles.setter
+    def solutionfiles(self, value):
+        self._solutionfiles = value
 
     @cached_property
     def settask(self):
@@ -82,10 +94,6 @@ class Solution(models.Model):
         if self.result == CONSTS["testing_status"]:
             return "info"
         return "danger"
-
-    @property
-    def volume_directory(self):
-        return "/sprint-data/worker/" + str(self.id)
 
     def exec_command(self, command, working_directory="app", timeout=None):
         return call(
