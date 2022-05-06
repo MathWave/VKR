@@ -16,6 +16,8 @@ services:
       mode: replicated
       restart_policy:
         condition: any
+      placement:
+        constraints: [node.role == manager]
       update_config:
         parallelism: 1
         order: start-first
@@ -34,6 +36,8 @@ services:
       mode: replicated
       restart_policy:
         condition: any
+      placement:
+        constraints: [node.role == manager]
       update_config:
         parallelism: 1
         order: start-first
@@ -46,6 +50,8 @@ services:
       mode: replicated
       restart_policy:
         condition: any
+      placement:
+        constraints: [node.role == manager]
       update_config:
         parallelism: 1
         order: start-first
@@ -167,6 +173,8 @@ services:
       mode: replicated
       restart_policy:
         condition: any
+      placement:
+        constraints: [node.role == manager]
       update_config:
         parallelism: 1
         order: start-first
