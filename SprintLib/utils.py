@@ -1,6 +1,8 @@
 import datetime
 from random import choice
+from time import sleep
 
+from django.core.management import BaseCommand
 from requests import get, post
 
 from Sprint import settings
@@ -53,3 +55,15 @@ class Timer:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.end_time = datetime.datetime.now()
         self.solution.extras[self.test]['time_spent'] = (self.end_time - self.start_time).total_seconds() * 1000
+
+
+class LoopWorker(BaseCommand):
+    sleep_period = 5
+
+    def go(self):
+        raise NotImplementedError("Method go should be implemented")
+
+    def handle(self, *args, **options):
+        while True:
+            self.go()
+            sleep(self.sleep_period)

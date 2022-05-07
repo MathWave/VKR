@@ -1,33 +1,43 @@
-from subprocess import call
+from subprocess import call, PIPE, run
 
-from SprintLib.queue import MessagingSupport, send_to_queue
+from Main.models import Solution
+from SprintLib.utils import LoopWorker
 
 
-class Command(MessagingSupport):
+class Command(LoopWorker):
     help = "starts docker cleaner"
-    queue_name = "cleaner"
+
+    def go(self):
+        result = run("docker ps", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+        lines = result.stdout.split('\n')[1:]
+        for line in lines:
+            line = [i for i in line.split() if i]
+            if line and line[-1].startswith('solution_'):
+                for el in line[-1].split('_'):
+                    if el.isnumeric():
+                        solution_id = int(el)
+                        break
+                solution = Solution.objects.filter(id=solution_id).first()
+                if solution is not None and (solution.result == 'In queue' or solution.result == 'Testing'):
+                    continue
+                call(f"docker rm --force {line[-1]}", shell=True)
+        result = run("docker image ls", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+        lines = result.stdout.split('\n')[1:]
+        for line in lines:
+            line = [i for i in line.split() if i]
+            if line and line[0].startswith('solution_'):
+                call("docker image rm " + line[0], shell=True)
+        result = run("docker network ls", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+        lines = result.stdout.split('\n')[1:]
+        for line in lines:
+            line = [i for i in line.split() if i]
+            if line and line[1].startswith('solution_'):
+                call("docker network rm " + line[0], shell=True)
+        a = 5
+        a += 1
 
     def handle(self, *args, **options):
         call('docker image rm $(docker images -q mathwave/sprint-repo)', shell=True)
-        call('docker rm $(docker ps -qa)', shell=True)
         print("Old images removed")
         super().handle(*args, **options)
 
-    def process(self, payload: dict):
-        name = payload['name']
-        type = payload['type']
-        if type == 'network':
-            command = f'docker network rm {name}'
-        elif type == 'container':
-            command = f'docker rm --force {name}'
-        elif type == 'image':
-            command = f'docker image rm --force {name}'
-        else:
-            raise NotImplementedError(f"Unknown type {type}")
-        print(f"Executing command {command}")
-        code = call(command, shell=True)
-        if code == 0:
-            print(f"Removed {type} {name}")
-        else:
-            print("Something went wrong")
-            send_to_queue(self.queue_name, payload)
