@@ -109,7 +109,8 @@ class BaseTester:
     def cleanup(self):
         self.solution.save()
         send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}"})
-        send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}_checker"})
+        if self.checker_code:
+            send_to_queue("cleaner", {"type": "container", "name": f"solution_{self.solution.id}_checker"})
         for file in self.solution.task.dockerfiles:
             add_name = file.filename[11:]
             send_to_queue("cleaner", {"type": "container", "name": f"solution_container_{self.solution.id}_{add_name}"})

@@ -1,6 +1,6 @@
 from subprocess import call
 
-from SprintLib.queue import MessagingSupport
+from SprintLib.queue import MessagingSupport, send_to_queue
 
 
 class Command(MessagingSupport):
@@ -30,3 +30,4 @@ class Command(MessagingSupport):
             print(f"Removed {type} {name}")
         else:
             print("Something went wrong")
+            send_to_queue(self.queue_name, payload)
