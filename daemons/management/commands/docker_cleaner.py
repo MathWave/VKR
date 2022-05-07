@@ -8,7 +8,7 @@ class Command(LoopWorker):
     help = "starts docker cleaner"
 
     def go(self):
-        result = run("docker ps", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+        result = run("docker ps -a", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
         lines = result.stdout.split('\n')[1:]
         solution_id = None
         for line in lines:
