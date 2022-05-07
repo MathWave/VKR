@@ -20,7 +20,7 @@ class Command(LoopWorker):
                         break
                 if solution_id:
                     solution = Solution.objects.filter(id=solution_id).first()
-                    if solution is not None and (solution.result == 'In queue' or solution.result == 'Testing'):
+                    if solution is not None and (solution.result == 'In queue' or solution.result.startswith('Testing')):
                         continue
                 call(f"docker rm --force {line[-1]}", shell=True)
         solution_id = None
@@ -35,7 +35,7 @@ class Command(LoopWorker):
                         break
                 if solution_id:
                     solution = Solution.objects.filter(id=solution_id).first()
-                    if solution is not None and (solution.result == 'In queue' or solution.result == 'Testing'):
+                    if solution is not None and (solution.result == 'In queue' or solution.result.startswith('Testing')):
                         continue
                 call("docker image rm " + line[0], shell=True)
         solution_id = None
@@ -50,11 +50,9 @@ class Command(LoopWorker):
                         break
                 if solution_id:
                     solution = Solution.objects.filter(id=solution_id).first()
-                    if solution is not None and (solution.result == 'In queue' or solution.result == 'Testing'):
+                    if solution is not None and (solution.result == 'In queue' or solution.result.startswith('Testing')):
                         continue
                 call("docker network rm " + line[0], shell=True)
-        a = 5
-        a += 1
 
     def handle(self, *args, **options):
         call('docker image rm $(docker images -q mathwave/sprint-repo)', shell=True)

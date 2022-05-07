@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
-from SprintLib.queue import notify, send_to_queue
+from SprintLib.queue import notify
 from SprintLib.utils import Timer
 
 
@@ -120,34 +120,6 @@ class BaseTester:
 
     def cleanup(self):
         self.solution.save()
-        send_to_queue(
-            "cleaner", {"type": "container", "name": f"solution_{self.solution.id}"}
-        )
-        if self.checker_code:
-            send_to_queue(
-                "cleaner",
-                {"type": "container", "name": f"solution_{self.solution.id}_checker"},
-            )
-        for file in self.solution.task.dockerfiles:
-            add_name = file.filename[11:]
-            send_to_queue(
-                "cleaner",
-                {
-                    "type": "container",
-                    "name": f"solution_container_{self.solution.id}_{add_name}",
-                },
-            )
-            send_to_queue(
-                "cleaner",
-                {
-                    "type": "image",
-                    "name": f"solution_image_{self.solution.id}_{add_name}",
-                },
-            )
-        send_to_queue(
-            "cleaner",
-            {"type": "network", "name": f"solution_network_{self.solution.id}"},
-        )
 
     def save_progress(self):
         progress = Progress.objects.get(
