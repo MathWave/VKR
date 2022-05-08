@@ -1,0 +1,329 @@
+version: "3.4"
+
+
+services:
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx
+      - /sprint-data/static:/var/www/html/static
+    networks:
+      - net
+    ports:
+      - "80:80"
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: sprint
+    volumes:
+      - /sprint-data/postgres-data:/var/lib/postgresql/data
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  rabbitmq:
+    image: rabbitmq:3.7.9-management
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  migrations:
+    image: mathwave/sprint-repo:sprint
+    command: ./manage.py migrate
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+
+  collect_static:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    volumes:
+      - /sprint-data/static:/usr/src/app/static
+    command: ./manage.py collectstatic --noinput
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+
+  web:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+      VK_SERVICE_TOKEN: $VK_SERVICE_TOKEN
+    volumes:
+      - /sprint-data/static:/usr/src/app/static
+    command: ./manage.py runserver 0.0.0.0:8000 --noreload --insecure
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  checker:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    command: ./manage.py runserver 0.0.0.0:7999 --noreload
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  polling:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    command: ./manage.py runserver 0.0.0.0:7998 --noreload
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  storage:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py storage
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    volumes:
+      - /sprint-data/data:/usr/src/app/data
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  bot:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    command: ./manage.py bot
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: stop-first
+
+  checker_cleaner:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    command: ./manage.py checker_cleaner
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: stop-first
+
+  worker:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py receive
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    volumes:
+      - /tmp:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: replicated
+      replicas: 8
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  docker_cleaner:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py docker_cleaner
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  file_generator:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py file_generator
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  notification_manager:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py notification_manager
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  apply-languages:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py apply_languages
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+
+networks:
+  net:
+    driver: overlay
