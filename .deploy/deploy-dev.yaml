@@ -6,7 +6,7 @@ services:
   nginx:
     image: nginx
     volumes:
-      - ./nginx:/etc/nginx
+      - ../nginx:/etc/nginx
       - /sprint-data/static:/var/www/html/static
     networks:
       - net
