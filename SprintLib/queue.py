@@ -3,7 +3,7 @@ import json
 import pika
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
-from django.db import OperationalError
+from psycopg2 import OperationalError
 from pika.adapters.utils.connection_workflow import AMQPConnectorException
 
 from Sprint import settings
