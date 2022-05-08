@@ -10,7 +10,7 @@ class Command(LoopWorker):
     help = "starts docker cleaner"
 
     def go(self):
-        for solution in Solution.objects.filter(Q(result="Testing") | Q(result="In queue"), docker_instances__isnull=False):
+        for solution in Solution.objects.filter(~Q(result="Testing") | ~Q(result="In queue"), docker_instances__isnull=False):
             for instance in sorted(solution.docker_instances, key=lambda x: x['type']):
                 if instance['type'] == 'network':
                     call(f"docker network rm --force {instance['name']}")
@@ -20,6 +20,8 @@ class Command(LoopWorker):
                     call(f"docker rm --force {instance['name']}")
                 else:
                     raise ValueError(f"Unknown docker type {instance['type']}")
+            solution.docker_instances = None
+            solution.save()
 
     def handle(self, *args, **options):
         call('docker image rm $(docker images -q mathwave/sprint-repo)', shell=True)
