@@ -13,7 +13,7 @@ class Command(LoopWorker):
         for solution in Solution.objects.filter(~Q(result="Testing") | ~Q(result="In queue"), docker_instances__isnull=False):
             for instance in sorted(solution.docker_instances, key=lambda x: x['type']):
                 if instance['type'] == 'network':
-                    call(f"docker network rm --force {instance['name']}", shell=True)
+                    call(f"docker network rm {instance['name']}", shell=True)
                 elif instance['type'] == 'image':
                     call(f"docker image rm --force {instance['name']}", shell=True)
                 elif instance['type'] == 'container':
