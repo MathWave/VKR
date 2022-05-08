@@ -1,11 +1,12 @@
-import os
-
 from aiohttp import web
 
 from FileStorage.sync import write_meta
 import aiofiles
 
+from SprintLib.redis import lock
 
+
+@lock()
 async def upload_file(request):
     file_id = await write_meta(request)
     async with aiofiles.open("data/" + str(file_id), "wb") as fs:
