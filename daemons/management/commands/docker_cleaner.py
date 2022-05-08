@@ -1,4 +1,6 @@
-from subprocess import call, PIPE, run
+from subprocess import call
+
+from django.db.models import Q
 
 from Main.models import Solution
 from SprintLib.utils import LoopWorker
@@ -8,51 +10,16 @@ class Command(LoopWorker):
     help = "starts docker cleaner"
 
     def go(self):
-        result = run("docker ps -a", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
-        lines = result.stdout.split('\n')[1:]
-        solution_id = None
-        for line in lines:
-            line = [i for i in line.split() if i]
-            if line and line[-1].startswith('solution_'):
-                for el in line[-1].split('_'):
-                    if el.isnumeric():
-                        solution_id = int(el)
-                        break
-                if solution_id:
-                    solution = Solution.objects.filter(id=solution_id).first()
-                    if solution is not None and (solution.result == 'In queue' or solution.result.startswith('Testing')):
-                        continue
-                call(f"docker rm --force {line[-1]}", shell=True)
-        solution_id = None
-        result = run("docker image ls", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
-        lines = result.stdout.split('\n')[1:]
-        for line in lines:
-            line = [i for i in line.split() if i]
-            if line and line[0].startswith('solution_'):
-                for el in line[-1].split('_'):
-                    if el.isnumeric():
-                        solution_id = int(el)
-                        break
-                if solution_id:
-                    solution = Solution.objects.filter(id=solution_id).first()
-                    if solution is not None and (solution.result == 'In queue' or solution.result.startswith('Testing')):
-                        continue
-                call("docker image rm " + line[0], shell=True)
-        solution_id = None
-        result = run("docker network ls", universal_newlines=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
-        lines = result.stdout.split('\n')[1:]
-        for line in lines:
-            line = [i for i in line.split() if i]
-            if line and line[1].startswith('solution_'):
-                for el in line[-1].split('_'):
-                    if el.isnumeric():
-                        solution_id = int(el)
-                        break
-                if solution_id:
-                    solution = Solution.objects.filter(id=solution_id).first()
-                    if solution is not None and (solution.result == 'In queue' or solution.result.startswith('Testing')):
-                        continue
-                call("docker network rm " + line[0], shell=True)
+        for solution in Solution.objects.filter(Q(result="Testing") | Q(result="In queue"), docker_instances__isnull=False):
+            for instance in sorted(solution.docker_instances, key=lambda x: x['type']):
+                if instance['type'] == 'network':
+                    call(f"docker network rm --force {instance['name']}")
+                elif instance['type'] == 'image':
+                    call(f"docker image rm --force {instance['name']}")
+                elif instance['type'] == 'container':
+                    call(f"docker rm --force {instance['name']}")
+                else:
+                    raise ValueError(f"Unknown docker type {instance['type']}")
 
     def handle(self, *args, **options):
         call('docker image rm $(docker images -q mathwave/sprint-repo)', shell=True)
