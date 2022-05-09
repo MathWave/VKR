@@ -305,7 +305,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
-      mode: global
+      mode: replicated
       restart_policy:
         condition: any
       update_config:
