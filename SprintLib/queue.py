@@ -3,7 +3,8 @@ import json
 import pika
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
-from psycopg2 import OperationalError
+import psycopg2
+import django.db
 from pika.adapters.utils.connection_workflow import AMQPConnectorException
 
 from Sprint import settings
@@ -34,7 +35,7 @@ class MessagingSupport(BaseCommand):
         try:
             self.process(data)
             print("Process finished successfully")
-        except OperationalError:
+        except (psycopg2.OperationalError, django.db.OperationalError):
             print("Failed to connect to database, restarting...")
             send_to_queue(self.queue_name, data)
             raise
