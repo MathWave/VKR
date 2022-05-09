@@ -92,19 +92,11 @@ class BaseTester:
 
     def _setup_networking(self):
         self.call(f"docker network create solution_network_{self.solution.id}")
-        self.solution.docker_instances.append({
-            "type": "network",
-            "name": f"solution_network_{self.solution.id}"
-        })
         for file in self.solution.task.dockerfiles:
             add_name = file.filename[11:]
             with open(join(self.path, "Dockerfile"), "w") as fs:
                 fs.write(file.text)
             self.call(f"docker build -t solution_image_{self.solution.id}_{add_name} .")
-            self.solution.docker_instances.append({
-                "type": "image",
-                "name": f"solution_image_{self.solution.id}_{add_name}"
-            })
             run_command = (
                 f"docker run "
                 f"--hostname {add_name} "
@@ -112,10 +104,6 @@ class BaseTester:
                 f"--name solution_container_{self.solution.id}_{add_name} "
                 f"-t -d solution_image_{self.solution.id}_{add_name}"
             )
-            self.solution.docker_instances.append({
-                "type": "container",
-                "name": f"solution_container_{self.solution.id}_{add_name}"
-            })
             print("run command", run_command)
             self.call(run_command)
 
@@ -170,10 +158,6 @@ class BaseTester:
             print("Files copied")
             self._setup_networking()
             docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume={self.path}:/{self.working_directory} -t -d {self.solution.language.image}"
-            self.solution.docker_instances.append({
-                "type": "container",
-                "name": f"solution_{self.solution.id}"
-            })
             print(docker_command)
             call(docker_command, shell=True)
             checker = self.solution.task.checkerfile
@@ -183,11 +167,6 @@ class BaseTester:
                     f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id}_checker --volume={self.path}:/app -t -d python:3.6",
                     shell=True,
                 )
-                self.solution.docker_instances.append({
-                    "type": "container",
-                    "name": f"solution_{self.solution.id}_checker"
-                })
-            self.solution.save()
             print("Container created")
             try:
                 self.before_test()
