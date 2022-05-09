@@ -21,7 +21,6 @@ class Solution(models.Model):
     test = models.IntegerField(default=None, null=True, blank=True)
     set = models.ForeignKey(Set, null=True, blank=True, on_delete=models.SET_NULL)
     extras = models.JSONField(default=dict)
-    docker_instances = models.JSONField(null=True, blank=True, default=list)
 
     _solutionfiles = None
 

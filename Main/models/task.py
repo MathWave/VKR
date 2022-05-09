@@ -16,6 +16,7 @@ class Task(models.Model):
     output_format = models.TextField(default="")
     specifications = models.TextField(default="")
     time_limit = models.IntegerField(default=10000)
+    memory_limit = models.IntegerField(default=524288)
     time_estimation = models.IntegerField(default=5)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     editors = ArrayField(models.TextField(), default=list)

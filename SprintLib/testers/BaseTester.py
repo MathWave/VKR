@@ -37,7 +37,9 @@ class BaseTester:
                 f"< {filename} {self.command} > output.txt",
                 timeout=self.solution.task.time_limit / 1000,
             )
-        if code != 0:
+        if code == 1:
+            raise TestException("ML")
+        elif code != 0:
             raise TestException("RE")
         result = (
             open(join(self.path, "output.txt"), "r")
@@ -157,7 +159,7 @@ class BaseTester:
                     fs.write(bts)
             print("Files copied")
             self._setup_networking()
-            docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --volume={self.path}:/{self.working_directory} -t -d {self.solution.language.image}"
+            docker_command = f"docker run --network solution_network_{self.solution.id} --name solution_{self.solution.id} --memory=\"{self.solution.task.memory_limit}k\" --volume={self.path}:/{self.working_directory} -t -d {self.solution.language.image}"
             print(docker_command)
             call(docker_command, shell=True)
             checker = self.solution.task.checkerfile
