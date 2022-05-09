@@ -50,3 +50,5 @@ deploy-prod:
     TELEGRAM_TOKEN: "$TELEGRAM_TOKEN_PROD"
   script:
     - docker stack deploy -c ./.deploy/deploy-prod.yaml sprint
+    - docker build -t mathwave/sprint-runner .
+    - docker push mathwave/sprint-runner
