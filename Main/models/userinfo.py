@@ -21,7 +21,7 @@ class UserInfo(models.Model):
     favourite_language_id = models.IntegerField(null=True, blank=True)
     rating = models.IntegerField(default=0)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    telegram_chat_id = models.TextField(default="")
+    telegram_chat_id = models.TextField(default="", null=True, blank=True)
     vk_user_id = models.IntegerField(null=True, blank=True)
     notification_solution_result = models.BooleanField(default=False)
     notification_friends = models.BooleanField(default=False)
