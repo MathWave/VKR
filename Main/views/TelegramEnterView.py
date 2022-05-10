@@ -5,10 +5,10 @@ from django.db.models import Q
 from SprintLib.BaseView import BaseView
 
 
-class EnterView(BaseView):
-    view_file = "enter.html"
+class TelegramEnterView(BaseView):
+    view_file = "telegram_enter.html"
     required_login = False
-    endpoint = "enter"
+    endpoint = "telegram_enter"
 
     def post(self):
         username = self.request.POST['username']

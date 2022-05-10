@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block scripts %}
+    var data = {
+        'username': false,
+        'name': false,
+        'surname': false,
+        'name': false,
+        'password': false
+    }
+    function checkData() {
+        var result = true;
+        for (const [key, value] of Object.entries(data)) {
+            result = result && value;
+        }
+        const button = document.getElementById('register');
+        button.disabled = !result;
+    }
+    function checkUsername() {
+        const username = document.getElementById('username');
+        $.ajax({
+            type: "POST",
+            url: '/check_new',
+            data: {"username": username.value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "check_username"},
+            statusCode: {
+                200: function() {
+                    username.style.backgroundColor = '#00FF00AA';
+                    data['username'] = true;
+                },
+                400: function() {
+                    username.style.backgroundColor = '#FF0000AA';
+                    data['username'] = false;
+                }
+            }
+        });
+        checkData();
+    }
+    function simpleCheck(element) {
+        const username = document.getElementById(element);
+        if (username.value !== "") {
+            username.style.backgroundColor = '#00FF00AA';
+            data[element] = true;
+        } else {
+            username.style.backgroundColor = '#FF0000AA';
+            data[element] = false;
+        }
+        checkData();
+    }
+    function checkEmail() {
+        const username = document.getElementById('email');
+        $.ajax({
+            type: "POST",
+            url: '/check_new',
+            data: {"email": username.value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "check_email"},
+            statusCode: {
+                200: function() {
+                    username.style.backgroundColor = '#00FF00AA';
+                    data['email'] = true;
+                },
+                400: function() {
+                    username.style.backgroundColor = '#FF0000AA';
+                    data['email'] = false;
+                }
+            }
+        });
+        checkData();
+    }
+    function checkPassword() {
+        const password = document.getElementById('password');
+        const repeat = document.getElementById('repeat');
+        if (password.value !== repeat.value) {
+            password.style.backgroundColor = '#FF0000AA';
+            repeat.style.backgroundColor = '#FF0000AA';
+            data['password'] = false;
+        } else {
+            password.style.backgroundColor = '#00FF00AA';
+            repeat.style.backgroundColor = '#00FF00AA';
+            data['password'] = true;
+        }
+        checkData();
+    }
+{% endblock %}
+
+{% block body %}
+    <div class="center">
+        <center>
+            <div>
+                <table><tr><td><img style="height: 80px; width: 80px;" src="/static/assets/img/brand/dark.svg" /></td><td><h1>Sprint</h1></td></tr></table>
+            </div>
+            <div>
+                <form method="POST">
+                    <p id="message" style="color: red;"></p>
+                    {% csrf_token %}
+                    <input type="text" class="form" name="username" onchange="checkUsername();" id="username" placeholder="username"><br>
+                    <input type="email" class="form" name="email" onchange="checkEmail();" id="email" placeholder="email"><br>
+                    <input type="text" class="form" name="surname" onchange="simpleCheck('surname');" id="surname" placeholder="Фамилия"><br>
+                    <input type="text" class="form" name="name" onchange="simpleCheck('name');" id="name" placeholder="Имя"><br>
+                    <input type="password" class="form" name="password" id="password" onchange="checkPassword();" placeholder="Пароль"><br>
+                    <input type="password" class="form" name="repeat" id="repeat" onchange="checkPassword();" placeholder="Повторить пароль"><br>
+                    <button type="submit" id="register" disabled class="sub btn btn-dark form">Регистрация</button>
+                </form>
+            </div>
+        </center>
+    </div>
+{% endblock %}

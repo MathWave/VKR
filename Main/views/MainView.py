@@ -15,7 +15,7 @@ class MainView(BaseView):
 
     @property
     def view_file(self):
-        if self.request.user.is_authenticated:
+        if self.request.user.is_authenticated and self.request.user.userinfo.verified:
             return "main.html"
         return "landing.html"
 

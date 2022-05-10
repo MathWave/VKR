@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block scripts %}
+    function send_code() {
+        const p = document.getElementById('message');
+        if (document.getElementById('state').value == 'code') {
+        $.ajax({
+          type: "POST",
+          url: '/send_code',
+          data: {"username": document.getElementById('username').value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "create"},
+          success: function(data) {
+            if (data['success']) {
+                document.getElementById('code').hidden = false;
+                document.getElementById('enter').firstChild.data = "Вход";
+                document.getElementById('state').value = "verify";
+                p.innerHTML = '';
+            } else {
+                p.innerHTML = data['message'];
+            }
+        }});
+        } else {
+        $.ajax({
+          type: "POST",
+          url: '/send_code',
+          data: {"username": document.getElementById('username').value, "code": document.getElementById('code').value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "check"},
+          success: function(data) {
+            if (data['success']) {
+                window.location.href = '/';
+            } else {
+                p.innerHTML = data['message'];
+            }
+            },
+        });
+        }
+    }
+{% endblock %}
+
+{% block body %}
+    <div class="center">
+        <center>
+            <div>
+                <table><tr><td><img style="height: 80px; width: 80px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/640px-Telegram_logo.svg.png" /></td><td><h1><a style="color: black;" href="/enter">Sprint</a></h1></td></tr></table>
+            </div>
+            <div>
+                <p id="message" style="color: red;"></p>
+                {% csrf_token %}
+                <input type="text" class="form" name="username" id="username" placeholder="username"><br>
+                <input type="password" class="form" name="code" id="code" placeholder="code" hidden><br>
+                <input type="hidden" id="state" value="code">
+                <button type="button" onclick="send_code()" id="enter" class="sub btn btn-dark form">Отправить код</button>
+            </div>
+            <div>
+                <a href="https://t.me/sprint_notifications_bot" target="_blank" class="sub btn btn-dark form">Регистрация</a>
+            </div><br>
+        </center>
+    </div>
+{% endblock %}

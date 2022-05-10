@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block scripts %}
+    var data = {
+        'username': false,
+    }
+    function checkData() {
+        var result = true;
+        for (const [key, value] of Object.entries(data)) {
+            result = result && value;
+        }
+        const button = document.getElementById('register');
+        button.disabled = !result;
+    }
+    function checkUsername() {
+        const username = document.getElementById('username');
+        $.ajax({
+            type: "POST",
+            url: '/check_new',
+            data: {"username": username.value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "check_username"},
+            statusCode: {
+                200: function() {
+                    username.style.backgroundColor = '#00FF00AA';
+                    data['username'] = true;
+                    checkData();
+                },
+                400: function() {
+                    username.style.backgroundColor = '#FF0000AA';
+                    data['username'] = false;
+                    checkData();
+                }
+            }
+        });
+    }
+{% endblock %}
+
+{% block body %}
+    <div class="center">
+        <center>
+            <div>
+                <h1><table><tr><td><i class="fa fa-user"></i></td><td>Sprint</td></tr></table></h1>
+            </div>
+            <div>
+                <form method="POST">
+                    <p id="message" style="color: red;"></p>
+                    {% csrf_token %}
+                    <input type="text" class="form" name="username" onchange="checkUsername();" id="username" placeholder="username"><br>
+                    <button type="submit" id="register" disabled class="sub btn btn-dark form">Подтвердить</button>
+                </form>
+            </div>
+        </center>
+    </div>
+{% endblock %}

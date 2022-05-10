@@ -18,4 +18,8 @@ from Main.views.SetView import SetView
 from Main.views.GroupView import GroupView
 from Main.views.CheckersView import CheckersView
 from Main.views.DownloadFileView import DownloadFileView
+from Main.views.RegisterView import RegisterView
+from Main.views.CheckNew import CheckNew
+from Main.views.TelegramEnterView import TelegramEnterView
+from Main.views.SetUsernameView import SetUsernameView
 from Main.views.social import *
