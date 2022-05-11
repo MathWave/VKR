@@ -47,10 +47,16 @@
                         elem.className = "page-item active";
                     }
                     if (page === 1) {
-                        document.getElementById("page_prev").style = "display: none;";
+                        const element = document.getElementById("page_prev");
+                        if (element) {
+                            element.style = "display: none;";
+                        }
                     }
                     if (page === pagesCount) {
-                        document.getElementById("page_next").style = "display: none;";
+                        const element = document.getElementById("page_next");
+                        if (element) {
+                            element.style = "display: none;";
+                        }
                     }
                 }
                 jQuery.get('/task_runtime?task_id={{ task.id }}', function(data1) {
