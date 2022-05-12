@@ -70,4 +70,13 @@ languages = [
         image="swift",
         highlight="swift",
     ),
+    Language(
+        id=6,
+        name="Bash",
+        work_name="Bash",
+        file_type="sh",
+        logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bash_Logo_Colored.svg/1200px-Bash_Logo_Colored.svg.png",
+        image="gcc",
+        highlight="sh",
+    )
 ]
