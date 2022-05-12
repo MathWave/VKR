@@ -6,6 +6,7 @@ from django.core.management import BaseCommand
 from requests import get, post
 
 from Sprint import settings
+from SprintLib.queue import send_to_queue
 
 
 def write_bytes(data: bytes):
@@ -67,3 +68,9 @@ class LoopWorker(BaseCommand):
         while True:
             self.go()
             sleep(self.sleep_period)
+
+
+def send_testing(solution):
+    if solution.set is not None and len(solution.set.checkers.all()) != 0:
+        return
+    send_to_queue("test", {"id": solution.id})

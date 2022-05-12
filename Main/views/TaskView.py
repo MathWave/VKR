@@ -5,8 +5,7 @@ from zipfile import ZipFile
 from Main.models import Solution, Progress, SolutionFile, SetTask, Task, Set
 from SprintLib.BaseView import BaseView, AccessError
 from SprintLib.language import languages
-from SprintLib.queue import send_to_queue
-from SprintLib.utils import write_bytes
+from SprintLib.utils import write_bytes, send_testing
 
 
 class TaskView(BaseView):
@@ -55,7 +54,7 @@ class TaskView(BaseView):
             solution=self.solution,
             fs_id=fs_id,
         )
-        self.send_testing()
+        send_testing(self.solution)
         return ("/task?setTask_id=" + str(self.setTask.id)) if self.set else ("/task?task_id=" + str(self.task.id))
 
     def post_1(self):
@@ -81,10 +80,5 @@ class TaskView(BaseView):
                 solution=self.solution,
                 fs_id=fs_id,
             )
-        self.send_testing()
+        send_testing(self.solution)
         return ("/task?setTask_id=" + str(self.setTask.id)) if self.set else ("/task?task_id=" + str(self.task.id))
-
-    def send_testing(self):
-        if self.solution.set is not None and len(self.solution.set.checkers.all()) != 0:
-            return
-        send_to_queue("test", {"id": self.solution.id})
