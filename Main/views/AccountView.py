@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from SprintLib.queue import notify
 from Main.models import Friendship
 from SprintLib.BaseView import BaseView
 from SprintLib.language import languages
+from SprintLib.queue import send_to_queue
 from SprintLib.utils import delete_file, write_bytes
 
 
@@ -46,17 +46,26 @@ class AccountView(BaseView):
             ).first()
             if friendship is None:
                 Friendship.objects.create(from_user=self.request.user, to_user=self.context["account"])
-                notify(self.context['account'], 'friends', f"Пользователь {self.request.user.username} хочет добавить тебя в друзья")
+                send_to_queue("notification", {
+                    "type": "friends_add",
+                    "from_user": self.request.user.id,
+                    "to_user": self.context["account"].id
+                })
             elif friendship.verified or friendship.from_user == self.request.user:
                 friendship.delete()
             else:
                 if self.request.POST["to_do"] == "yes":
                     friendship.verified = True
                     friendship.save()
-                    notify(self.context['account'], 'friends', f"Пользователь {self.request.user.username} добавил тебя в друзья")
                 else:
                     friendship.delete()
-                    notify(self.context['account'], 'friends', f"Пользователь {self.request.user.username} отклонил твою заявку")
+                send_to_queue("notification", {
+                    "type": "friends_accept",
+                    "from_user": self.request.user.id,
+                    "to_user": self.context['account'].id,
+                    "accepted": self.request.POST['to_do'] == 'yes'
+                })
+
         return "/account?username=" + self.request.GET["username"]
 
     def post_upload_photo(self):

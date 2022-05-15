@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 from Main.models.progress import Progress
 from Sprint.settings import CONSTS
-from SprintLib.queue import notify, send_to_queue
+from SprintLib.queue import send_to_queue
 from SprintLib.utils import Timer
 
 
@@ -111,14 +111,10 @@ class BaseTester:
 
     def notify(self):
         self.solution.user.userinfo.refresh_from_db()
-        notify(
-            self.solution.user,
-            "solution_result",
-            f"Задача: {self.solution.task.name}\n"
-            f"Результат: {self.solution.result}\n"
-            f"Очки решения: {Progress.by_solution(self.solution).score}\n"
-            f"Текущий рейтинг: {self.solution.user.userinfo.rating}",
-        )
+        send_to_queue("notification", {
+            "type": "solution",
+            "solution_id": self.solution.id
+        })
 
     def cleanup(self):
         self.solution.save()

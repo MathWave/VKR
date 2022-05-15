@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from Sprint import settings
 from SprintLib.BaseView import BaseView
-from SprintLib.queue import notify
+from SprintLib.queue import send_to_queue
 
 
 class SendCodeView(BaseView):
@@ -23,7 +23,10 @@ class SendCodeView(BaseView):
         print(f"Отправлен код для {username}", code)
         user.userinfo.code = code
         user.userinfo.save()
-        notify(user, "any", "Код для входа в сервис: " + str(code))
+        send_to_queue("telegram", {
+            "chat_id": user.userinfo.telegram_chat_id,
+            "text": "Код для входа в сервис: " + str(code)
+        })
         return {"success": True, "message": "Код отправлен"}
 
     def post_check(self):

@@ -10,8 +10,8 @@ from django.utils import timezone
 from Checker.models import Checker
 from FileStorage.sync import synchronized_method
 from Main.models import Solution, SolutionFile, ExtraFile, Progress
+from SprintLib.queue import send_to_queue
 from SprintLib.utils import generate_token
-from SprintLib.queue import notify as notification
 
 
 def get_dynamic(request):
@@ -92,13 +92,10 @@ def notify(request):
         solution = Solution.objects.get(id=request.GET['solution_id'])
         if checker.set != solution.set:
             return JsonResponse({"status": "incorrect solution"}, status=403)
-        notification(
-            solution.user,
-            "solution_result",
-            f"Задача: {solution.task.name}\n"
-            f"Результат: {solution.result}\n"
-            f"Очки решения: {Progress.by_solution(solution).score}\n"
-            f"Текущий рейтинг: {solution.user.userinfo.rating}")
+        send_to_queue("notification", {
+            "type": "solution",
+            "solution_id": solution.id
+        })
         return JsonResponse({"status": True})
     except ObjectDoesNotExist:
         return JsonResponse({"status": "incorrect token"}, status=403)

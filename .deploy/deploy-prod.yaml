@@ -360,6 +360,50 @@ services:
         parallelism: 1
         order: start-first
 
+  telegram_sender:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py telegram_sender
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      REDIS_HOST: "redis"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
+  email_sender:
+    image: mathwave/sprint-repo:sprint
+    networks:
+      - net
+    command: ./manage.py email_sender
+    environment:
+      DB_HOST: "postgres"
+      FS_HOST: "storage"
+      RABBIT_HOST: "rabbitmq"
+      REDIS_HOST: "redis"
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      EMAIL_PASSWORD: $EMAIL_PASSWORD
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+
   apply-languages:
     image: mathwave/sprint-repo:sprint
     networks:

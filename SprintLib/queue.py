@@ -56,11 +56,3 @@ class MessagingSupport(BaseCommand):
                     channel.start_consuming()
             except AMQPConnectorException:
                 print("connection to rabbit failed: reconnecting")
-
-
-def notify(user: User, notification_type: str, text: str):
-    send_to_queue("notifications", {
-        'user_id': user.id,
-        'type': notification_type,
-        'text': text,
-    })
