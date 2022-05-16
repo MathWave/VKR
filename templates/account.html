@@ -126,6 +126,15 @@
                                     {% endif %}
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <h2><i class="fa fa-at"></i></h2>
+                                </td>
+                                <td><div style="width: 20px;"></div></td>
+                                <td>
+                                    <p style="padding-top: 8px; font-size: 24px;">{{ account.email }}</p>
+                                </td>
+                            </tr>
                         {% endif %}
                     </table>
                 </div>
@@ -133,12 +142,70 @@
         </div>
     </div>
     {% if owner %}
+        {% if not account.email %}
+            <div class="card border-0 shadow mb-4">
+                <div class="card-body">
+                    <h1 class="h4">Прикрепи почту к своему аккаунту</h1>
+                    <script>
+                        function checkEmail() {
+                            const username = document.getElementById('email');
+                            $.ajax({
+                                type: "POST",
+                                url: '/check_new',
+                                data: {"email": username.value, "csrfmiddlewaretoken": document.getElementsByName('csrfmiddlewaretoken')[0].value, "action": "check_email"},
+                                statusCode: {
+                                    200: function() {
+                                        username.style.backgroundColor = '#00FF00AA';
+                                        data['email'] = true;
+                                    },
+                                    400: function() {
+                                        username.style.backgroundColor = '#FF0000AA';
+                                        data['email'] = false;
+                                    }
+                                }
+                            });
+                        }
+                    </script>
+                    <h5>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="email" class="form" name="email" onchange="checkEmail();" id="email" placeholder="email"><br>
+                            <input type="hidden" name="action" value="add_email">
+                            <button type="submit" class="btn btn-info mt-3">Сохранить</button>
+                        </form>
+                    </h5>
+                </div>
+            </div>
+        {% endif %}
         <div class="card border-0 shadow mb-4">
             <div class="card-body">
                 <h1 class="h4">Уведомления</h1>
                 <form method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="notifications">
+                    <table>
+                        {% if account.userinfo.telegram_chat_id %}
+                            <tr>
+                                <td style="width: 200px;">
+                                    Уведомления в телеграм
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="notification_telegram" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% if account.email %}
+                            <tr>
+                                <td style="width: 200px;">
+                                    Уведомления по почте
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="notification_email" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                    <hr>
                     <table>
                         <tr>
                             <td style="width: 200px;">

@@ -84,6 +84,11 @@ class AccountView(BaseView):
         self.request.user.userinfo.save()
         return "/account"
 
+    def post_add_email(self):
+        self.request.user.email = self.request.POST['email']
+        self.request.user.save()
+        return "/account"
+
     def post_notifications(self):
         for attr in dir(self.request.user.userinfo):
             if attr.startswith("notification"):

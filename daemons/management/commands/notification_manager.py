@@ -16,9 +16,9 @@ class Command(MessagingSupport):
                       f"Результат: {solution.result}\n" \
                       f"Очки решения: {Progress.by_solution(solution).score}\n" \
                       f"Текущий рейтинг: {solution.user.userinfo.rating}"
-            if user.userinfo.telegram_chat_id is not None:
+            if user.userinfo.notification_telegram is not None:
                 yield "telegram", {"chat_id": user.userinfo.telegram_chat_id, "text": message}
-            if user.email:
+            if user.userinfo.notification_email:
                 yield "email", {"subject": "Тестирование завершено", "message": message, "email": user.email}
 
     def handle_friends_add(self, payload):
@@ -26,9 +26,9 @@ class Command(MessagingSupport):
         from_user = User.objects.get(id=payload['from_user_id'])
         if user.userinfo.notification_friends:
             message = f"Пользователь {from_user.username} хочет добавить тебя в друзья"
-            if user.userinfo.telegram_chat_id:
+            if user.userinfo.notification_telegram:
                 yield "telegram", {"chat_id": user.userinfo.telegram_chat_id, "text": message}
-            if user.email:
+            if user.userinfo.notification_email:
                 yield "email", {"subject": "Новая заявка в друзья", "message": message, "email": user.email}
 
     def handle_friends_accept(self, payload):
@@ -39,9 +39,9 @@ class Command(MessagingSupport):
                 message = f"Пользователь {from_user} одобрил заявку в друзья"
             else:
                 message = f"Пользователь {from_user} отклонил заявку в друзья"
-            if user.userinfo.telegram_chat_id:
+            if user.userinfo.notification_telegram:
                 yield "telegram", {"chat_id": user.userinfo.telegram_chat_id, "text": message}
-            if user.email:
+            if user.userinfo.notification_email:
                 yield "email", {"subject": "Новая заявка в друзья", "message": message, "email": user.email}
 
     def process(self, payload: dict):

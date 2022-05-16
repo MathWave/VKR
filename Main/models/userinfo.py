@@ -26,6 +26,8 @@ class UserInfo(models.Model):
     notification_solution_result = models.BooleanField(default=False)
     notification_friends = models.BooleanField(default=False)
     notification_messages = models.BooleanField(default=False)
+    notification_telegram = models.BooleanField(default=False)
+    notification_email = models.BooleanField(default=False)
     code = models.IntegerField(null=True, blank=True)
     verified = models.BooleanField(default=False)
     teacher = models.BooleanField(default=False)
