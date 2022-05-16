@@ -35,7 +35,11 @@ class BaseView:
                     return HttpResponseRedirect("/enter")
                 if c.required_login and not request.user.userinfo.verified:
                     return HttpResponseRedirect("/set_username")
-                if not c.required_login and request.user.is_authenticated and request.user.userinfo.verified:
+                if (
+                    not c.required_login
+                    and request.user.is_authenticated
+                    and request.user.userinfo.verified
+                ):
                     return HttpResponseRedirect("/")
             request_method = request.method.lower()
             exec("from Main.models import *")
