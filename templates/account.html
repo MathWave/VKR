@@ -190,7 +190,7 @@
                                     Уведомления в телеграм
                                 </td>
                                 <td>
-                                    <input type="checkbox" name="notification_telegram" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
+                                    <input type="checkbox" name="notification_telegram" {% if user.userinfo.notification_telegram %}checked{% endif %}>
                                 </td>
                             </tr>
                         {% endif %}
@@ -200,7 +200,7 @@
                                     Уведомления по почте
                                 </td>
                                 <td>
-                                    <input type="checkbox" name="notification_email" {% if user.userinfo.notification_solution_result %}checked{% endif %}>
+                                    <input type="checkbox" name="notification_email" {% if user.userinfo.notification_email %}checked{% endif %}>
                                 </td>
                             </tr>
                         {% endif %}
