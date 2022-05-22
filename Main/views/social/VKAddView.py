@@ -1,8 +1,5 @@
 import os
 
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from requests import get
 
 from SprintLib.BaseView import BaseView
