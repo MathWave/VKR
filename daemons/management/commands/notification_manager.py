@@ -22,8 +22,8 @@ class Command(MessagingSupport):
                 yield "email", {"subject": "Тестирование завершено", "message": message, "email": user.email}
 
     def handle_friends_add(self, payload):
-        user = User.objects.get(id=payload['to_user_id'])
-        from_user = User.objects.get(id=payload['from_user_id'])
+        user = User.objects.get(id=payload['to_user'])
+        from_user = User.objects.get(id=payload['from_user'])
         if user.userinfo.notification_friends:
             message = f"Пользователь {from_user.username} хочет добавить тебя в друзья"
             if user.userinfo.notification_telegram:
