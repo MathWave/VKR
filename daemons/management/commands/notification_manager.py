@@ -32,8 +32,8 @@ class Command(MessagingSupport):
                 yield "email", {"subject": "Новая заявка в друзья", "message": message, "email": user.email}
 
     def handle_friends_accept(self, payload):
-        user = User.objects.get(id=payload['to_user_id'])
-        from_user = User.objects.get(id=payload['from_user_id'])
+        user = User.objects.get(id=payload['to_user'])
+        from_user = User.objects.get(id=payload['from_user'])
         if user.userinfo.notification_friends:
             if payload['accepted']:
                 message = f"Пользователь {from_user} одобрил заявку в друзья"
