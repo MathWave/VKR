@@ -4,6 +4,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 
 class AccessError(Exception):
@@ -24,6 +25,7 @@ class BaseView:
 
     @classmethod
     def as_view(cls):
+        @csrf_exempt
         def execute(request):
             if request.user.is_authenticated:
                 user_info = request.user.userinfo
