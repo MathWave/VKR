@@ -27,15 +27,5 @@ class DistantTester(BaseTester):
     def notify(self):
         self.request("notify")
 
-    def cleanup(self):
-        self.save_solution()
-        self.call(f"docker rm --force solution_{self.solution.id}")
-        self.call(f"docker rm --force solution_{self.solution.id}_checker")
-        for file in self.solution.task.dockerfiles:
-            add_name = file.filename[11:]
-            self.call(f"docker rm --force solution_container_{self.solution.id}_{add_name}")
-            self.call(f"docker image rm solution_image_{self.solution.id}_{add_name}")
-        self.call(f"docker network rm solution_network_{self.solution.id}")
-
     def save_progress(self):
         self.request("save_progress")

@@ -266,52 +266,6 @@ services:
         parallelism: 1
         order: start-first
 
-  docker_cleaner:
-    image: mathwave/sprint-repo:sprint
-    networks:
-      - net
-    command: ./manage.py docker_cleaner
-    environment:
-      DB_HOST: "postgres"
-      FS_HOST: "storage"
-      RABBIT_HOST: "rabbitmq"
-      REDIS_HOST: "redis"
-      DB_PASSWORD: $DB_PASSWORD
-      DEBUG: $DEBUG
-      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      mode: global
-      restart_policy:
-        condition: any
-      update_config:
-        parallelism: 1
-        order: start-first
-
-  redis_worker:
-    image: mathwave/sprint-repo:sprint
-    networks:
-      - net
-    command: ./manage.py redis_worker
-    environment:
-      DB_HOST: "postgres"
-      FS_HOST: "storage"
-      RABBIT_HOST: "rabbitmq"
-      REDIS_HOST: "redis"
-      DB_PASSWORD: $DB_PASSWORD
-      DEBUG: $DEBUG
-      TELEGRAM_TOKEN: $TELEGRAM_TOKEN
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      mode: replicated
-      restart_policy:
-        condition: any
-      update_config:
-        parallelism: 1
-        order: start-first
-
   file_generator:
     image: mathwave/sprint-repo:sprint
     networks:
