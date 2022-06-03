@@ -37,9 +37,7 @@ class BaseTester:
                 f"< {filename} {self.command} > output.txt",
                 timeout=self.solution.task.time_limit / 1000,
             )
-        if code == 1:
-            raise TestException("ML")
-        elif code != 0:
+        if code != 0:
             raise TestException("RE")
         result = (
             open(join(self.path, "output.txt"), "r")
